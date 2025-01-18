@@ -20,5 +20,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
   Optional<Participant> findByInformationIdAndUserId(Integer informationId, Integer userId);
 
+  // `informationId` を元に participant の合計数を取得
+  Integer countByInformationId(Integer informationId);
 
 }

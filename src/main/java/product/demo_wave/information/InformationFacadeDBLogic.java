@@ -1,5 +1,6 @@
 package product.demo_wave.information;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,6 +21,7 @@ import product.demo_wave.entity.User;
 import product.demo_wave.logic.GetUserLogic;
 import product.demo_wave.repository.CommentRepository;
 import product.demo_wave.repository.ParticipantRepository;
+import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.security.UsersDetails;
 import product.demo_wave.security.UsersDetailsService;
 import product.demo_wave.repository.InformationRepository;
@@ -32,6 +34,7 @@ class InformationFacadeDBLogic extends BasicFacadeDBLogic {
     private final InformationRepository informationRepository;
     private final CommentRepository commentRepository;
     private final ParticipantRepository participantRepository;
+    private final PaymentRepository paymentRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
 //    @CustomRetry
@@ -173,6 +176,18 @@ class InformationFacadeDBLogic extends BasicFacadeDBLogic {
     public Boolean isParticipant(Integer informationId) {
         Boolean isParticipant = participantRepository.existsByInformationIdAndUserIdAndDeletedAtIsNull(informationId, this.getUserLogic.getUserFromCache().getId());
         return isParticipant;
+    }
+
+    @CustomRetry
+    public Integer participantCount(Integer informationId) {
+        Integer participantCount = participantRepository.countByInformationId(informationId);
+        return participantCount;
+    }
+
+    @CustomRetry
+    public BigDecimal donateAmount(Integer informationId) {
+        BigDecimal donateAmount = paymentRepository.getTotalDonatedAmountByInformationId(informationId);
+        return donateAmount;
     }
 
 }

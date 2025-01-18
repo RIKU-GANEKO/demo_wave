@@ -61,8 +61,24 @@
                 </form>
             </div>
 
-            <!-- コメントセクション -->
             <div class="col-span-1 flex flex-col gap-9">
+
+                <!-- 参加者数 -->
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h2>デモ参加者数</h2>
+                        <h3 th:text="${participantCount}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
+                    </div>
+                </div>
+
+                <!-- 支援金総額 -->
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h2>支援金総額</h2>
+                        <h3 th:text="${donateAmount}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
+                    </div>
+                </div>
+
                 <!-- コメントリスト -->
                 <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
