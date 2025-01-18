@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>お知らせ</title>
+</head>
+<body>
+<main>
+    <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+        <!-- Breadcrumb Start -->
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-title-md2 font-bold text-black dark:text-white">お知らせ</h2>
+        </div>
+        <!-- Breadcrumb End -->
+
+        <!-- ====== Form Elements Section Start -->
+        <div class="grid grid-cols-1 gap-9 sm:grid-cols-2">
+
+            <div class="flex flex-col gap-9">
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h3 th:text="${information.title}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
+                        <p th:text="${#temporals.format(information.announcementTime, 'yyyy年MM月dd日 HH時mm分')}" class="text-right text-xs xl:text-base"></p>
+                    </div>
+                    <div class="flex flex-col gap-5.5 p-6.5" style="min-height: 300px;">
+                        <th:block th:if="${information.content}">
+                            <th:block th:each="str, stat : ${information.content.split('\r\n|\r|\n', -1)}">
+                                <th:block th:text="${str}"/>
+                                <br th:if="${!stat.last}"/>
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h2>デモ時間</h2>
+                        <h3 th:text="${#temporals.format(information.demoDate, 'yyyy年MM月dd日 HH時mm分')}" class="text-right text-xs xl:text-base"></h3>
+                    </div>
+                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h2>デモ会場</h2>
+                        <h3 th:text="${information.demoPlace}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
+                        <h3 th:text="${information.demoAddress}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
+                    </div>
+                    <div id="map" style="height: 400px; width: 100%;"></div> <!-- Google Mapsを表示する要素 -->
+                </div>
+                <a th:href="@{/information}">
+                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">お知らせ一覧に戻る</button>
+                </a>
+                <form th:action="@{/information/{id}/participant/add(id=${information.id})}" method="post">
+                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+                            th:text="${isParticipant} ? 'このデモ活動への参加をやめる' : 'このデモ活動に参加する'">
+                        このデモ活動に参加する <!-- デフォルト値として残しておく -->
+                    </button>
+                </form>
+                <form th:action="@{/payment/create-checkout-session}" method="post">
+                    <!-- 隠しフィールドに information.id をセット. 支援されるデモ(information)を特定するため -->
+                    <input type="hidden" name="informationId" th:value="${information.id}"/>
+                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">
+                        このデモ活動に支援金を送る
+                    </button>
+                </form>
+            </div>
+
+            <!-- コメントセクション -->
+            <div class="col-span-1 flex flex-col gap-9">
+                <!-- コメントリスト -->
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h3 class="font-medium text-black dark:text-white">コメント一覧</h3>
+                    </div>
+                    <div class="p-6.5">
+                        <th:block th:each="comment : ${comments}">
+                            <div class="mb-4 border-b border-stroke pb-4 dark:border-strokedark">
+                                <p th:text="${comment.content}" class="text-black dark:text-white"></p>
+                                <p th:text="${#temporals.format(comment.createdAt, 'yyyy年MM月dd日 HH:mm')}" class="text-xs text-gray-500 dark:text-gray-400"></p>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- コメント入力フォーム -->
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h3 class="font-medium text-black dark:text-white">コメントを追加</h3>
+                    </div>
+                    <form th:action="@{/information/comment/create}" method="post" class="p-6.5">
+                        <input type="hidden" th:name="informationId" th:value="${information.id}" />
+                        <div class="mb-4">
+                    <textarea
+                            id="content"
+                            name="content"
+                            rows="4"
+                            placeholder="コメントを入力してください"
+                            class="w-full rounded border border-stroke p-3 text-sm text-black dark:border-strokedark dark:bg-boxdark dark:text-white"
+                            required></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="rounded bg-primary p-3 text-sm font-medium text-gray">送信</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Google Maps APIの読み込み -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE&callback=initMap" async defer></script>
+    <script th:inline="javascript">
+        // Google Maps APIの初期化関数
+        function initMap() {
+            // 緯度・経度を取得 (Thymeleafで埋め込まれる)
+            const latitude = /*[[${information.demoAddressLatitude}]]*/ 35.6895; // デフォルト値: 東京
+            const longitude = /*[[${information.demoAddressLongitude}]]*/ 139.6917; // デフォルト値: 東京
+            console.log("latitude: " + latitude);
+
+            // Google Mapsのオプション設定
+            const mapOptions = {
+                center: { lat: latitude, lng: longitude },
+                zoom: 15, // ズームレベル
+            };
+
+            // Google Mapsを描画
+            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            // マーカーを追加
+            new google.maps.Marker({
+                position: { lat: latitude, lng: longitude },
+                map: map,
+                title: "デモ会場", // ツールチップ
+            });
+        }
+    </script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+</main>
+</body>
+</html>

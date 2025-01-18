@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー登録完了</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+
+<main class="container py-5">
+    <div class="bg-white rounded shadow-sm p-4">
+        <!-- ヘッダー -->
+        <div class="text-center mb-4">
+            <h2 class="h4 fw-bold">ユーザー登録完了</h2>
+<!--            <p th:text="${userForm.accountName()} + ' ＞ ユーザーリスト ＞ 登録完了'" class="text-muted"></p>-->
+        </div>
+
+        <!-- ユーザー情報 -->
+        <div class="mb-4">
+            <div class="mb-3">
+                <label class="form-label fw-bold">表示名:</label>
+                <p class="form-control-plaintext" th:text="${userForm.name}"></p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">メールアドレス:</label>
+                <p class="form-control-plaintext" th:text="${userForm.email}"></p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">パスワード:</label>
+                <p class="form-control-plaintext" th:text="${userForm.password}"></p>
+            </div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="text-center">
+            <a th:href="@{/login}" class="btn btn-primary">ログイン画面へ</a>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ltrjvnR4/Jqsma1iZgSAcQeQOU04XQmAN5X8BQY5QbiwliuJqL7eq23fQFsyjIc9" crossorigin="anonymous"></script>
+</body>
+</html>

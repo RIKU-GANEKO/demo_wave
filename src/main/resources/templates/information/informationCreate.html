@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FreePass Ad|お知らせ登録</title>
+</head>
+
+<body>
+<main>
+    <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+        <!-- Breadcrumb Start -->
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-title-md2 font-bold text-black dark:text-white">
+                お知らせ登録
+            </h2>
+        </div>
+        <!-- Breadcrumb End -->
+
+        <!-- ====== Form Layout Section Start -->
+        <div class="grid grid-cols-1 gap-9 sm:grid-cols-2">
+            <div class="flex flex-col gap-9">
+                <!-- Contact Form -->
+                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h3 class="font-semibold text-black dark:text-white">
+                            お知らせ
+                        </h3>
+                    </div>
+                    <form method="post" th:action="@{/information/create}" th:object="${informationForm}" th:csrf>
+                        <div class="p-6.5">
+                            <div class="mb-4.5">
+                                <label class="mb-2.5 block text-black dark:text-white">
+                                    タイトル
+                                </label>
+                                <input type="text"
+                                    id="title"
+                                    name="title"
+                                    placeholder="タイトル"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                                <p th:if="${#fields.hasErrors('title')}" th:errorclass="error" th:errors="*{title}"/>
+                            </div>
+
+                            <div class="mb-4.5">
+                                <label class="mb-2.5 block text-black dark:text-white">
+                                    告知日
+                                </label>
+                                <div class="relative z-20 bg-transparent dark:bg-form-input">
+                                    <input type="text"
+                                       id="announcementTime"
+                                       name="announcementTime"
+                                       class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium shadow-card-2 focus-visible:outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-boxdark"
+                                       value=""
+                                    />
+                                    <p th:if="${#fields.hasErrors('announcementTime')}" th:errorclass="error" th:errors="*{announcementTime}"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-4.5">
+                                <label class="mb-2.5 block text-black dark:text-white">
+                                    デモ日時
+                                </label>
+                                <div class="relative z-20 bg-transparent dark:bg-form-input">
+                                    <input type="text"
+                                           id="demoDate"
+                                           name="demoDate"
+                                           class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium shadow-card-2 focus-visible:outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-boxdark"
+                                           value=""
+                                    />
+                                    <p th:if="${#fields.hasErrors('demoDate')}" th:errorclass="error" th:errors="*{demoDate}"/>
+                                </div>
+                            </div>
+
+                            <div class="mb-4.5">
+                                <label class="mb-2.5 block text-black dark:text-white">
+                                    デモ場所
+                                </label>
+                                <input type="text"
+                                       id="demoPlace"
+                                       name="demoPlace"
+                                       placeholder="開催場所"
+                                       class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+                                <p th:if="${#fields.hasErrors('demoPlace')}" th:errorclass="error" th:errors="*{demoPlace}"/>
+                                <input type="text"
+                                       id="demoAddress"
+                                       name="demoAddress"
+                                       placeholder="住所"
+                                       class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                                />
+<!--                                <p th:if="${#fields.hasErrors('demoAddress')}" th:errorclass="error" th:errors="*{demoAddress}"/>-->
+                                <!-- ボタン -->
+                                <button type="button" id="showMapButton" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Google Mapを表示</button>
+                                <div id="map" style="display: none;"></div> <!-- 初期状態で非表示 -->
+                                <!-- 緯度・経度を送信するための隠しフィールド -->
+                                <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" />
+                                <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="mb-2.5 block text-black dark:text-white">
+                                    本文
+                                </label>
+                                <textarea
+                                    id="content"
+                                    name="content"
+                                    rows="6"
+                                    placeholder="Type your message"
+                                    class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"></textarea>
+                                <p th:if="${#fields.hasErrors('content')}" th:errorclass="error" th:errors="*{content}"/>
+                            </div>
+
+                            <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">確認</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- ====== Form Layout Section End -->
+    </div>
+
+    <style>
+        #map {
+          width: 100%;
+          height: 400px; /* 必要に応じて調整 */
+          margin-top: 20px;
+        }
+    </style>
+
+    <style>
+        #showMapButton {
+          display: block; /* ブロック要素として表示 */
+          margin-top: 16px;
+          padding: 12px 20px;
+          background-color: #007bff; /* 青色 */
+          color: white; /* テキストを白に */
+          font-weight: bold;
+          border: none; /* ボーダーを削除 */
+          border-radius: 8px; /* 角を丸く */
+          cursor: pointer; /* ホバー時のカーソルをポインターに */
+          text-align: center;
+        }
+
+        #showMapButton:hover {
+          background-color: #0056b3; /* ホバー時に色を少し濃く */
+        }
+    </style>
+
+<!--    <script>-->
+<!--        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({-->
+<!--          key: "AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE",-->
+<!--          v: "weekly",-->
+<!--          // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).-->
+<!--          // Add other bootstrap parameters as needed, using camel case.-->
+<!--        });-->
+<!--    </script>-->
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE&callback=initMap"
+            async
+            defer
+    ></script>
+    <script>
+        let geocoder; // Geocoder インスタンス
+    let map; // Map インスタンス
+    let latLng; // 緯度経度を保持する変数
+
+    // 初期化処理
+    function initMap() {
+        geocoder = new google.maps.Geocoder();
+
+        // 地図を初期化 (デフォルト位置)
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 35.6895, lng: 139.6917 }, // 初期位置は東京
+            zoom: 12,
+        });
+    }
+
+    // Geocoding で住所から緯度経度を取得
+    function geocodeAddress(address) {
+        if (!geocoder) {
+            alert("Google Maps API がまだ初期化されていません");
+            return;
+        }
+
+        geocoder.geocode({ address: address }, (results, status) => {
+            if (status === "OK") {
+                // 緯度経度を取得して変数に保存
+                latLng = results[0].geometry.location;
+                console.log("Geocoding results:", results);
+                console.log("Lat:", latLng.lat());
+                console.log("Lng:", latLng.lng());
+
+                // 緯度経度を隠しフィールドに設定
+                document.getElementById("demoAddressLatitude").value = latLng.lat();
+                document.getElementById("demoAddressLongitude").value = latLng.lng();
+
+                // 地図を表示
+                displayMap(latLng);
+            } else {
+                console.error("Geocode failed due to:", status);
+                alert("住所の取得に失敗しました: " + status);
+            }
+        });
+    }
+
+    // 地図を指定した緯度経度で表示
+    function displayMap(latLng) {
+        // 地図を指定した緯度経度に移動
+        map.setCenter(latLng);
+
+        // マーカーを表示
+        new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: "指定した場所",
+        });
+
+        // 地図を表示
+        document.getElementById("map").style.display = "block";  // 地図を表示する
+    }
+
+    window.onload = () => {
+        // ボタンのクリックイベントを設定
+        document.getElementById("showMapButton").addEventListener("click", () => {
+            const address = document.getElementById("demoAddress").value;
+            if (address) {
+                geocodeAddress(address);
+            } else {
+                alert("住所を入力してください");
+            }
+        });
+    };
+
+    </script>
+    <script>
+        $(function () {
+            $('#announcementTime').daterangepicker({
+                "singleDatePicker": true,
+                "timePicker": true,
+                "timePicker24Hour": true,
+                "autoApply": true,
+                "locale": {
+                    "format": "YYYY-MM-DD HH:mm",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Custom",
+                    "weekLabel": "W",
+                    "daysOfWeek": [
+                        "日",
+                        "月",
+                        "火",
+                        "水",
+                        "木",
+                        "金",
+                        "土"
+                    ],
+                    "monthNames": [
+                        "1月",
+                        "2月",
+                        "3月",
+                        "4月",
+                        "5月",
+                        "6月",
+                        "7月",
+                        "8月",
+                        "9月",
+                        "10月",
+                        "11月",
+                        "12月"
+                    ],
+                    "firstDay": 1
+                },
+                "showCustomRangeLabel": false,
+                startDate: moment().startOf('hour'),
+            }, function (start, end, label) {
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            });
+
+            // #demoDate の初期化
+            $('#demoDate').daterangepicker({
+                "singleDatePicker": true,
+                "timePicker": true,
+                "timePicker24Hour": true,
+                "autoApply": true,
+                "locale": {
+                    "format": "YYYY-MM-DD HH:mm",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Custom",
+                    "weekLabel": "W",
+                    "daysOfWeek": [
+                        "日", "月", "火", "水", "木", "金", "土"
+                    ],
+                    "monthNames": [
+                        "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"
+                    ],
+                    "firstDay": 1
+                },
+                "showCustomRangeLabel": false,
+                startDate: moment().startOf('hour'),
+            }, function (start, end, label) {
+                console.log('New date selected for demoDate: ' + start.format('YYYY-MM-DD HH:mm') + ' (predefined range: ' + label + ')');
+            });
+        });
+
+    </script>
+</main>
+</body>
+</html>
