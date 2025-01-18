@@ -16,4 +16,14 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 	@Query("SELECT SUM(p.donateAmount) FROM Payment p WHERE p.informationId = :informationId")
 	BigDecimal getTotalDonatedAmountByInformationId(Integer informationId);
 
+	// userId を元に今月支援した金額の合計を取得
+	@Query("""
+        SELECT SUM(p.donateAmount) 
+        FROM Payment p 
+        WHERE p.donateUserId = :userId 
+          AND YEAR(p.createdAt) = YEAR(CURRENT_DATE)
+          AND MONTH(p.createdAt) = MONTH(CURRENT_DATE)
+    """)
+	BigDecimal getTotalDonatedAmountByUserIdForCurrentMonth(Integer userId);
+
 }

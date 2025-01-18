@@ -20,6 +20,7 @@ class MypageService {
 		mypageGetUserContext.fetchUser();
 		mypageGetUserContext.fetchAccount();
 		mypageGetUserContext.fetchParticipatedInformation();
+		mypageGetUserContext.fetchSendDonateAmount();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}

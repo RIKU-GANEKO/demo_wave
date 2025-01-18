@@ -1,5 +1,6 @@
 package product.demo_wave.mypage;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,6 +26,7 @@ import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.CommentRepository;
 import product.demo_wave.repository.InformationRepository;
 import product.demo_wave.repository.ParticipantRepository;
+import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.repository.UserRepository;
 
 @Component
@@ -33,7 +35,7 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     private final InformationRepository informationRepository;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
-    private final CommentRepository commentRepository;
+    private final PaymentRepository paymentRepository;
     private final ParticipantRepository participantRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
@@ -58,6 +60,13 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     List<Information> fetchParticipatedInformation() {
         Integer userId = this.getUserLogic.getUserFromCache().getId();
         return informationRepository.findParticipatedInformationByUserId(userId);
+    }
+
+    // ログイン中のユーザーが今月支援した金額を取得
+    @CustomRetry
+    BigDecimal fetchSendDonateAmount() {
+        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        return paymentRepository.getTotalDonatedAmountByUserIdForCurrentMonth(userId);
     }
 
 //    @CustomRetry

@@ -1,5 +1,6 @@
 package product.demo_wave.mypage;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +24,7 @@ class MypageGetUserContext {
     private User user;
     private Account account;
     private List<Information> participatedInformations;
+    private BigDecimal sendDonateAmount;
 
     void fetchUser() throws UnsupportedOperationException {
         user = mypageFacadeDBLogic.fetchUser();
@@ -36,10 +38,15 @@ class MypageGetUserContext {
         participatedInformations = mypageFacadeDBLogic.fetchParticipatedInformation();
     }
 
+    void fetchSendDonateAmount() throws UnsupportedOperationException {
+        sendDonateAmount = mypageFacadeDBLogic.fetchSendDonateAmount();
+    }
+
     void setModelAndView() {
         this.mv.addObject("user", this.user);
         this.mv.addObject("account", this.account);
         this.mv.addObject("participatedInformations", this.participatedInformations);
+        this.mv.addObject("sendDonateAmount", this.sendDonateAmount);
         this.mv.setViewName("mypage");
     }
 }
