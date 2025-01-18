@@ -37,6 +37,8 @@ class InformationService {
 		informationShowGetContext.fetchInformation();
 		informationShowGetContext.fetchComment();
 		informationShowGetContext.fetchIsParticipant();
+		informationShowGetContext.fetchParticipantCount();
+		informationShowGetContext.fetchDonateAmount();
 		informationShowGetContext.setModelAndView();
 		return informationShowGetContext.getMv();
 		// TODO catchしてlogに吐き出すようにすべき

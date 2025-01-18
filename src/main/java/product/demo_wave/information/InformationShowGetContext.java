@@ -1,5 +1,6 @@
 package product.demo_wave.information;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +19,8 @@ class InformationShowGetContext {
     private List<Comment> comments;
 
     private Boolean isParticipant;
+    private Integer participantCount;
+    private BigDecimal donateAmount;
 
     @Getter
     private final ModelAndView mv;
@@ -37,10 +40,20 @@ class InformationShowGetContext {
         isParticipant = informationFacadeDBLogic.isParticipant(informationId);
     }
 
+    void fetchParticipantCount() {
+        participantCount = informationFacadeDBLogic.participantCount(informationId);
+    }
+
+    void fetchDonateAmount() {
+        donateAmount = informationFacadeDBLogic.donateAmount(informationId);
+    }
+
     void setModelAndView() {
         this.mv.addObject("information", this.information);
         this.mv.addObject("isParticipant", this.isParticipant);
         this.mv.addObject("comments", this.comments);
+        this.mv.addObject("participantCount", this.participantCount);
+        this.mv.addObject("donateAmount", this.donateAmount);
         this.mv.setViewName("information");
     }
 }
