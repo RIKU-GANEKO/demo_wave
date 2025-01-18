@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title,body)">
+<head th:fragment="head">
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:replace="${title}"></title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+        rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+
+  <script type="text/javascript"
+          src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+</head>
+
+<body
+    x-data="{ page: 'information', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+    x-init="
+          darkMode = JSON.parse(localStorage.getItem('darkMode'));
+          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    :class="{'dark text-bodydark bg-boxdark-2': darkMode === true}"
+>
+<!-- ===== Preloader Start ===== -->
+<div
+    x-show="loaded"
+    x-init="window.addEventListener('DOMContentLoaded', () => {setTimeout(() => loaded = false, 300)})"
+    class="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-white dark:bg-black"
+>
+  <div
+      class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"
+  ></div>
+</div>
+
+<!-- ===== Preloader End ===== -->
+<!-- ===== Page Wrapper Start ===== -->
+<div class="flex h-screen overflow-hidden">
+  <!-- ===== Sidebar Start ===== -->
+  <aside th:fragment="menu"
+         :class="sidebarToggle ? 'translate-x-0' : '-translate-x-full'"
+         class="absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0"
+         @click.outside="sidebarToggle = false">
+    <!-- SIDEBAR HEADER -->
+    <div class="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+      <div class="flex items-center gap-2.5">
+        <img th:src="@{/images/logo2.png}" alt="Logo"/>
+        <img th:src="@{/images/freepass.png}" alt="freepass"/>
+      </div>
+    </div>
+    <!-- SIDEBAR HEADER -->
+  </aside>
+  <!-- ===== Sidebar End ===== -->
+
+  <!-- ===== Content Area Start ===== -->
+  <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+    <!-- ===== HEADER ===== -->
+    <div
+        class="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
+      <div class="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
+        <div class="flex items-center gap-3 2xsm:gap-7">
+          <h1 class="flex items-center gap-3.5 py-4 px-6 font-bold duration-300 ease-in-out text-black dark:text-white lg:text-base">
+            パスワード再設定</h1>
+        </div>
+      </div>
+    </div>
+    <!-- ===== HEADER ===== -->
+    <main th:replace="${body}"></main>
+  </div>
+  <!-- ===== Content Area End ===== -->
+</div>
+<!-- ===== Page Wrapper End ===== -->
+<script defer th:src="@{/js/bundle.js}"></script>
+
+<script th:inline="javascript">
+  function checkPasswordMatch() {
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+    var submitButton = document.getElementById('submitButton');
+    var passwordMatchMessage = document.getElementById('passwordMatchMessage');
+
+    var hasUpperCase = /[A-Z]/.test(password);
+    var hasLowerCase = /[a-z]/.test(password);
+    var hasNumber = /\d/.test(password);
+    var isLengthValid = password.length >= 6 && password.length <= 20;
+
+    // Reset previous messages
+    passwordMatchMessage.innerHTML = '';
+    passwordMatchMessage.style.color = '';
+
+    if (password === confirmPassword && hasUpperCase && hasLowerCase && hasNumber && isLengthValid) {
+      passwordMatchMessage.innerHTML = 'パスワードが一致しました！';
+      passwordMatchMessage.style.color = 'green';
+      submitButton.disabled = false;
+    } else {
+      if (password !== confirmPassword) {
+        passwordMatchMessage.innerHTML += 'パスワードが一致しません。<br>';
+      }
+      if (!hasUpperCase) {
+        passwordMatchMessage.innerHTML += 'パスワードには大文字を含めるようにしてください。<br>';
+      }
+      if (!hasLowerCase) {
+        passwordMatchMessage.innerHTML += 'パスワードには小文字を含めるようにしてください。<br>';
+      }
+      if (!hasNumber) {
+        passwordMatchMessage.innerHTML += 'パスワードには半角数字を含めるようにしてください。<br>';
+      }
+      if (!isLengthValid) {
+        passwordMatchMessage.innerHTML += 'パスワードは6文字以上20文字以内にしてください。';
+      }
+      passwordMatchMessage.style.color = 'red';
+      submitButton.disabled = true;
+    }
+  }
+</script>
+
+<style>
+  #submitButton:disabled {
+    background-color: gray;
+    color: #ccc; /* Lighten the text color for better visibility */
+  }
+</style>
+</body>
+</html>

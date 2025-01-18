@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ユーザー登録</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/signup.css}">
+</head>
+<body class="text-center">
+
+<main class="form-signup w-100 m-auto">
+    <form method="post" th:action="@{/user/signup}" th:object="${userForm}">
+        <img class="mb-4" th:src="@{/images/demoWaveLogo.png}" alt="Demo Wave Logo" width="98" height="121">
+        <h1 class="h3 mb-3 fw-normal">ユーザー登録</h1>
+
+        <!-- ユーザー名入力 -->
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingUsername" name="name"
+                   th:value="${userForm.name}" placeholder="ユーザー名">
+            <label for="floatingUsername">ユーザー名</label>
+        </div>
+
+        <!-- メールアドレス入力 -->
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingUserEmail" name="email"
+                   th:value="${userForm.email}" placeholder="メールアドレス">
+            <label for="floatingUserEmail">メールアドレス</label>
+        </div>
+
+        <!-- パスワード入力 -->
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="floatingPassword" name="password"
+                   th:value="${userForm.password}" placeholder="パスワード">
+            <label for="floatingPassword">パスワード</label>
+        </div>
+
+        <!-- エラーメッセージ -->
+        <p th:if="${signupError}" th:text="${signupError}" class="text-danger"></p>
+
+        <!-- 登録ボタン -->
+        <button class="w-100 btn btn-lg btn-primary" type="submit">登録</button>
+
+        <!-- ログイン画面リンク -->
+        <a th:href="@{/login}" class="d-block mt-3">ログイン画面</a>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2025</p>
+    </form>
+</main>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ltrjvnR4/Jqsma1iZgSAcQeQOU04XQmAN5X8BQY5QbiwliuJqL7eq23fQFsyjIc9" crossorigin="anonymous"></script>
+</body>
+</html>
