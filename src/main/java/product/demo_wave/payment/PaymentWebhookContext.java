@@ -41,6 +41,8 @@ class PaymentWebhookContext {
 
     private PaymentDTO paymentDTO;
 
+    private BigDecimal donatedAmount;
+
     void getSessionData() throws UnsupportedOperationException {
 
         String endpointSecret = "whsec_18f1e69443ef415e014d356d9789d625a5fb0714d90cbaced686b5e305f5775c"; // Webhookシークレット
@@ -74,13 +76,13 @@ class PaymentWebhookContext {
                 Session session = (Session) stripeObject;
                 //支払い金額や他の情報を取得
                 String sessionId = session.getId();
-                BigDecimal donatedAmount = BigDecimal.valueOf(session.getAmountTotal()); // 総支払額（最小通貨単位）
+                this.donatedAmount = BigDecimal.valueOf(session.getAmountTotal()); // 総支払額（最小通貨単位）
                 String currency = session.getCurrency();
                 Integer informationId = Integer.valueOf(session.getMetadata().get("informationId"));
                 Integer donateUserId = Integer.valueOf(session.getMetadata().get("donateUserId"));
 
                 System.out.println("支払いが完了しました: Session ID = " + sessionId);
-                System.out.println("総支払額: " + donatedAmount + " " + currency);
+                System.out.println("総支払額: " + this.donatedAmount + " " + currency);
                 System.out.println("informationId(デモID) : " + informationId);
                 System.out.println("donateUserId : " + donateUserId);
 
@@ -112,9 +114,9 @@ class PaymentWebhookContext {
             // メール送信処理
             gmailService.sendEmail(service,
                     "uemayorimiyanahakokusai@gmail.com",
-                    "uemayorimiyanahakokusai@gmail.com",
-                    "DemoWave 支援金送信",
-                    "XX円を送金しました！");
+                    "uemayorimiyanahakokusai@gmail.com", // 本番デプロイ前に支援者Emailアドレスへ修正
+                    "DemoWave 支援金送信完了",
+                    this.donatedAmount + "円を送金しました！");
 
             System.out.println("メール送信完了");
         } catch (IOException | GeneralSecurityException e) {
