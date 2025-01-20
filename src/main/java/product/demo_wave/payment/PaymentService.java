@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import product.demo_wave.common.google.GmailService;
 import product.demo_wave.logic.GetUserLogic;
 
 @Service
@@ -15,6 +16,7 @@ import product.demo_wave.logic.GetUserLogic;
 public class PaymentService {
 
 	private final PaymentFacadeDBLogic paymentFacadeDBLogic;
+	private final GmailService gmailService;
 	private final GetUserLogic getUserLogic;
 
 	private final String YOUR_DOMAIN = "http://localhost:8082/demo_wave";
@@ -64,11 +66,29 @@ public class PaymentService {
 	ResponseEntity<String> handleStripeWebhook(
 			PaymentWebhookContext paymentWebhookContext) {
 		paymentWebhookContext.setPaymentFacadeDBLogic(paymentFacadeDBLogic);
+		paymentWebhookContext.setGmailService(gmailService);
 
-		paymentWebhookContext.getSessionData();
+		// セッションデータ取得処理
+		try {
+			paymentWebhookContext.getSessionData();
+		} catch (UnsupportedOperationException e) {
+			// 例外が発生した場合もここで終了
+			return paymentWebhookContext.getResponseEntity();
+		}
+
+		// イベントタイプが不正の場合はここで終了
+		if (paymentWebhookContext.getResponseEntity() != null) {
+			return paymentWebhookContext.getResponseEntity();
+		}
+
+		// DB登録処理を呼び出し
 		paymentWebhookContext.insertPaymentDataToDb();
-//		paymentWebhookContext.setResponseEntity();
+		paymentWebhookContext.sendMail();
 		return paymentWebhookContext.getResponseEntity();
+
+//		paymentWebhookContext.getSessionData();
+//		paymentWebhookContext.insertPaymentDataToDb();
+//		return paymentWebhookContext.getResponseEntity();
 	}
 
 }
