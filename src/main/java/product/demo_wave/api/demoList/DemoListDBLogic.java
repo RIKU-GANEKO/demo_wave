@@ -1,14 +1,12 @@
 package product.demo_wave.api.demoList;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
-import product.demo_wave.entity.Information;
-import product.demo_wave.repository.InformationRepository;
+import product.demo_wave.entity.Demo;
+import product.demo_wave.repository.DemoRepository;
 
 @Component
 @AllArgsConstructor
@@ -16,7 +14,7 @@ public class DemoListDBLogic {
 
 //	private static final Logger logger = Logger.getLogger(DemoListDBLogic.class.getSimpleName());
 
-	private final InformationRepository informationRepository;
+	private final DemoRepository demoRepository;
 
 //	private final UserRepository userRepository;
 
@@ -31,9 +29,9 @@ public class DemoListDBLogic {
 	 * @return デモ一覧情報のレスポンスを含むリスト
 	 */
 //	List<DemoListRecord> fetchDemoList() {
-	List<Information> fetchDemoList() {
+	List<Demo> fetchDemoList() {
 //		List<DemoListRecord> responses = new ArrayList<>();
-		List<Information> information = informationRepository.findAll();
+		List<Demo> demos = demoRepository.findAll();
 //		for (String freepassId : freepassIds) {
 //			User user = userRepository.findByFreepassIdAndDeletedFalse(freepassId);
 //			DemoListRecord demoListResponse = fetchUserProfile(user);
@@ -41,7 +39,7 @@ public class DemoListDBLogic {
 //				responses.add(demoListResponse);
 //			}
 //		}
-		return information;
+		return demos;
 //		return responses;
 	}
 

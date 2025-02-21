@@ -23,6 +23,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import product.demo_wave.common.google.GmailService;
+import product.demo_wave.entity.Demo;
+import product.demo_wave.entity.User;
 
 @RequiredArgsConstructor
 class PaymentWebhookContext {
@@ -78,16 +80,19 @@ class PaymentWebhookContext {
                 String sessionId = session.getId();
                 this.donatedAmount = BigDecimal.valueOf(session.getAmountTotal()); // 総支払額（最小通貨単位）
                 String currency = session.getCurrency();
-                Integer informationId = Integer.valueOf(session.getMetadata().get("informationId"));
+                Integer demoId = Integer.valueOf(session.getMetadata().get("demoId"));
                 Integer donateUserId = Integer.valueOf(session.getMetadata().get("donateUserId"));
 
                 System.out.println("支払いが完了しました: Session ID = " + sessionId);
                 System.out.println("総支払額: " + this.donatedAmount + " " + currency);
-                System.out.println("informationId(デモID) : " + informationId);
+                System.out.println("demoId(デモID) : " + demoId);
                 System.out.println("donateUserId : " + donateUserId);
 
+                Demo demo = paymentFacadeDBLogic.getDemo(demoId);
+                User donateUser = paymentFacadeDBLogic.getDonateUser(donateUserId);
+
                 // 必要な処理（DB保存や通知など）をここで実装
-                this.paymentDTO = new PaymentDTO(informationId, donateUserId, donatedAmount);
+                this.paymentDTO = new PaymentDTO(demo, donateUser, donatedAmount);
             }
 
             this.responseEntity.ok("Webhook received!");
@@ -131,9 +136,9 @@ class PaymentWebhookContext {
     }
 
 //    void setResponseEntity() {
-//        this.mv.addObject("information", this.information);
+//        this.mv.addObject("demo", this.demo);
 //        this.mv.addObject("isParticipant", this.isParticipant);
 //        this.mv.addObject("comments", this.comments);
-//        this.mv.setViewName("information");
+//        this.mv.setViewName("demo");
 //    }
 }

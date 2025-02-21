@@ -36,7 +36,7 @@ public class SecurityConfig {
         try {
             http.authorizeHttpRequests(authorize -> {
                 authorize
-//                        .requestMatchers("/information").permitAll()
+//                        .requestMatchers("/demo").permitAll()
                         .requestMatchers("/demoList/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error")
-                        .defaultSuccessUrl("/information")
+                        .defaultSuccessUrl("/demo")
                         .permitAll();
             });
             http.logout(form -> {

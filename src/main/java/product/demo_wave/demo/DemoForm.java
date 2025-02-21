@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-record InformationForm(
+record DemoForm(
     Integer id,
 
     @Size(max = 255, message = "タイトルは255文字以内にしてください")

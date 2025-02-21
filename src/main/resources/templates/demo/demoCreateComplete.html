@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout(~{::title}, ~{::main})}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreePass Ad|お知らせ登録完了</title>
+</head>
+
+<body>
+<main>
+  <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <!-- Breadcrumb Start -->
+    <div class="sm:grid-cols-12">
+      <div class="flex-wrap border-b border-stroke py-3 px-12 dark:border-strokedark">
+        <p class="text-title-md font-bold text-black dark:text-white">お知らせ登録完了</p>
+      </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- ====== Form Layout Section Start -->
+    <div class="grid grid-cols-1 gap-9 sm:grid-cols-12">
+      <div class="flex flex-col gap-9">
+        <!-- Demo Form -->
+        <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
+            <p class="font-medium text-black dark:text-white">タイトル</p>
+            <h3 th:text="${demoForm.title}"
+                class="font-medium text-black dark:text-white"></h3>
+          </div>
+
+          <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
+            <p class="font-medium text-black dark:text-white">公開日時</p>
+            <h3 th:text="${#temporals.format(demoForm.announcementTime, 'yyyy-MM-dd HH:mm')}"
+                class="font-medium text-black dark:text-white"></h3>
+          </div>
+
+          <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
+            <p class="font-medium text-black dark:text-white">本文</p>
+            <h3 th:text="${demoForm.content}"
+                class="font-medium text-black dark:text-white"></h3>
+          </div>
+        </div>
+        <div class="flex items-start justify-center">
+          <a th:href="@{/demo}">
+            <button type="button" class="rounded border border-stroke bg-primary p-3 font-medium text-gray">一覧へ</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- ====== Form Layout Section End -->
+  </div>
+</main>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
@@ -12,9 +12,9 @@ import lombok.Setter;
 class ParticipantAddPostContext {
 
   @Setter
-  private InformationFacadeDBLogic informationFacadeDBLogic;
+  private DemoFacadeDBLogic demoFacadeDBLogic;
 
-  private final Integer informationId;
+  private final Integer demoId;
   @Getter
   private final ModelAndView modelAndView;
   private final RedirectAttributes redirectAttributes;
@@ -24,15 +24,15 @@ class ParticipantAddPostContext {
 //  }
 
 //  void setErrorModelAndView() {
-//    this.modelAndView.setViewName("informationCreate");
+//    this.modelAndView.setViewName("demoCreate");
 //  }
 
   void toggleParticipant() {
-    informationFacadeDBLogic.toggleParticipant(informationId);
+    demoFacadeDBLogic.toggleParticipant(demoId);
   }
 
   void setModelAndView() {
-    this.redirectAttributes.addAttribute("informationId", informationId);
-    this.modelAndView.setViewName("redirect:/information/show");
+    this.redirectAttributes.addAttribute("demoId", demoId);
+    this.modelAndView.setViewName("redirect:/demo/show");
   }
 }

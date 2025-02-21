@@ -58,9 +58,9 @@ CREATE TABLE user_role (
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
--- informationテーブルの作成
-DROP TABLE IF EXISTS `information`;
-CREATE TABLE information (
+-- demoテーブルの作成
+DROP TABLE IF EXISTS `demo`;
+CREATE TABLE demo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
@@ -80,32 +80,32 @@ CREATE TABLE information (
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE comment (
     id INT AUTO_INCREMENT PRIMARY KEY,                -- 主キー
-    information_id INT NOT NULL,                      -- 外部キー (information.id と型を一致させる)
+    demo_id INT NOT NULL,                      -- 外部キー (demo.id と型を一致させる)
     content TEXT NOT NULL,                            -- コメント内容
     user_id INT NOT NULL,                             -- ユーザーID
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 作成日時
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新日時
     deleted_at TIMESTAMP DEFAULT NULL,                -- 削除日時（ソフトデリート用）
-    FOREIGN KEY (information_id) REFERENCES information(id) -- 外部キー制約
+    FOREIGN KEY (demo_id) REFERENCES demo(id) -- 外部キー制約
 );
 
 -- participantテーブルの作成
 DROP TABLE IF EXISTS `participant`;
 CREATE TABLE participant (
     id INT AUTO_INCREMENT PRIMARY KEY, -- 中間テーブルの主キー
-    information_id INT NOT NULL,      -- デモID (外部キー)
+    demo_id INT NOT NULL,      -- デモID (外部キー)
     user_id INT NOT NULL,             -- ユーザーID (外部キー)
     created_at TIMESTAMP NULL DEFAULT NULL,
     updated_at TIMESTAMP NULL DEFAULT NULL,
     deleted_at TIMESTAMP NULL DEFAULT NULL
---    UNIQUE (information_id, user_id) -- デモとユーザーの組み合わせはユニーク
+--    UNIQUE (demo_id, user_id) -- デモとユーザーの組み合わせはユニーク
 );
 
 -- paymentテーブルの作成
 DROP TABLE IF EXISTS `payment`;
 CREATE TABLE payment (
     id INT AUTO_INCREMENT PRIMARY KEY,                -- 主キー
-    information_id INT NOT NULL, -- 情報ID
+    demo_id INT NOT NULL, -- 情報ID
     donate_user_id INT NOT NULL, -- 寄付ユーザーID
     donate_amount DECIMAL NOT NULL, -- 寄付金額
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 作成日時

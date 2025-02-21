@@ -10,6 +10,6 @@ import product.demo_wave.entity.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-  List<Comment> findByInformationId(Integer informationId);
+  List<Comment> findByDemoId(Integer demoId);
 
 }

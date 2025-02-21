@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class InformationCreatePostContext {
+class DemoCreatePostContext {
 
   @Getter
   private final ModelAndView modelAndView;
-  private final InformationForm informationForm;
+  private final DemoForm demoForm;
   private final BindingResult result;
   private final RedirectAttributes redirectAttributes;
 
@@ -21,11 +21,11 @@ class InformationCreatePostContext {
   }
 
   void setErrorModelAndView() {
-    this.modelAndView.setViewName("informationCreate");
+    this.modelAndView.setViewName("demoCreate");
   }
 
   void setModelAndView() {
-    this.redirectAttributes.addFlashAttribute("informationForm", informationForm);
-    this.modelAndView.setViewName("redirect:/information/create/confirm");
+    this.redirectAttributes.addFlashAttribute("demoForm", demoForm);
+    this.modelAndView.setViewName("redirect:/demo/create/confirm");
   }
 }
