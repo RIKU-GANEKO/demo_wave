@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import product.demo_wave.entity.Account;
-import product.demo_wave.entity.Information;
+import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.User;
 
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ class MypageGetUserContext {
 
     private User user;
     private Account account;
-    private List<Information> participatedInformations;
+    private List<Demo> participatedDemos;
     private BigDecimal sendDonateAmount;
 
     void fetchUser() throws UnsupportedOperationException {
@@ -34,8 +34,8 @@ class MypageGetUserContext {
         account = mypageFacadeDBLogic.fetchAccount();
     }
 
-    void fetchParticipatedInformation() throws UnsupportedOperationException {
-        participatedInformations = mypageFacadeDBLogic.fetchParticipatedInformation();
+    void fetchParticipatedDemo() throws UnsupportedOperationException {
+        participatedDemos = mypageFacadeDBLogic.fetchParticipatedDemo();
     }
 
     void fetchSendDonateAmount() throws UnsupportedOperationException {
@@ -44,9 +44,13 @@ class MypageGetUserContext {
 
     void setModelAndView() {
         this.mv.addObject("user", this.user);
+        System.out.println("user: " + user);
         this.mv.addObject("account", this.account);
-        this.mv.addObject("participatedInformations", this.participatedInformations);
+        System.out.println("account: " + account);
+        this.mv.addObject("participatedDemos", this.participatedDemos);
+        System.out.println("participatedDemos: " + participatedDemos);
         this.mv.addObject("sendDonateAmount", this.sendDonateAmount);
+        System.out.println("sendDonateAmount: " + sendDonateAmount);
         this.mv.setViewName("mypage");
     }
 }

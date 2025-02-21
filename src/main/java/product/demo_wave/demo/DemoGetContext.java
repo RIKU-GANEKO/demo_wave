@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import product.demo_wave.AppProperties;
-import product.demo_wave.entity.Information;
 
 import product.demo_wave.common.logic.BasicFacadeDBLogic.PageData;
 import product.demo_wave.logic.GetUserLogic;
 
 @RequiredArgsConstructor
-class InformationGetContext {
+class DemoGetContext {
     private final AppProperties properties;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
@@ -28,9 +27,9 @@ class InformationGetContext {
     private Pageable pageable;
 
     @Setter
-    private InformationFacadeDBLogic informationFacadeDBLogic;
+    private DemoFacadeDBLogic demoFacadeDBLogic;
 
-    private Page<InformationWithParticipantDTO> informationList;
+    private Page<DemoWithParticipantDTO> demoList;
 
     private String organizerUserName;
 
@@ -47,17 +46,17 @@ class InformationGetContext {
     }
 
 //    void getParticipantCount() {
-//        this.participantCount = informationFacadeDBLogic.fetchParticipantCount();
+//        this.participantCount = DemoFacadeDBLogic.fetchParticipantCount();
 //    }
 
-    void fetchInformation() throws UnsupportedOperationException {
-        PageData<InformationWithParticipantDTO> informationPageData = informationFacadeDBLogic.fetchAllInformation(this.pageable);
-        this.informationList = informationPageData.getPage();
+    void fetchDemo() throws UnsupportedOperationException {
+        PageData<DemoWithParticipantDTO> demoPageData = demoFacadeDBLogic.fetchAllDemo(this.pageable);
+        this.demoList = demoPageData.getPage();
     }
 
     void setModelAndView() {
-        this.mv.addObject("informationList", this.informationList);
+        this.mv.addObject("demoList", this.demoList);
         this.mv.addObject("organizerUserName", this.organizerUserName);
-        this.mv.setViewName("informationList");
+        this.mv.setViewName("demoList");
     }
 }

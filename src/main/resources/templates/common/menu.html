@@ -12,9 +12,9 @@
     <!-- SIDEBAR HEADER -->
     <div class="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-           th:href="@{/information}"
-           @click="selected = 'Information'"
-           x-data="{ selected: $persist('Information') }">
+           th:href="@{/demo}"
+           @click="selected = 'demo'"
+           x-data="{ selected: $persist('demo') }">
             <div class="flex items-center gap-2.5">
                 <img th:src="@{/images/logo2.png}" alt="Logo"/>
                 <img th:src="@{/images/freepass.png}" alt="freepass"/>
@@ -42,12 +42,12 @@
                 <h3 class="mb-4 ml-4 text-sm font-medium text-bodydark2">MENU</h3>
 
                 <ul class="mb-6 flex flex-col gap-1.5">
-                    <!-- Menu Item Information -->
+                    <!-- Menu Item Demo -->
                     <li>
                         <a class="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
-                            th:href="@{/information}"
-                            @click="selected = (selected === 'Information' ? '':'Information')"
-                            :class="{ 'bg-graydark dark:bg-meta-4': (selected === 'Information') }">
+                            th:href="@{/demo}"
+                            @click="selected = (selected === 'demo' ? '':'demo')"
+                            :class="{ 'bg-graydark dark:bg-meta-4': (selected === 'demo') }">
                             <i class="fas fa-lightbulb"></i>
                             デモ一覧
                         </a>
