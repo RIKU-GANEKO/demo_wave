@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,6 +37,7 @@ public class SecurityConfig {
             http.authorizeHttpRequests(authorize -> {
                 authorize
 //                        .requestMatchers("/information").permitAll()
+                        .requestMatchers("/demoList/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()
@@ -64,6 +66,11 @@ public class SecurityConfig {
             http.csrf(csrf -> {
                 csrf.ignoringRequestMatchers("/payment/**"); // WebhookエンドポイントのみCSRF無効化
             });
+//            postメソッドなら必要
+//            http.csrf(csrf -> {
+//                csrf.ignoringRequestMatchers("/demoList/**"); // `/demoList/**` のみ CSRF 無効化
+//            });
+//            http.csrf(csrf -> csrf.disable());
 
             return http.build();
         } catch (Exception e) {
@@ -84,6 +91,20 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(Collections.singletonList(provider));
     }
+
+//    /**
+//     * アクセス制限を解除する path を指定する
+//     * @param web
+//     * @throws Exception
+//     */
+////    @Override
+//    public void configure(WebSecurity web) {
+//        web
+//                .ignoring().antMatchers(
+//                        // 新 api 系
+//                        "/demoList**"
+//                );
+//    }
 
     /*
     @Override
