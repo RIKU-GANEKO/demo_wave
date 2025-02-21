@@ -31,7 +31,7 @@ public class PaymentController {
 
 	@PostMapping("/create-checkout-session")
 	public ModelAndView createCheckoutSession(
-			@RequestParam("informationId") Integer informationId,
+			@RequestParam("demoId") Integer demoId,
 			ModelAndView modelAndView,
 			RedirectAttributes redirectAttributes) {
 
@@ -39,7 +39,7 @@ public class PaymentController {
 		CheckoutSessionContext checkoutSessionContext = new CheckoutSessionContext();
 
 		// Serviceを呼び出してセッション作成
-		String checkoutUrl = paymentService.createCheckoutSession(checkoutSessionContext, informationId);
+		String checkoutUrl = paymentService.createCheckoutSession(checkoutSessionContext, demoId);
 
 		// 成功時のリダイレクト
 		modelAndView.setViewName("redirect:" + checkoutUrl);

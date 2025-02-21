@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -13,10 +13,10 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 class CommentCreatePostContext {
 
-  private final Integer informationId;
+  private final Integer demoId;
 
   @Setter
-  private InformationFacadeDBLogic informationFacadeDBLogic;
+  private DemoFacadeDBLogic demoFacadeDBLogic;
 
   @Getter
   private final ModelAndView modelAndView;
@@ -24,15 +24,15 @@ class CommentCreatePostContext {
   private final RedirectAttributes redirectAttributes;
 
   void saveComment() {
-    informationFacadeDBLogic.saveComment(commentForm, informationId);
+    demoFacadeDBLogic.saveComment(commentForm, demoId);
   }
 
   void setModelAndView() {
-    String encodedInformationId = URLEncoder.encode(informationId.toString(), StandardCharsets.UTF_8);
+    String encodeddemoId = URLEncoder.encode(demoId.toString(), StandardCharsets.UTF_8);
 
     this.redirectAttributes.addFlashAttribute(commentForm);
-//    this.modelAndView.setViewName("redirect:/information/show");
-    this.modelAndView.setViewName("redirect:/information/show?informationId=" + encodedInformationId);
+//    this.modelAndView.setViewName("redirect:/demo/show");
+    this.modelAndView.setViewName("redirect:/demo/show?demoId=" + encodeddemoId);
   }
 
 }

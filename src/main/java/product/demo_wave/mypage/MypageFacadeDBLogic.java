@@ -1,30 +1,22 @@
 package product.demo_wave.mypage;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
 import product.demo_wave.entity.Account;
-import product.demo_wave.entity.Comment;
-import product.demo_wave.entity.Information;
-import product.demo_wave.entity.Participant;
-//import product.demo_wave.information.CommentForm;
-//import product.demo_wave.information.InformationForm;
+import product.demo_wave.entity.Demo;
+//import product.demo_wave.demo.CommentForm;
+//import product.demo_wave.demo.DemoForm;
 import product.demo_wave.entity.User;
-import product.demo_wave.information.InformationWithParticipantDTO;
 import product.demo_wave.logic.GetUserLogic;
 import product.demo_wave.repository.AccountRepository;
-import product.demo_wave.repository.CommentRepository;
-import product.demo_wave.repository.InformationRepository;
+import product.demo_wave.repository.DemoRepository;
 import product.demo_wave.repository.ParticipantRepository;
 import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.repository.UserRepository;
@@ -32,7 +24,7 @@ import product.demo_wave.repository.UserRepository;
 @Component
 @AllArgsConstructor
 class MypageFacadeDBLogic extends BasicFacadeDBLogic {
-    private final InformationRepository informationRepository;
+    private final DemoRepository demoRepository;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final PaymentRepository paymentRepository;
@@ -57,45 +49,45 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 
     // ログイン中のユーザーが参加した(する予定の)デモ活動を取得
     @CustomRetry
-    List<Information> fetchParticipatedInformation() {
+    List<Demo> fetchParticipatedDemo() {
         Integer userId = this.getUserLogic.getUserFromCache().getId();
-        return informationRepository.findParticipatedInformationByUserId(userId);
+        return demoRepository.findParticipatedDemoByUserId(userId);
     }
 
     // ログイン中のユーザーが今月支援した金額を取得
     @CustomRetry
     BigDecimal fetchSendDonateAmount() {
         Integer userId = this.getUserLogic.getUserFromCache().getId();
-        return paymentRepository.getTotalDonatedAmountByUserIdForCurrentMonth(userId);
+        return paymentRepository.getTotalDonatedAmountByUserForCurrentMonth(fetchUser());
     }
 
 //    @CustomRetry
-//    Information fetchInformation(Integer informationId) {
-//        Optional<Information> information = informationRepository.findById(informationId);
-//        return information.orElse(new Information());
+//    Demo fetchdemo(Integer demoId) {
+//        Optional<Demo> demo = demoRepository.findById(demoId);
+//        return demo.orElse(new Demo());
 //    }
 
 //    @CustomRetry
-//    void saveInformation(InformationForm informationForm) {
+//    void savedemo(DemoForm DemoForm) {
 //
-//        // Information を保存し、保存したエンティティを取得
-//        Information savedInformation = informationRepository.saveAndFlush(toEntity(informationForm, null));
+//        // Demo を保存し、保存したエンティティを取得
+//        Demo saveddemo = demoRepository.saveAndFlush(toEntity(DemoForm, null));
 //
-//        // 登録した Information の ID を取得
-//        Integer informationId = savedInformation.getId();
+//        // 登録した Demo の ID を取得
+//        Integer demoId = saveddemo.getId();
 //
 //        // Participant に登録
-//        participantRepository.saveAndFlush(toParticipantEntity(informationId));
+//        participantRepository.saveAndFlush(toParticipantEntity(demoId));
 //
-////        informationRepository.saveAndFlush(toEntity(informationForm, null));
+////        demoRepository.saveAndFlush(toEntity(DemoForm, null));
 //    }
 //
-//    private Information toEntity(InformationForm informationForm, Integer informationId) {
-//        Information information = new Information();
+//    private Demo toEntity(DemoForm DemoForm, Integer demoId) {
+//        Demo demo = new Demo();
 //
-//        if (informationId != null) {
-//            information = informationRepository.findById(informationId)
-//                    .orElseThrow(() -> new NoSuchElementException("Information not found."));
+//        if (demoId != null) {
+//            demo = demoRepository.findById(demoId)
+//                    .orElseThrow(() -> new NoSuchElementException("Demo not found."));
 //        }
 //
 ////        // SecurityContextからログインユーザーの詳細情報を取得
@@ -103,38 +95,38 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 ////        UsersDetails usersDetails = (UsersDetails) authentication.getPrincipal(); // UsersDetailsを取得
 ////        User loggedInUser = usersDetails.getUser(); // Userオブジェクトを取得
 //
-//        information.setTitle(informationForm.title());
-//        information.setContent(informationForm.content());
-//        information.setAnnouncementTime(informationForm.announcementTime());
-//        information.setDemoDate(informationForm.demoDate());
-//        information.setDemoPlace(informationForm.demoPlace());
-//        information.setDemoAddress(informationForm.demoAddress());
-//        information.setDemoAddressLatitude(informationForm.demoAddressLatitude());
-//        information.setDemoAddressLongitude(informationForm.demoAddressLongitude());
-//        information.setOrganizerUserId(this.getUserLogic.getUserFromCache().getId());
-////        information.setOrganizerName("我如古陸");
+//        demo.setTitle(DemoForm.title());
+//        demo.setContent(DemoForm.content());
+//        demo.setAnnouncementTime(DemoForm.announcementTime());
+//        demo.setDemoDate(DemoForm.demoDate());
+//        demo.setDemoPlace(DemoForm.demoPlace());
+//        demo.setDemoAddress(DemoForm.demoAddress());
+//        demo.setDemoAddressLatitude(DemoForm.demoAddressLatitude());
+//        demo.setDemoAddressLongitude(DemoForm.demoAddressLongitude());
+//        demo.setOrganizerUserId(this.getUserLogic.getUserFromCache().getId());
+////        demo.setOrganizerName("我如古陸");
 //
-//        return information;
+//        return demo;
 //    }
 //
-//    private Participant toParticipantEntity(Integer informationId) {
+//    private Participant toParticipantEntity(Integer demoId) {
 //        Participant participant = new Participant();
 //
-//        participant.setInformationId(informationId);
+//        participant.setdemoId(demoId);
 //        participant.setUserId(this.getUserLogic.getUserFromCache().getId());
 //
 //        return participant;
 //    }
 //
 //    @CustomRetry
-//    void saveComment(CommentForm commentForm, Integer informationId) {
-//        commentRepository.saveAndFlush(toEntity(commentForm, informationId));
+//    void saveComment(CommentForm commentForm, Integer demoId) {
+//        commentRepository.saveAndFlush(toEntity(commentForm, demoId));
 //    }
 //
-//    private Comment toEntity(CommentForm commentForm, Integer informationId) {
+//    private Comment toEntity(CommentForm commentForm, Integer demoId) {
 //        Comment comment = new Comment();
 //
-//        comment.setInformationId(informationId);
+//        comment.setdemoId(demoId);
 //        comment.setContent(commentForm.content());
 //        comment.setUserId(this.getUserLogic.getUserFromCache().getId());
 //
@@ -142,16 +134,16 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 //    }
 //
 //    @CustomRetry
-//    void toggleParticipant(Integer informationId) {
+//    void toggleParticipant(Integer demoId) {
 //
 //        Integer userId = this.getUserLogic.getUserFromCache().getId();
 //
 //        // 該当データを検索
-//        Optional<Participant> existingParticipant = participantRepository.findByInformationIdAndUserId(informationId, userId);
+//        Optional<Participant> existingParticipant = participantRepository.findBydemoIdAndUserId(demoId, userId);
 //
 //        if (existingParticipant.isEmpty() || existingParticipant.get().getDeletedAt() != null) {
 //            // データが存在しない、または論理削除されている場合、新しいデータを作成
-//            participantRepository.saveAndFlush(toEntity(informationId, userId));
+//            participantRepository.saveAndFlush(toEntity(demoId, userId));
 //        } else {
 //            // データが存在し、論理削除されていない場合、不参加として論理削除
 //            Participant participant = existingParticipant.get();
@@ -159,26 +151,26 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 //            participantRepository.saveAndFlush(participant);
 //        }
 //
-////        Boolean isParticipant = participantRepository.existsByInformationIdAndUserIdAndDeletedAtIsNull(informationId, this.getUserLogic.getUserFromCache().getId());
+////        Boolean isParticipant = participantRepository.existsBydemoIdAndUserIdAndDeletedAtIsNull(demoId, this.getUserLogic.getUserFromCache().getId());
 ////        if (!isParticipant) {
-////            participantRepository.saveAndFlush(toEntity(informationId, userId));
+////            participantRepository.saveAndFlush(toEntity(demoId, userId));
 ////        } else {
 ////
 ////        }
 //    }
 //
-//    private Participant toEntity(Integer informationId, Integer userId) {
+//    private Participant toEntity(Integer demoId, Integer userId) {
 //        Participant participant = new Participant();
 //
-//        participant.setInformationId(informationId);
+//        participant.setdemoId(demoId);
 //        participant.setUserId(userId);
 //
 //        return participant;
 //    }
 //
 //    @CustomRetry
-//    public Boolean isParticipant(Integer informationId) {
-//        Boolean isParticipant = participantRepository.existsByInformationIdAndUserIdAndDeletedAtIsNull(informationId, this.getUserLogic.getUserFromCache().getId());
+//    public Boolean isParticipant(Integer demoId) {
+//        Boolean isParticipant = participantRepository.existsBydemoIdAndUserIdAndDeletedAtIsNull(demoId, this.getUserLogic.getUserFromCache().getId());
 //        return isParticipant;
 //    }
 

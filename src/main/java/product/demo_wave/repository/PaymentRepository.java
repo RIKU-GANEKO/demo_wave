@@ -7,23 +7,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.Payment;
+import product.demo_wave.entity.User;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
-	// informationId を元に支援金の総額を取得
-	@Query("SELECT SUM(p.donateAmount) FROM Payment p WHERE p.informationId = :informationId")
-	BigDecimal getTotalDonatedAmountByInformationId(Integer informationId);
+	// demoId を元に支援金の総額を取得
+	@Query("SELECT SUM(p.donateAmount) FROM Payment p WHERE p.demo = :demo")
+	BigDecimal getTotalDonatedAmountByDemo(Demo demo);
 
 	// userId を元に今月支援した金額の合計を取得
 	@Query("""
         SELECT SUM(p.donateAmount) 
         FROM Payment p 
-        WHERE p.donateUserId = :userId 
+        WHERE p.user = :user
           AND YEAR(p.createdAt) = YEAR(CURRENT_DATE)
           AND MONTH(p.createdAt) = MONTH(CURRENT_DATE)
     """)
-	BigDecimal getTotalDonatedAmountByUserIdForCurrentMonth(Integer userId);
+	BigDecimal getTotalDonatedAmountByUserForCurrentMonth(User user);
 
 }

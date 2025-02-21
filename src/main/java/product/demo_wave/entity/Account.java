@@ -35,8 +35,8 @@ public class Account {
   @Column(name = "id")
   private Integer id;
 
-  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-  private List<User> userList = new ArrayList<>();
+//  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+//  private List<User> userList = new ArrayList<>();
 
 //  @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, orphanRemoval = true)
 //  private List<Media> mediaList;

@@ -21,28 +21,28 @@
     <!-- ====== Form Layout Section Start -->
     <div class="grid grid-cols-1 gap-9 sm:grid-cols-12">
       <div class="flex flex-col gap-9">
-        <!-- Information Form -->
+        <!-- Demo Form -->
         <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
             <p class="font-medium text-black dark:text-white">タイトル</p>
-            <h3 th:text="${informationForm.title}"
+            <h3 th:text="${demoForm.title}"
                 class="font-medium text-black dark:text-white"></h3>
           </div>
 
           <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
             <p class="font-medium text-black dark:text-white">公開日時</p>
-            <h3 th:text="${#temporals.format(informationForm.announcementTime, 'yyyy-MM-dd HH:mm')}"
+            <h3 th:text="${#temporals.format(demoForm.announcementTime, 'yyyy-MM-dd HH:mm')}"
                 class="font-medium text-black dark:text-white"></h3>
           </div>
 
           <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
             <p class="font-medium text-black dark:text-white">本文</p>
-            <h3 th:text="${informationForm.content}"
+            <h3 th:text="${demoForm.content}"
                 class="font-medium text-black dark:text-white"></h3>
           </div>
         </div>
         <div class="flex items-start justify-center">
-          <a th:href="@{/information}">
+          <a th:href="@{/demo}">
             <button type="button" class="rounded border border-stroke bg-primary p-3 font-medium text-gray">一覧へ</button>
           </a>
         </div>

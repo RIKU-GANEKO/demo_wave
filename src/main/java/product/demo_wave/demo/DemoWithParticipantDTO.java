@@ -1,8 +1,8 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import java.time.LocalDateTime;
 
-public record InformationWithParticipantDTO(
+public record DemoWithParticipantDTO(
 		Integer id,
 		String title,
 		String demoPlace,

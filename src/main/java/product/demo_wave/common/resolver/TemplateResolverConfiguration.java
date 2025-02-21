@@ -22,9 +22,9 @@ public class TemplateResolverConfiguration {
   }
 
   @Bean
-  public SpringResourceTemplateResolver informationTemplateResolver() {
+  public SpringResourceTemplateResolver demoTemplateResolver() {
     SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-    templateResolver.setPrefix("classpath:/templates/information/");
+    templateResolver.setPrefix("classpath:/templates/demo/");
     templateResolver.setSuffix(".html");
     templateResolver.setTemplateMode(TemplateMode.HTML);
     templateResolver.setCharacterEncoding("UTF-8");

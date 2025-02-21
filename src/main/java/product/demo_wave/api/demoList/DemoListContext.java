@@ -1,7 +1,6 @@
 package product.demo_wave.api.demoList;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import product.demo_wave.entity.Information;
+import product.demo_wave.entity.Demo;
 
 /**
  * ユーザ情報取得用 Service
@@ -57,7 +56,7 @@ public class DemoListContext {
 	 */
 	ResponseEntity<APIResponse> getDemoList() {
 //		List<DemoListRecord> responses = null;
-		List<Information> responses = null;
+		List<Demo> responses = null;
 
 //		if (freepassIds != null && emails != null) {
 //			throw new DemoListException(DemoListErrorCode.INVALID_REQUEST.getCode(), DemoListErrorCode.INVALID_REQUEST.getDescription(), HttpStatus.BAD_REQUEST);

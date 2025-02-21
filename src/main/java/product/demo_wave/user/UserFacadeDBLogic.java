@@ -75,7 +75,7 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
     user.setRoles(Collections.singletonList(fetchRoleUSER()));
 
 //    logger.info("Create user.");
-//    logger.info("New user information : " + user.toString());
+//    logger.info("New user demo : " + user.toString());
     try {
 //      logger.info("Start creating user...");
       userRepository.saveAndFlush(user);
@@ -114,14 +114,14 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //        .orElseThrow(() -> new NoSuchElementException("User not found."));
 //
 //    logger.info("Update user.");
-//    logger.info("Target user information : " + user.toString());
+//    logger.info("Target user demo : " + user.toString());
 //    user.setName(userForm.name());
 //    user.setEmail(userForm.email());
 //    if (!userForm.password().isBlank()) {
 //      String encodedPassword = passwordEncoder.encode(userForm.password());
 //      user.setPassword(encodedPassword);
 //    }
-//    logger.info("Updated user information : " + user.toString());
+//    logger.info("Updated user demo : " + user.toString());
 //    try {
 //      logger.info("Start updating site...");
 //      userRepository.saveAndFlush(user);
@@ -139,7 +139,7 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //        .orElseThrow(() -> new NoSuchElementException("User not found."));
 //    Account account = user.getAccount();
 //    logger.info("Delete user.");
-//    logger.info("Target user information : " + user.toString());
+//    logger.info("Target user demo : " + user.toString());
 //    try {
 //      // accountから対象userの紐づけを削除
 //      account.getUserList().remove(user);

@@ -25,7 +25,7 @@ INSERT INTO roles (id, role) VALUES
 INSERT INTO user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (1, 2);
 
-INSERT INTO information (id, title, content, demo_date, demo_place, demo_address, demo_address_latitude, demo_address_longitude, organizer_user_id, announcement_time, created_at, updated_at)
+INSERT INTO demo (id, title, content, demo_date, demo_place, demo_address, demo_address_latitude, demo_address_longitude, organizer_user_id, announcement_time, created_at, updated_at)
 VALUES
 (1, 'demo in shibuya', 'we have demo in 1/1', '2025-01-05 16:58:58', 'shibuya', '沖縄県那覇市上間1-19-3', 26.202222300, 127.708866200, 1, '2025-01-05 16:58:58', '2025-01-05 16:58:58', '2025-01-05 16:58:58'),
 (2, 'demo in shinjuku', 'we have demo in 1/2', '2025-01-05 22:18:13', 'shinjuku', '沖縄県那覇市上間1-19-3', 26.202222300, 127.708866200, 1,'2025-01-05 22:18:13', '2025-01-05 22:18:13', '2025-01-05 22:18:13'),
@@ -33,7 +33,7 @@ VALUES
 22:18:13');
 
 -- コメントデータを挿入
-INSERT INTO comment (information_id, content, user_id, created_at, updated_at, deleted_at) VALUES
+INSERT INTO comment (demo_id, content, user_id, created_at, updated_at, deleted_at) VALUES
 (1, 'We support you!', 1, NOW(), NOW(), NULL),
 (1, 'このデモ活動は非常に興味深いです。', 1, NOW(), NOW(), NULL),
 (1, '参加を検討しています！', 1, NOW(), NOW(), NULL),
@@ -47,5 +47,5 @@ INSERT INTO comment (information_id, content, user_id, created_at, updated_at, d
 (5, 'このような活動がもっと増えてほしいです。応援しています！', 1, NOW(), NOW(), NULL);
 
 -- 参加者データを挿入
-INSERT INTO participant (information_id, user_id, created_at, updated_at)
+INSERT INTO participant (demo_id, user_id, created_at, updated_at)
 VALUES (5, 1, NOW(), NOW());
