@@ -32,66 +32,66 @@ class MypageController {
 		return mypageService.rootByGet(mypageGetContext);
 	}
 
-	@GetMapping("{informationId}")
+	@GetMapping("{demoId}")
 	ModelAndView userByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
 		return mypageService.userByGet(mypageGetUserContext);
 	}
 
 //	@GetMapping("/show")
-//	ModelAndView showByGet(@RequestParam("informationId") Integer informationId, ModelAndView mv) {
-//		InformationShowGetContext informationShowGetContext = new InformationShowGetContext(informationId, mv);
-//		return informationService.showByGet(informationShowGetContext);
+//	ModelAndView showByGet(@RequestParam("demoId") Integer demoId, ModelAndView mv) {
+//		demoShowGetContext demoShowGetContext = new demoShowGetContext(demoId, mv);
+//		return demoService.showByGet(demoShowGetContext);
 //	}
 //
 //	@GetMapping("/create")
-//	ModelAndView createByGet(InformationForm informationForm, ModelAndView modelAndView) {
-//		InformationCreateGetContext informationCreateGetContext = new InformationCreateGetContext(
-//				modelAndView, informationForm);
-//		return informationService.createByGet(informationCreateGetContext);
+//	ModelAndView createByGet(DemoForm DemoForm, ModelAndView modelAndView) {
+//		demoCreateGetContext demoCreateGetContext = new demoCreateGetContext(
+//				modelAndView, DemoForm);
+//		return demoService.createByGet(demoCreateGetContext);
 //	}
 //
 //	@PostMapping("/create")
-//	ModelAndView createByPost(@Valid InformationForm informationForm, BindingResult bindingResult,
+//	ModelAndView createByPost(@Valid DemoForm DemoForm, BindingResult bindingResult,
 //			ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
-//		InformationCreatePostContext informationPostContext = new InformationCreatePostContext(
-//				modelAndView, informationForm, bindingResult, redirectAttributes);
-//		return informationService.createByPost(informationPostContext);
+//		demoCreatePostContext demoPostContext = new demoCreatePostContext(
+//				modelAndView, DemoForm, bindingResult, redirectAttributes);
+//		return demoService.createByPost(demoPostContext);
 //	}
 //
 //	@GetMapping("/create/confirm")
-//	ModelAndView createConfirmByGet(InformationForm informationForm, ModelAndView modelAndView) {
-//		InformationCreateConfirmGetContext informationCreateConfirmGetContext = new InformationCreateConfirmGetContext(
-//				informationForm, modelAndView);
-//		return informationService.createConfirmByGet(informationCreateConfirmGetContext);
+//	ModelAndView createConfirmByGet(DemoForm DemoForm, ModelAndView modelAndView) {
+//		demoCreateConfirmGetContext demoCreateConfirmGetContext = new demoCreateConfirmGetContext(
+//				DemoForm, modelAndView);
+//		return demoService.createConfirmByGet(demoCreateConfirmGetContext);
 //	}
 //
 //	@PostMapping("/create/confirm")
-//	ModelAndView createConfirmByPost(InformationForm informationForm, ModelAndView modelAndView,
+//	ModelAndView createConfirmByPost(DemoForm DemoForm, ModelAndView modelAndView,
 //			RedirectAttributes redirectAttributes) {
-//		InformationCreateConfirmPostContext informationCreateConfirmPostContext = new InformationCreateConfirmPostContext(
-//				modelAndView, informationForm, redirectAttributes);
-//		return informationService.createConfirmByPost(informationCreateConfirmPostContext);
+//		demoCreateConfirmPostContext demoCreateConfirmPostContext = new demoCreateConfirmPostContext(
+//				modelAndView, DemoForm, redirectAttributes);
+//		return demoService.createConfirmByPost(demoCreateConfirmPostContext);
 //	}
 //
 //	@GetMapping("/create/complete")
-//	ModelAndView createCompleteByGet(InformationForm informationForm, ModelAndView modelAndView) {
-//		InformationCreateCompleteGetContext informationCreateCompleteGetContext = new InformationCreateCompleteGetContext(
-//				informationForm, modelAndView);
-//		return informationService.createCompleteByGet(informationCreateCompleteGetContext);
+//	ModelAndView createCompleteByGet(DemoForm DemoForm, ModelAndView modelAndView) {
+//		demoCreateCompleteGetContext demoCreateCompleteGetContext = new demoCreateCompleteGetContext(
+//				DemoForm, modelAndView);
+//		return demoService.createCompleteByGet(demoCreateCompleteGetContext);
 //	}
 //
 //	@PostMapping("/comment/create")
-//	ModelAndView commentCreateByPost(@RequestParam("informationId") Integer informationId, @Valid CommentForm commentForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
+//	ModelAndView commentCreateByPost(@RequestParam("demoId") Integer demoId, @Valid CommentForm commentForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
 //		CommentCreatePostContext commentPostContext = new CommentCreatePostContext(
-//				informationId, modelAndView, commentForm, redirectAttributes);
-//		return informationService.commentCreateByPost(commentPostContext);
+//				demoId, modelAndView, commentForm, redirectAttributes);
+//		return demoService.commentCreateByPost(commentPostContext);
 //	}
 //
-//	@PostMapping("{informationId}/participant/add")
-//	ModelAndView createByPost(@PathVariable Integer informationId, ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
+//	@PostMapping("{demoId}/participant/add")
+//	ModelAndView createByPost(@PathVariable Integer demoId, ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
 //		ParticipantAddPostContext participantAddPostContext = new ParticipantAddPostContext(
-//				informationId, modelAndView, redirectAttributes);
-//		return informationService.createByPost(participantAddPostContext);
+//				demoId, modelAndView, redirectAttributes);
+//		return demoService.createByPost(participantAddPostContext);
 //	}
 }

@@ -16,15 +16,17 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "information")
-@SQLDelete(sql = "UPDATE information SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Table(name = "demo")
+@SQLDelete(sql = "UPDATE demo SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at is null")
 @Data
-public class Information {
+public class Demo {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,8 +54,9 @@ public class Information {
   @Column(name = "demo_address_longitude")
   private BigDecimal demoAddressLongitude;
 
-  @Column(name = "organizer_user_id")
-  private Integer organizerUserId;
+  @ManyToOne
+  @JoinColumn(name = "organizer_user_id")
+  private User user;
 
   @Column(name = "announcement_time")
   private LocalDateTime announcementTime;

@@ -15,6 +15,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,11 +32,13 @@ public class Participant {
   @Column(name = "id")
   private Integer id;
 
-  @Column(name = "information_id")
-  private Integer informationId;
+  @ManyToOne
+  @JoinColumn(name = "demo_id")
+  private Demo demo;
 
-  @Column(name = "user_id")
-  private Integer userId;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @CreatedDate
   @Column

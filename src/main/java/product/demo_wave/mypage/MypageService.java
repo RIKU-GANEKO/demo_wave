@@ -19,64 +19,64 @@ class MypageService {
 		mypageGetUserContext.setMypageFacadeDBLogic(mypageFacadeDBLogic);
 		mypageGetUserContext.fetchUser();
 		mypageGetUserContext.fetchAccount();
-		mypageGetUserContext.fetchParticipatedInformation();
+		mypageGetUserContext.fetchParticipatedDemo();
 		mypageGetUserContext.fetchSendDonateAmount();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}
 
-//	ModelAndView showByGet(InformationShowGetContext informationShowGetContext) throws DataAccessException {
+//	ModelAndView showByGet(demoShowGetContext demoShowGetContext) throws DataAccessException {
 //		// runtime exceptionは何が出るかわからないから、
-//		informationShowGetContext.setInformationFacadeDBLogic(informationFacadeDBLogic);
+//		demoShowGetContext.setdemoFacadeDBLogic(demoFacadeDBLogic);
 //
-//		informationShowGetContext.fetchInformation();
-//		informationShowGetContext.fetchComment();
-//		informationShowGetContext.fetchIsParticipant();
-//		informationShowGetContext.setModelAndView();
-//		return informationShowGetContext.getMv();
+//		demoShowGetContext.fetchdemo();
+//		demoShowGetContext.fetchComment();
+//		demoShowGetContext.fetchIsParticipant();
+//		demoShowGetContext.setModelAndView();
+//		return demoShowGetContext.getMv();
 //		// TODO catchしてlogに吐き出すようにすべき
 //		// throwsであるのは、エラーキャッチしたら、すぐ処理できるものを書く、うまくいかないならエラーページに飛ばすというのが多いが
 //		// 処理しようがないことが多いが、dataaccessexcみたいなものは、処理できる段階で処理するのが良い
 //	}
 //
-//	ModelAndView createByGet(InformationCreateGetContext informationCreateGetContext) {
-//		informationCreateGetContext.setModelAndView();
-//		return informationCreateGetContext.getModelAndView();
+//	ModelAndView createByGet(demoCreateGetContext demoCreateGetContext) {
+//		demoCreateGetContext.setModelAndView();
+//		return demoCreateGetContext.getModelAndView();
 //	}
 //
-//	ModelAndView createByPost(InformationCreatePostContext informationCreatePostContext) {
-//		if (informationCreatePostContext.hasErrors()) {
-//			informationCreatePostContext.setErrorModelAndView();
-//			return informationCreatePostContext.getModelAndView();
+//	ModelAndView createByPost(demoCreatePostContext demoCreatePostContext) {
+//		if (demoCreatePostContext.hasErrors()) {
+//			demoCreatePostContext.setErrorModelAndView();
+//			return demoCreatePostContext.getModelAndView();
 //		}
 //
-//		informationCreatePostContext.setModelAndView();
-//		return informationCreatePostContext.getModelAndView();
+//		demoCreatePostContext.setModelAndView();
+//		return demoCreatePostContext.getModelAndView();
 //	}
 //
 //	ModelAndView createConfirmByGet(
-//			InformationCreateConfirmGetContext informationCreateConfirmGetContext) {
-//		informationCreateConfirmGetContext.setModelAndView();
-//		return informationCreateConfirmGetContext.getModelAndView();
+//			demoCreateConfirmGetContext demoCreateConfirmGetContext) {
+//		demoCreateConfirmGetContext.setModelAndView();
+//		return demoCreateConfirmGetContext.getModelAndView();
 //	}
 //
 //	ModelAndView createConfirmByPost(
-//			InformationCreateConfirmPostContext informationCreateConfirmPostContext) {
-//		informationCreateConfirmPostContext.setInformationFacadeDBLogic(informationFacadeDBLogic);
+//			demoCreateConfirmPostContext demoCreateConfirmPostContext) {
+//		demoCreateConfirmPostContext.setdemoFacadeDBLogic(demoFacadeDBLogic);
 //
-//		informationCreateConfirmPostContext.saveInformation();
-//		informationCreateConfirmPostContext.setModelAndView();
-//		return informationCreateConfirmPostContext.getModelAndView();
+//		demoCreateConfirmPostContext.savedemo();
+//		demoCreateConfirmPostContext.setModelAndView();
+//		return demoCreateConfirmPostContext.getModelAndView();
 //	}
 //
 //	ModelAndView createCompleteByGet(
-//			InformationCreateCompleteGetContext informationCreateCompleteGetContext) {
-//		informationCreateCompleteGetContext.setModelAndView();
-//		return informationCreateCompleteGetContext.getModelAndView();
+//			demoCreateCompleteGetContext demoCreateCompleteGetContext) {
+//		demoCreateCompleteGetContext.setModelAndView();
+//		return demoCreateCompleteGetContext.getModelAndView();
 //	}
 //
 //	ModelAndView commentCreateByPost(CommentCreatePostContext commentCreatePostContext) {
-//		commentCreatePostContext.setInformationFacadeDBLogic(informationFacadeDBLogic);
+//		commentCreatePostContext.setdemoFacadeDBLogic(demoFacadeDBLogic);
 //
 //		commentCreatePostContext.saveComment();
 //		commentCreatePostContext.setModelAndView();
@@ -84,7 +84,7 @@ class MypageService {
 //	}
 //
 //	ModelAndView createByPost(ParticipantAddPostContext participantAddPostContext) {
-//		participantAddPostContext.setInformationFacadeDBLogic(informationFacadeDBLogic);
+//		participantAddPostContext.setdemoFacadeDBLogic(demoFacadeDBLogic);
 //
 ////		if (participantAddPostContext.hasErrors()) {
 ////			participantAddPostContext.setErrorModelAndView();

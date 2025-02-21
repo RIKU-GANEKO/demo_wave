@@ -21,7 +21,7 @@ public class PaymentService {
 
 	private final String YOUR_DOMAIN = "http://localhost:8082/demo_wave";
 
-	public String createCheckoutSession(CheckoutSessionContext context, Integer informationId) {
+	public String createCheckoutSession(CheckoutSessionContext context, Integer demoId) {
 
 		Integer userId = this.getUserLogic.getUserFromCache().getId();
 
@@ -39,7 +39,7 @@ public class PaymentService {
 									.setPrice(context.getPriceId()) // Price IDを利用
 									.build()
 					)
-					.putMetadata("informationId", informationId.toString()) // informationIdをメタデータに追加
+					.putMetadata("demoId", demoId.toString()) // demoIdをメタデータに追加
 					.putMetadata("donateUserId", userId.toString()) // userIdをメタデータに追加
 					.build();
 			System.out.println("params.getMode: " + params.getMode());
@@ -48,7 +48,7 @@ public class PaymentService {
 			System.out.println("params.getEmail: " + params.getCustomerEmail());
 			System.out.println("params.addLineItem.quantity: " + params.getLineItems().get(0).getQuantity());
 			System.out.println("params.addLineItem.price: " + params.getLineItems().get(0).getPrice());
-//			System.out.println("informationId: " + );
+//			System.out.println("demoId: " + );
 //			System.out.println("donateUserId: " + );
 
 			// Stripeセッションを作成

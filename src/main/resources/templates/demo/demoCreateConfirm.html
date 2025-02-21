@@ -20,46 +20,46 @@
 
     <!-- ====== Form Layout Section Start -->
     <div class="grid grid-cols-1 gap-9 sm:grid-cols-12">
-      <form method="post" th:action="@{/information/create/confirm}" th:object="${informationForm}" th:csrf>
+      <form method="post" th:action="@{/demo/create/confirm}" th:object="${demoForm}" th:csrf>
         <div class="flex flex-col gap-9">
-          <!-- Information Form -->
+          <!-- Demo Form -->
           <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
               <p class="font-medium text-black dark:text-white">タイトル</p>
-              <h3 th:text="${informationForm.title}" class="font-medium text-black dark:text-white"></h3>
-              <input type="hidden" th:value="${informationForm.title}" name="title" id="title">
+              <h3 th:text="${demoForm.title}" class="font-medium text-black dark:text-white"></h3>
+              <input type="hidden" th:value="${demoForm.title}" name="title" id="title">
             </div>
 
             <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
               <p class="font-medium text-black dark:text-white">告知日</p>
-              <h3 th:text="${#temporals.format(informationForm.announcementTime, 'yyyy-MM-dd HH:mm')}" class="font-medium text-black dark:text-white"></h3>
-              <input type="hidden" th:value="${#temporals.format(informationForm.announcementTime, 'yyyy-MM-dd HH:mm')}" name="announcementTime" id="announcementTime">
+              <h3 th:text="${#temporals.format(demoForm.announcementTime, 'yyyy-MM-dd HH:mm')}" class="font-medium text-black dark:text-white"></h3>
+              <input type="hidden" th:value="${#temporals.format(demoForm.announcementTime, 'yyyy-MM-dd HH:mm')}" name="announcementTime" id="announcementTime">
             </div>
 
             <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
               <p class="font-medium text-black dark:text-white">デモ日時</p>
-              <h3 th:text="${#temporals.format(informationForm.demoDate, 'yyyy-MM-dd HH:mm')}" class="font-medium text-black dark:text-white"></h3>
-              <input type="hidden" th:value="${#temporals.format(informationForm.demoDate, 'yyyy-MM-dd HH:mm')}" name="demoDate" id="demoDate">
+              <h3 th:text="${#temporals.format(demoForm.demoDate, 'yyyy-MM-dd HH:mm')}" class="font-medium text-black dark:text-white"></h3>
+              <input type="hidden" th:value="${#temporals.format(demoForm.demoDate, 'yyyy-MM-dd HH:mm')}" name="demoDate" id="demoDate">
             </div>
 
             <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
               <p class="font-medium text-black dark:text-white">デモ場所</p>
-              <h3 th:text="${informationForm.demoPlace}" class="font-medium text-black dark:text-white"></h3>
-              <h3 th:text="${informationForm.demoAddress}" class="font-medium text-black dark:text-white"></h3>
-              <input type="hidden" th:value="${informationForm.demoPlace}" name="demoPlace" id="demoPlace">
-              <input type="hidden" th:value="${informationForm.demoAddress}" name="demoAddress" id="demoAddress">
-              <input type="hidden" th:value="${informationForm.demoAddressLatitude}" name="demoAddressLatitude" id="demoAddressLatitude">
-              <input type="hidden" th:value="${informationForm.demoAddressLongitude}" name="demoAddressLongitude" id="demoAddressLongitude">
+              <h3 th:text="${demoForm.demoPlace}" class="font-medium text-black dark:text-white"></h3>
+              <h3 th:text="${demoForm.demoAddress}" class="font-medium text-black dark:text-white"></h3>
+              <input type="hidden" th:value="${demoForm.demoPlace}" name="demoPlace" id="demoPlace">
+              <input type="hidden" th:value="${demoForm.demoAddress}" name="demoAddress" id="demoAddress">
+              <input type="hidden" th:value="${demoForm.demoAddressLatitude}" name="demoAddressLatitude" id="demoAddressLatitude">
+              <input type="hidden" th:value="${demoForm.demoAddressLongitude}" name="demoAddressLongitude" id="demoAddressLongitude">
             </div>
 
             <div class="flex-wrap border-b border-stroke py-8 px-12 dark:border-strokedark">
               <p class="font-medium text-black dark:text-white">本文</p>
-              <h3 th:text="${informationForm.content}" class="font-medium text-black dark:text-white"></h3>
-              <input type="hidden" th:value="${informationForm.content}" name="content" id="content">
+              <h3 th:text="${demoForm.content}" class="font-medium text-black dark:text-white"></h3>
+              <input type="hidden" th:value="${demoForm.content}" name="content" id="content">
             </div>
           </div>
           <div class="flex items-start justify-center">
-            <a th:href="@{/information/create}">
+            <a th:href="@{/demo/create}">
               <button type="button" class="rounded border border-stroke bg-white p-3 font-medium text-black">戻る</button>
             </a>
             <button type="submit" class="rounded border border-stroke bg-primary p-3 font-medium text-gray">保存</button>

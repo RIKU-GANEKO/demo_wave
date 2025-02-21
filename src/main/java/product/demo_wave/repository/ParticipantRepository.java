@@ -6,21 +6,23 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.Participant;
+import product.demo_wave.entity.User;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
-  List<Participant> findByInformationId(Integer informationId);
+//  List<Participant> findByDemoId(Integer demoId);
 
-  List<Participant> findByUserId(Integer userId);
+//  List<Participant> findByUserId(Integer userId);
 
-  // `information_id` に基づいて、現在のユーザーが参加しているかどうかをチェック
-  boolean existsByInformationIdAndUserIdAndDeletedAtIsNull(Integer informationId, Integer userId);
+  // `demo_id` に基づいて、現在のユーザーが参加しているかどうかをチェック
+  boolean existsByDemoAndUserAndDeletedAtIsNull(Demo demo, User user);
 
-  Optional<Participant> findByInformationIdAndUserId(Integer informationId, Integer userId);
+  Optional<Participant> findByDemoAndUser(Demo demo, User user);
 
-  // `informationId` を元に participant の合計数を取得
-  Integer countByInformationId(Integer informationId);
+  // `demoId` を元に participant の合計数を取得
+  Integer countByDemo(Demo demo);
 
 }

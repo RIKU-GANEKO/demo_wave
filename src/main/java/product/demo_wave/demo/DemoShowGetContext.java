@@ -1,4 +1,4 @@
-package product.demo_wave.information;
+package product.demo_wave.demo;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,12 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import product.demo_wave.entity.Comment;
-import product.demo_wave.entity.Information;
+import product.demo_wave.entity.Demo;
 
 @RequiredArgsConstructor
-class InformationShowGetContext {
-    private final Integer informationId;
-    private Information information;
+class DemoShowGetContext {
+    private final Integer demoId;
+    private Demo demo;
     private List<Comment> comments;
 
     private Boolean isParticipant;
@@ -26,34 +26,34 @@ class InformationShowGetContext {
     private final ModelAndView mv;
 
     @Setter
-    private InformationFacadeDBLogic informationFacadeDBLogic;
+    private DemoFacadeDBLogic demoFacadeDBLogic;
 
-    void fetchInformation() throws UnsupportedOperationException {
-        this.information = informationFacadeDBLogic.fetchInformation(this.informationId);
+    void fetchDemo() throws UnsupportedOperationException {
+        this.demo = demoFacadeDBLogic.fetchDemo(this.demoId);
     }
 
     void fetchComment() throws UnsupportedOperationException {
-        this.comments = informationFacadeDBLogic.fetchComment(this.informationId);
+        this.comments = demoFacadeDBLogic.fetchComment(this.demoId);
     }
 
     void fetchIsParticipant() {
-        isParticipant = informationFacadeDBLogic.isParticipant(informationId);
+        isParticipant = demoFacadeDBLogic.isParticipant(demoId);
     }
 
     void fetchParticipantCount() {
-        participantCount = informationFacadeDBLogic.participantCount(informationId);
+        participantCount = demoFacadeDBLogic.participantCount(demoId);
     }
 
     void fetchDonateAmount() {
-        donateAmount = informationFacadeDBLogic.donateAmount(informationId);
+        donateAmount = demoFacadeDBLogic.donateAmount(demoId);
     }
 
     void setModelAndView() {
-        this.mv.addObject("information", this.information);
+        this.mv.addObject("demo", this.demo);
         this.mv.addObject("isParticipant", this.isParticipant);
         this.mv.addObject("comments", this.comments);
         this.mv.addObject("participantCount", this.participantCount);
         this.mv.addObject("donateAmount", this.donateAmount);
-        this.mv.setViewName("information");
+        this.mv.setViewName("demo");
     }
 }
