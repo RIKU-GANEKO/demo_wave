@@ -40,11 +40,11 @@ public class DemoListService {
 			demoListContext.checkApiKey();
 			return demoListContext.getDemoList();
 		}
-		catch (DemoListException e) {
+		catch (DemoListException e) { // Token認証に失敗した場合
 //			logger.error("DemoListException: ", e);
 			return demoListContext.errorResponse(e.getError(), e.getMessage(), e.getHttpStatus());
 		}
-		catch (Exception e) {
+		catch (Exception e) { // Token認証は突破したが内部的なエラーが起きた場合
 //			logger.error("エラーが発生。", e);
 			return demoListContext.errorResponse(DemoListErrorCode.INTERNAL_SERVER_ERROR.getCode(), DemoListErrorCode.INTERNAL_SERVER_ERROR.getDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import product.demo_wave.entity.Demo;
 
 /**
  * ユーザ情報取得用 Service
@@ -55,18 +54,7 @@ public class DemoListContext {
 	 * @return APIレスポンスを含むResponseEntityオブジェクト
 	 */
 	ResponseEntity<APIResponse> getDemoList() {
-//		List<DemoListRecord> responses = null;
-		List<Demo> responses = null;
-
-//		if (freepassIds != null && emails != null) {
-//			throw new DemoListException(DemoListErrorCode.INVALID_REQUEST.getCode(), DemoListErrorCode.INVALID_REQUEST.getDescription(), HttpStatus.BAD_REQUEST);
-//		} else if (freepassIds != null) {
-//			responses = demoListDBLogic.fetchUserInfosByFreepassId(freepassIds);
-//		} else if (emails != null) {
-//			responses = demoListDBLogic.fetchUserInfosByEmail(emails);
-//		} else {
-//			throw new DemoListException(DemoListErrorCode.INVALID_REQUEST_2.getCode(), DemoListErrorCode.INVALID_REQUEST_2.getDescription(), HttpStatus.BAD_REQUEST);
-//		}
+		List<DemoListRecord> responses = null;
 
 		responses = demoListDBLogic.fetchDemoList();
 
