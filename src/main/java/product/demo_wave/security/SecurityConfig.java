@@ -38,6 +38,7 @@ public class SecurityConfig {
                 authorize
 //                        .requestMatchers("/demo").permitAll()
                         .requestMatchers("/demoList/**").permitAll()
+                        .requestMatchers("/{demoId}/commentList/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()
