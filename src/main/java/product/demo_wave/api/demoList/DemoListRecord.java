@@ -1,38 +1,21 @@
 package product.demo_wave.api.demoList;
 
-//record DemoListRecord {
-//
-//	String id,
-//	String title,
-//	String content,
-//	String demoDate,
-//	String demoPlace,
-//	String demoAddress,
-//	String demoAddressLatitude,
-//	String demoAddressLongitude,
-//	String organizerUserId,
-//	String announcementTime
-//) {
-//		static DemoListRecord fromEntity(User user, UserProfile userProfile) {
-//			UserProfileDetail userProfileDetail = JsonParser.toObject(userProfile.getJsonUserData(), UserProfileDetail.class);
-//
-//			return new DemoListRecord(
-//					user.getFreepassId(),
-//					user.getEmail(),
-//					userProfileDetail.getLastName() + userProfileDetail.getFirstName(),
-//					userProfileDetail.getFirstName(),
-//					userProfileDetail.getLastName(),
-//					userProfileDetail.getFirstNameKana(),
-//					userProfileDetail.getLastNameKana(),
-//					userProfileDetail.getBirthday(),
-//					userProfileDetail.getSex(),
-//					userProfileDetail.getPostcode(),
-//					userProfileDetail.getRegion(),
-//					userProfileDetail.getCity(),
-//					userProfileDetail.getAddress(),
-//					userProfileDetail.getBuilding(),
-//					userProfileDetail.getPhoneNumber()
-//			);
-//		}
-//
-//}
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record DemoListRecord (
+		Integer id, // demo.id
+		String title, // demo.title
+		String content, // demo.content
+		LocalDateTime demoDate, // demo.demoDate
+		String demoPlace, // demo.demoPlace
+		String demoAddress, // demo.demoAddress
+		BigDecimal demoAddressLatitude, // demo.demoAddressLatitude
+		BigDecimal demoAddressLongitude, // demo.demoAddressLongitude
+		String organizerUserName, // demo.user.name
+		LocalDateTime announcementTime, // demo.announcementTime
+		Long numberOfDemoParticipants, // 各demoの参加者合計数
+		BigDecimal totalDonatedMoney // 各demoの支援金総額
+) {
+
+}
