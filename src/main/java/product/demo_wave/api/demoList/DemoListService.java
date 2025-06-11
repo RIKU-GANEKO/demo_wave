@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorCode;
 
 /**
  * ユーザ情報取得用 Service
@@ -37,16 +39,10 @@ public class DemoListService {
 	ResponseEntity<APIResponse> getDemoList(DemoListContext demoListContext) {
 		demoListContext.setDemoListDBLogic(demoListDBLogic);
 		try {
-			demoListContext.checkApiKey();
 			return demoListContext.getDemoList();
 		}
-		catch (DemoListException e) { // Token認証に失敗した場合
-//			logger.error("DemoListException: ", e);
-			return demoListContext.errorResponse(e.getError(), e.getMessage(), e.getHttpStatus());
-		}
 		catch (Exception e) { // Token認証は突破したが内部的なエラーが起きた場合
-//			logger.error("エラーが発生。", e);
-			return demoListContext.errorResponse(DemoListErrorCode.INTERNAL_SERVER_ERROR.getCode(), DemoListErrorCode.INTERNAL_SERVER_ERROR.getDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return demoListContext.errorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

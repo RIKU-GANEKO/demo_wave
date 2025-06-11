@@ -1,16 +1,16 @@
-package product.demo_wave.api.commentList;
+package product.demo_wave.common.api;
 
 import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
 
 @Getter
-public class CommentListException extends RuntimeException {
+public class Exception extends RuntimeException {
 
 	private final String error;
 	private final HttpStatus httpStatus;
 
-	public CommentListException(String error, String message, HttpStatus httpStatus) {
+	public Exception(String error, String message, HttpStatus httpStatus) {
 		super(message);
 		this.error = error;
 		this.httpStatus = httpStatus;

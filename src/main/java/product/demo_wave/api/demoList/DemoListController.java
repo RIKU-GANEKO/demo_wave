@@ -1,6 +1,6 @@
 package product.demo_wave.api.demoList;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +8,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+
 import lombok.AllArgsConstructor;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorResponse;
 
 /**
  * <pre>
@@ -46,18 +52,27 @@ public class DemoListController {
 	 *     <li>500: INTERNAL_SERVER_ERROR - サーバ内部エラー</li>
 	 * </ul>
 	 *
-	 * @param apiKey Authorizationヘッダーから取得したApiKey
-	 * @param expectedApiKey 期待されるApiKey
 	 * @return デモ一覧情報を含むAPIのレスポンス
 	 */
 	@GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<APIResponse> getDemoList(
-			@RequestHeader(name = "X-API-Key", required = false) String apiKey,
-			@Value("${api.apikey}")  String expectedApiKey)
-	{
+			@RequestHeader(name = "Authorization") String authorizationHeader // ← Firebase トークンを受け取る
+	) {
+
+		// "Bearer <token>" を分離
+		String idToken = authorizationHeader.replace("Bearer ", "").trim();
+
+		// Firebase トークンを検証して uid / email を取得
+		FirebaseToken decodedToken;
+		try {
+			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+		} catch (FirebaseAuthException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(new ErrorResponse("Invalid Firebase token"));
+		}
+
 		DemoListContext demoListContext = DemoListContext.builder()
-				.apiKey(apiKey)
-				.expectedApiKey(expectedApiKey)
+				.firebaseUid(decodedToken.getUid())
 				.build();
 		return demoListService.getDemoList(demoListContext);
 	}
