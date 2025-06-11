@@ -5,11 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import product.demo_wave.api.commentList.APIResponse;
-import product.demo_wave.api.commentList.CommentListContext;
-import product.demo_wave.api.commentList.CommentListDBLogic;
-import product.demo_wave.api.commentList.CommentListErrorCode;
-import product.demo_wave.api.commentList.CommentListException;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorCode;
 
 /**
  * ユーザ情報取得用 Service
@@ -40,16 +37,10 @@ public class CommentListService {
 	ResponseEntity<APIResponse> getCommentList(CommentListContext commentListContext) {
 		commentListContext.setCommentListDBLogic(commentListDBLogic);
 		try {
-			commentListContext.checkApiKey();
 			return commentListContext.getCommentList();
 		}
-		catch (CommentListException e) { // Token認証に失敗した場合
-//			logger.error("DemoListException: ", e);
-			return commentListContext.errorResponse(e.getError(), e.getMessage(), e.getHttpStatus());
-		}
 		catch (Exception e) { // Token認証は突破したが内部的なエラーが起きた場合
-//			logger.error("エラーが発生。", e);
-			return commentListContext.errorResponse(CommentListErrorCode.INTERNAL_SERVER_ERROR.getCode(), CommentListErrorCode.INTERNAL_SERVER_ERROR.getDescription(),
+			return commentListContext.errorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getDescription(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -1,10 +1,10 @@
-package product.demo_wave.api.demoList;
+package product.demo_wave.common.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-enum DemoListErrorCode {
+public enum ErrorCode {
 
 	UNAUTHORIZED("unauthorized", "APIKeyが間違っています"),
 	INTERNAL_SERVER_ERROR("server_error", "API側のエラーです");

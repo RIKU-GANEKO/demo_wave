@@ -5,10 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
-import product.demo_wave.api.demoList.DemoListRecord;
-import product.demo_wave.entity.Comment;
 import product.demo_wave.repository.CommentRepository;
-import product.demo_wave.repository.DemoRepository;
 
 @Component
 @AllArgsConstructor
@@ -29,7 +26,6 @@ public class CommentListDBLogic {
 	List<CommentListRecord> fetchCommentList(Integer demoId) {
 
 		List<CommentListRecord> responses = commentRepository.getByDemoId(demoId);
-		System.out.println("responses: " + responses);
 		return responses;
 	}
 

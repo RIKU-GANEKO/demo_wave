@@ -4,7 +4,7 @@ services:
     image: mysql:8.0
     container_name: demo_wave_mysql
     ports:
-      - "3309:3306"
+      - "3310:3306"
     environment:
       MYSQL_ROOT_PASSWORD: mysql
       MYSQL_DATABASE: demo_wave
