@@ -39,6 +39,7 @@ class DemoGetContext {
         if (!pageable.isPaged()) {
             pageable = PageRequest.of(0, properties.getPageRecordsLimit(), pageable.getSort());
         }
+        System.out.println("AAAA");
     }
 
     void getOrganizerUserName() {
@@ -50,13 +51,17 @@ class DemoGetContext {
 //    }
 
     void fetchDemo() throws UnsupportedOperationException {
+        System.out.println("BBBB");
         PageData<DemoWithParticipantDTO> demoPageData = demoFacadeDBLogic.fetchAllDemo(this.pageable);
         this.demoList = demoPageData.getPage();
+        System.out.println("CCCC");
     }
 
     void setModelAndView() {
+        System.out.println("DDDD");
         this.mv.addObject("demoList", this.demoList);
         this.mv.addObject("organizerUserName", this.organizerUserName);
         this.mv.setViewName("demoList");
+        System.out.println("EEEE");
     }
 }

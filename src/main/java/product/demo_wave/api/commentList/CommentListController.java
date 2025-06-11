@@ -1,19 +1,21 @@
 package product.demo_wave.api.commentList;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+
 import lombok.AllArgsConstructor;
-import product.demo_wave.api.commentList.APIResponse;
-import product.demo_wave.api.commentList.CommentListContext;
-import product.demo_wave.api.commentList.CommentListService;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorResponse;
 
 /**
  * <pre>
@@ -38,20 +40,29 @@ public class CommentListController {
 	 * </ul>
 	 *
 	 * @param demoId コメントに紐づくデモのid
-	 * @param apiKey Authorizationヘッダーから取得したApiKey
-	 * @param expectedApiKey 期待されるApiKey
 	 * @return デモ一覧情報を含むAPIのレスポンス
 	 */
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<APIResponse> getCommentList(
-			@PathVariable Integer demoId,
-			@RequestHeader(name = "X-API-Key", required = false) String apiKey,
-			@Value("${api.apikey}")  String expectedApiKey)
-	{
+			@RequestHeader(name = "Authorization") String authorizationHeader, // ← Firebase トークンを受け取る
+			@PathVariable Integer demoId
+	) {
+
+		// "Bearer <token>" を分離
+		String idToken = authorizationHeader.replace("Bearer ", "").trim();
+
+		// Firebase トークンを検証して uid を取得
+		FirebaseToken decodedToken;
+		try {
+			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+		} catch (FirebaseAuthException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(new ErrorResponse("Invalid Firebase token"));
+		}
+
 		CommentListContext commentListContext = CommentListContext.builder()
+				.firebaseUid(decodedToken.getUid())
 				.demoId(demoId)
-				.apiKey(apiKey)
-				.expectedApiKey(expectedApiKey)
 				.build();
 		return commentListService.getCommentList(commentListContext);
 	}

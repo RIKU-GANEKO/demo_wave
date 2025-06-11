@@ -1,4 +1,4 @@
-package product.demo_wave.api.demoList;
+package product.demo_wave.common.api;
 
 import com.google.gson.annotations.SerializedName;
 

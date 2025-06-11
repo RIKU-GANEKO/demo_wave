@@ -6,6 +6,6 @@ public record DemoWithParticipantDTO(
 		Integer id,
 		String title,
 		String demoPlace,
-		LocalDateTime demoDate,
+		LocalDateTime demoStartDate,
 		Long participantCount
 ) {}

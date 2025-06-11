@@ -49,3 +49,12 @@ INSERT INTO comment (demo_id, content, user_id, created_at, updated_at, deleted_
 -- 参加者データを挿入
 INSERT INTO participant (demo_id, user_id, created_at, updated_at)
 VALUES (5, 1, NOW(), NOW());
+
+カテゴリーデータを挿入
+INSERT INTO category (name, image_url, created_at, updated_at) VALUES
+('environment', '/images/category/environment.png', NOW(), NOW()),
+('anti_war', '/images/category/anti_war.png', NOW(), NOW()),
+('animal_rights', '/images/category/animal_rights.png', NOW(), NOW()),
+('politics', '/images/category/politics.png', NOW(), NOW()),
+('human_rights', '/images/category/human_rights.png', NOW(), NOW()),
+('social_walfare', '/images/category/social_welfare.png', NOW(), NOW());

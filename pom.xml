@@ -118,6 +118,11 @@
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version> <!-- 最新版は公式リポジトリで確認してください -->
 		</dependency>
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>9.5.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
