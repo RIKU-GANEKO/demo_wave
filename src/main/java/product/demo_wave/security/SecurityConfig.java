@@ -39,6 +39,12 @@ public class SecurityConfig {
 //                        .requestMatchers("/demo").permitAll()
                         .requestMatchers("/demoList/**").permitAll()
                         .requestMatchers("/{demoId}/commentList/**").permitAll()
+                        .requestMatchers("/{demoId}/comment/create/**").permitAll()
+                        .requestMatchers("/api/demo/create/**").permitAll()
+                        .requestMatchers("/api/user/create/**").permitAll()
+                        .requestMatchers("/api/demo/participate/**").permitAll()
+                        .requestMatchers("/api/demo/participation-status**").permitAll()
+                        .requestMatchers("/api/user/get/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()
@@ -68,9 +74,24 @@ public class SecurityConfig {
                 csrf.ignoringRequestMatchers("/payment/**"); // WebhookエンドポイントのみCSRF無効化
             });
 //            postメソッドなら必要
-//            http.csrf(csrf -> {
-//                csrf.ignoringRequestMatchers("/demoList/**"); // `/demoList/**` のみ CSRF 無効化
-//            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/{demoId}/comment/create/**"); // "/{demoId}/comment/create/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/demo/create/**"); // "/api/demo/create/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/user/create/**"); // "/api/user/create/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/demo/participate/**"); // "/api/demo/participate/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/demo/participation-status**"); // "/api/demo/participate/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/user/get/**"); // "/api/demo/participate/**" のみ CSRF 無効化
+            });
 //            http.csrf(csrf -> csrf.disable());
 
             return http.build();

@@ -8,13 +8,8 @@ import org.springframework.http.ResponseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import product.demo_wave.api.commentList.APIResponse;
-import product.demo_wave.api.commentList.CommentListDBLogic;
-import product.demo_wave.api.commentList.CommentListErrorCode;
-import product.demo_wave.api.commentList.CommentListException;
-import product.demo_wave.api.commentList.CommentListResponse;
-import product.demo_wave.api.commentList.ErrorCodeResponse;
-import product.demo_wave.entity.Comment;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorCodeResponse;
 
 /**
  * ユーザ情報取得用 Service
@@ -25,23 +20,11 @@ public class CommentListContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
+	private final String firebaseUid;
 	private final Integer demoId;
-	private final String apiKey;
-	private final String expectedApiKey;
 
 	@Setter
 	private CommentListDBLogic commentListDBLogic;
-
-	/**
-	 * Headerで入力されたAPIキーが期待されるAPIキーと一致するかどうかを検証
-	 *
-	 * @return boolean
-	 */
-	void checkApiKey() {
-		if (!expectedApiKey.equals(apiKey)) {
-			throw new CommentListException(CommentListErrorCode.UNAUTHORIZED.getCode(), CommentListErrorCode.UNAUTHORIZED.getDescription(), HttpStatus.UNAUTHORIZED);
-		}
-	}
 
 	/**
 	 * エラーレスポンスを生成して返す。

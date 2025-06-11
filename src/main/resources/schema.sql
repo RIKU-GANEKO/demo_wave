@@ -64,6 +64,7 @@ CREATE TABLE demo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    category_id INT NOT NULL,
     demo_date DATETIME NOT NULL,
     demo_place VARCHAR(100) NOT NULL,
     demo_address varchar(255) NOT NULL,
@@ -112,3 +113,21 @@ CREATE TABLE payment (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新日時
     deleted_at TIMESTAMP NULL DEFAULT NULL
 );
+
+-- categoryテーブルの作成
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE category (
+    id INT AUTO_INCREMENT PRIMARY KEY,                   -- 主キー
+    name VARCHAR(255) NOT NULL,                          -- カテゴリ名
+    image_url VARCHAR(255) NOT NULL,                     -- 画像URL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新日時
+    deleted_at TIMESTAMP NULL DEFAULT NULL               -- 削除日時（論理削除）
+);
+
+ALTER TABLE Users
+ADD COLUMN firebase_uid VARCHAR(128) NOT NULL AFTER id;
+
+ALTER TABLE users
+ADD COLUMN profile_image_path VARCHAR(255) NULL
+AFTER email;

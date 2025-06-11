@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import product.demo_wave.common.api.APIResponse;
+import product.demo_wave.common.api.ErrorCodeResponse;
 
 /**
  * ユーザ情報取得用 Service
@@ -18,22 +20,10 @@ public class DemoListContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String apiKey;
-	private final String expectedApiKey;
+	private final String firebaseUid;
 
 	@Setter
 	private DemoListDBLogic demoListDBLogic;
-
-	/**
-	 * Headerで入力されたAPIキーが期待されるAPIキーと一致するかどうかを検証
-	 *
-	 * @return boolean
-	 */
-	void checkApiKey() {
-		if (!expectedApiKey.equals(apiKey)) {
-			throw new DemoListException(DemoListErrorCode.UNAUTHORIZED.getCode(), DemoListErrorCode.UNAUTHORIZED.getDescription(), HttpStatus.UNAUTHORIZED);
-		}
-	}
 
 	/**
 	 * エラーレスポンスを生成して返す。

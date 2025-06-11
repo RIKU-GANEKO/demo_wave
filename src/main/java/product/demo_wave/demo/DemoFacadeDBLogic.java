@@ -47,7 +47,7 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     PageData<DemoWithParticipantDTO> fetchAllDemo(Pageable pageable) {
         LocalDateTime now = LocalDateTime.now();
         Page<DemoWithParticipantDTO> demos =
-                demoRepository.findDemoWithParticipantCountsBeforeAnnouncementTime(now, pageable);
+                demoRepository.findDemoWithParticipantCounts(now, pageable);
         int range = getPageDisplayRange(demos);
         return new PageData<>(demos, range);
     }
@@ -104,10 +104,9 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
 
         demo.setTitle(demoForm.title());
         demo.setContent(demoForm.content());
-        demo.setAnnouncementTime(demoForm.announcementTime());
-        demo.setDemoDate(demoForm.demoDate());
+        demo.setDemoStartDate(demoForm.demoDate());
+        demo.setDemoEndDate(demoForm.demoDate());
         demo.setDemoPlace(demoForm.demoPlace());
-        demo.setDemoAddress(demoForm.demoAddress());
         demo.setDemoAddressLatitude(demoForm.demoAddressLatitude());
         demo.setDemoAddressLongitude(demoForm.demoAddressLongitude());
         demo.setUser(this.getUserLogic.getUserFromCache());

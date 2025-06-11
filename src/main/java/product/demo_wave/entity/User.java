@@ -38,11 +38,17 @@ public class User {
   @Column(name = "id")
   private Integer id;
 
+  @Column(name = "firebase_uid")
+  private String firebaseUid;
+
   @Column(name = "name")
   private String name;
 
   @Column(name = "email")
   private String email;
+
+  @Column(name = "profile_image_path")
+  private String profileImagePath;
 
   @Column(name = "password")
   private String password;
@@ -88,8 +94,10 @@ public class User {
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("Account [");
+    sb.append("firebaseUid:").append(this.firebaseUid).append(", ");
     sb.append("Name:").append(this.name).append(", ");
     sb.append("email:").append(this.email).append(", ");
+    sb.append("profileImagePath:").append(this.profileImagePath).append(", ");
     sb.append("status:").append(this.status).append(", ");
     sb.append("accountId:").append(this.account.getId()).append(", ");
     sb.append("accountName:").append(this.account.getName());

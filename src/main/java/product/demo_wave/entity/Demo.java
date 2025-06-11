@@ -39,14 +39,18 @@ public class Demo {
   @Column(name = "content")
   private String content;
 
-  @Column(name = "demo_date")
-  private LocalDateTime demoDate;
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  private Category category;
+
+  @Column(name = "demo_start_date")
+  private LocalDateTime demoStartDate;
+
+  @Column(name = "demo_end_date")
+  private LocalDateTime demoEndDate;
 
   @Column(name = "demo_place")
   private String demoPlace;
-
-  @Column(name = "demo_address")
-  private String demoAddress;
 
   @Column(name = "demo_address_latitude")
   private BigDecimal demoAddressLatitude;
@@ -57,9 +61,6 @@ public class Demo {
   @ManyToOne
   @JoinColumn(name = "organizer_user_id")
   private User user;
-
-  @Column(name = "announcement_time")
-  private LocalDateTime announcementTime;
 
   @CreatedDate
   @Column
