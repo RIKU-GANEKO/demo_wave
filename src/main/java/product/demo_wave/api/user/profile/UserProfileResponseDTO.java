@@ -9,4 +9,5 @@ public class UserProfileResponseDTO {
 	private String firebaseUid;
 	private String email;
 	private String name;
+	private String profileImagePath;
 }

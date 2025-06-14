@@ -7,6 +7,7 @@ public record CommentListRecord(
 		Integer demoId, // comment.demo.id
 		String content, // comment.content
 		String writerName, // comment.user.name
+		String writeProfileImagePath,
 		LocalDateTime createdAt // comment.createdAt
 ) {
 
