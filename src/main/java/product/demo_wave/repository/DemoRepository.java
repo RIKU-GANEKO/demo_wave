@@ -39,7 +39,7 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   @Query("""
     SELECT new product.demo_wave.api.demoList.DemoListRecord(
         d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name,
+        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
         COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
     )
     FROM Demo d
@@ -48,7 +48,7 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
     LEFT JOIN Participant p ON p.demo = d
     LEFT JOIN Payment pay ON pay.demo = d
     GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name
+        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
   """)
   List<DemoListRecord> getDemoList();
 

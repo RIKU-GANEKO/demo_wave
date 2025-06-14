@@ -46,6 +46,7 @@ public class DemoListContext {
 	ResponseEntity<APIResponse> getDemoList() {
 		List<DemoListRecord> responses = null;
 
+		System.out.println("contextまでOK");
 		responses = demoListDBLogic.fetchDemoList();
 
 		return new ResponseEntity<>(new DemoListResponse(responses), HttpStatus.OK);

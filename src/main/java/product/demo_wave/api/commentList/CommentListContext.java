@@ -47,7 +47,6 @@ public class CommentListContext {
 	ResponseEntity<APIResponse> getCommentList() {
 		List<CommentListRecord> responses = null;
 
-//		Integer demoId = objListRequestJson.getDemoId();
 		responses = commentListDBLogic.fetchCommentList(demoId);
 
 		return new ResponseEntity<>(new CommentListResponse(responses), HttpStatus.OK);

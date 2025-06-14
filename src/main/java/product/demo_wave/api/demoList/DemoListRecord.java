@@ -14,6 +14,7 @@ public record DemoListRecord (
 		BigDecimal demoAddressLatitude, // demo.demoAddressLatitude
 		BigDecimal demoAddressLongitude, // demo.demoAddressLongitude
 		String organizerUserName, // demo.user.name
+		String hostProfileImagePath, // 各デモの主催者のプロフィール画像
 		Long numberOfDemoParticipants, // 各demoの参加者合計数
 		BigDecimal totalDonatedMoney // 各demoの支援金総額
 ) {
