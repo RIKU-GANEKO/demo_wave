@@ -59,6 +59,8 @@ public class DemoListController {
 			@RequestHeader(name = "Authorization") String authorizationHeader // ← Firebase トークンを受け取る
 	) {
 
+		System.out.println("リクエストが来た。");
+
 		// "Bearer <token>" を分離
 		String idToken = authorizationHeader.replace("Bearer ", "").trim();
 

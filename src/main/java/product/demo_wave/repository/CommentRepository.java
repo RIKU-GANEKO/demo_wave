@@ -20,7 +20,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
         c.id, 
         c.demo.id, 
         c.content, 
-        c.user.name, 
+        c.user.name,
+        c.user.profileImagePath, 
         c.createdAt
     ) 
     FROM Comment c 
