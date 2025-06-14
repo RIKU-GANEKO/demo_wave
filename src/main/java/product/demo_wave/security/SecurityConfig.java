@@ -92,6 +92,9 @@ public class SecurityConfig {
             http.csrf(csrf -> {
                 csrf.ignoringRequestMatchers("/api/user/get/**"); // "/api/demo/participate/**" のみ CSRF 無効化
             });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/demoList/**"); // "/api/demoList/**" のみ CSRF 無効化
+            });
 //            http.csrf(csrf -> csrf.disable());
 
             return http.build();

@@ -14,7 +14,8 @@ public class UserProfileResponse implements APIResponse {
 		this.user = new UserProfileResponseDTO(
 				userEntity.getFirebaseUid(),
 				userEntity.getEmail(),
-				userEntity.getName()
+				userEntity.getName(),
+				userEntity.getProfileImagePath()
 		);
 	}
 }
