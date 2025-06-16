@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 
 	UNAUTHORIZED("unauthorized", "APIKeyが間違っています"),
-	INTERNAL_SERVER_ERROR("server_error", "API側のエラーです");
+	INTERNAL_SERVER_ERROR("server_error", "API側のエラーです"),
+	INVALID_SIGNATURE("invalid_signature", "署名が不正です");
 
 	@Getter
 	private final String code;

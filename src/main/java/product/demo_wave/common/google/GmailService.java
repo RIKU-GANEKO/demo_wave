@@ -47,7 +47,7 @@ public class GmailService {
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
 				HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
 				.setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
-//				.setAccessType("offline")
+				.setAccessType("offline")
 				.build();
 
 		LocalServerReceiver receiver = new LocalServerReceiver.Builder().build();
@@ -66,7 +66,7 @@ public class GmailService {
 
 		try {
 			return new Gmail.Builder(httpTransport, JSON_FACTORY, credential)
-//					.setApplicationName(APPLICATION_NAME)
+					.setApplicationName(APPLICATION_NAME)
 					.build();
 		} catch (Exception e) {
 			System.out.println("Gmailサービスの構築に失敗しました: " + e.getMessage());
