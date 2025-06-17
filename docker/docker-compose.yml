@@ -1,7 +1,9 @@
 services:
-
   db:
-    image: mysql:8.0
+    build:
+      context: .
+      dockerfile: mysql/Dockerfile
+    platform: linux/amd64
     container_name: demo_wave_mysql
     ports:
       - "3310:3306"
@@ -16,27 +18,3 @@ services:
 
 volumes:
   demo_wave_db_data:  # ボリュームを定義
-
-
-#Dockerfileを使用する場合はこちらを使う
-#version: '3.8'
-#
-#services:
-#  db:
-#    build:
-#      context: ./mysql
-#    container_name: demo_wave_mysql
-#    ports:
-#      - "3309:3306"
-#    environment:
-#      MYSQL_ROOT_PASSWORD: mysql
-#      MYSQL_DATABASE: demo_wave
-#      MYSQL_USER: rikuganeko
-#      MYSQL_PASSWORD: Riku1204
-#      TZ: Asia/Tokyo
-#    volumes:
-#      - demo_wave_db_data:/var/lib/mysql
-#    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-#
-#volumes:
-#  demo_wave_db_data:

@@ -15,6 +15,7 @@ public class DemoCreateResponse implements APIResponse {
 				demoEntity.getTitle(),
 				demoEntity.getContent(),
 				demoEntity.getDemoPlace(),
+				demoEntity.getPrefecture().getId(),
 				demoEntity.getDemoAddressLatitude(),
 				demoEntity.getDemoAddressLongitude(),
 				demoEntity.getDemoStartDate(),
