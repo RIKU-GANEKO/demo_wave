@@ -1,6 +1,5 @@
 package product.demo_wave.api.demoList;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -10,10 +9,12 @@ import product.demo_wave.api.demoList.DemoRequest;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.entity.Category;
 import product.demo_wave.entity.Demo;
+import product.demo_wave.entity.Prefecture;
 import product.demo_wave.entity.User;
 import product.demo_wave.repository.DemoRepository;
 import product.demo_wave.repository.UserRepository;
 import product.demo_wave.repository.CategoryRepository;
+import product.demo_wave.repository.PrefectureRepository;
 
 @Component
 @AllArgsConstructor
@@ -24,6 +25,7 @@ public class DemoCreateDBLogic {
 	private final DemoRepository demoRepository;
 	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
+	private final PrefectureRepository prefectureRepository;
 
 	/**
 	 *
@@ -40,6 +42,7 @@ public class DemoCreateDBLogic {
 		demo.setTitle(request.getTitle());
 		demo.setContent(request.getContent());
 		demo.setDemoPlace(request.getDemoPlace());
+		demo.setPrefecture(fetchPrefecture(request.getPrefectureId()));
 		demo.setDemoAddressLatitude(request.getDemoAddressLatitude());
 		demo.setDemoAddressLongitude(request.getDemoAddressLongitude());
 		demo.setDemoStartDate(request.getDemoStartDate());
@@ -59,6 +62,12 @@ public class DemoCreateDBLogic {
 	User fetchUser(String firebaseUid) {
 		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
 		return user.orElse(new User());
+	}
+
+	@CustomRetry
+	Prefecture fetchPrefecture(Integer prefectureId) {
+		Optional<Prefecture> prefecture = prefectureRepository.findById(prefectureId);
+		return prefecture.orElse(new Prefecture());
 	}
 
 }

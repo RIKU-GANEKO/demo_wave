@@ -1,5 +1,6 @@
 package product.demo_wave.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,5 +52,30 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
         d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
   """)
   List<DemoListRecord> getDemoList();
+
+  @Query("""
+    SELECT new product.demo_wave.api.demoList.DemoListRecord(
+        d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
+        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
+        COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
+    )
+    FROM Demo d
+    LEFT JOIN d.category c
+    LEFT JOIN d.user u
+    LEFT JOIN Participant p ON p.demo = d
+    LEFT JOIN Payment pay ON pay.demo = d
+    WHERE (:prefectureId IS NULL OR d.prefecture.id = :prefectureId)
+      AND (:categoryId IS NULL OR d.category.id = :categoryId)
+      AND (:demoDate IS NULL OR FUNCTION('DATE', d.demoStartDate) = :demoDate)
+      AND ((:keyword IS NULL OR :keyword = '') OR d.title LIKE %:keyword% OR d.content LIKE %:keyword%)
+    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
+             d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
+""")
+  List<DemoListRecord> getDemoSearchList(
+          @Param("prefectureId") Integer prefectureId,
+          @Param("demoDate") LocalDate demoDate,
+          @Param("categoryId") Integer categoryId,
+          @Param("keyword") String keyword
+  );
 
 }

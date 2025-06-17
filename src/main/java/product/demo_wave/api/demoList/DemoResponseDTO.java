@@ -12,6 +12,7 @@ public class DemoResponseDTO {
 	private String title;
 	private String content;
 	private String demoPlace;
+	private Integer prefectureId;
 	private BigDecimal demoAddressLatitude;
 	private BigDecimal demoAddressLongitude;
 	private LocalDateTime demoStartDate;
