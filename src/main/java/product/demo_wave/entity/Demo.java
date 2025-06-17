@@ -52,6 +52,10 @@ public class Demo {
   @Column(name = "demo_place")
   private String demoPlace;
 
+  @ManyToOne
+  @JoinColumn(name = "prefecture_id")
+  private Prefecture prefecture;
+
   @Column(name = "demo_address_latitude")
   private BigDecimal demoAddressLatitude;
 
