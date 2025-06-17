@@ -12,6 +12,7 @@ public class DemoRequest {
 	private final String title;
 	private final String content;
 	private final String demoPlace;
+	private final Integer prefectureId;
 	private final BigDecimal demoAddressLatitude;
 	private final BigDecimal demoAddressLongitude;
 	private final LocalDateTime demoStartDate;  // ISO8601の日時文字列を受け取るならStringでOK。Date型に変換することも可能。

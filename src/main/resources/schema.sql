@@ -131,3 +131,20 @@ ADD COLUMN firebase_uid VARCHAR(128) NOT NULL AFTER id;
 ALTER TABLE users
 ADD COLUMN profile_image_path VARCHAR(255) NULL
 AFTER email;
+
+DROP TABLE IF EXISTS `prefecture`;
+CREATE TABLE prefecture (
+    id INT AUTO_INCREMENT PRIMARY KEY,                   -- 主キー
+    name VARCHAR(255) NOT NULL,                          -- 都道府県名
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新日時
+    deleted_at TIMESTAMP NULL DEFAULT NULL               -- 削除日時（論理削除）
+);
+
+ALTER TABLE demo
+ADD COLUMN prefecture_id INT NOT NULL;
+AFTER demo_place;
+
+ALTER TABLE demo
+ADD CONSTRAINT fk_demo_prefecture
+FOREIGN KEY (prefecture_id) REFERENCES prefecture(id);
