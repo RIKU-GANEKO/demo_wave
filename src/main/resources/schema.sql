@@ -148,3 +148,14 @@ AFTER demo_place;
 ALTER TABLE demo
 ADD CONSTRAINT fk_demo_prefecture
 FOREIGN KEY (prefecture_id) REFERENCES prefecture(id);
+
+CREATE TABLE location_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    demo_id INT NOT NULL,
+    timestamp DATETIME NOT NULL,
+    latitude DECIMAL(12,9) NOT NULL,
+    longitude DECIMAL(12,9) NOT NULL,
+    is_within_radius BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
