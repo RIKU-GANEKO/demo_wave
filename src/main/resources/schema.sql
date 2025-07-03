@@ -159,3 +159,13 @@ CREATE TABLE location_logs (
     is_within_radius BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- favorite_demoテーブルの作成
+CREATE TABLE favorite_demo (
+    id INT AUTO_INCREMENT PRIMARY KEY,                  -- 主キー
+    demo_id INT NOT NULL,                               -- お気に入り対象のデモID
+    user_id INT NOT NULL,                               -- お気に入りしたユーザーID
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,     -- 作成日時
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新日時
+    deleted_at TIMESTAMP NULL DEFAULT NULL              -- 論理削除用
+);
