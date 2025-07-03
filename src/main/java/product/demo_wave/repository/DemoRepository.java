@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import product.demo_wave.api.demoList.DemoListRecord;
+import product.demo_wave.api.demoList.FavoriteDemoListRecord;
 import product.demo_wave.api.demoList.todayDemoList.TodayDemoListRecord;
 import product.demo_wave.entity.Demo;
 import product.demo_wave.demo.DemoWithParticipantDTO;
@@ -95,5 +96,23 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
     d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
 """)
   List<TodayDemoListRecord> getTodayDemoList(@Param("userId") Integer userId);
+
+  @Query("""
+    SELECT new product.demo_wave.api.demoList.FavoriteDemoListRecord(
+        d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
+        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
+        COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
+    )
+    FROM Demo d
+    LEFT JOIN d.category c
+    LEFT JOIN d.user u
+    LEFT JOIN Participant p ON p.demo = d
+    LEFT JOIN Payment pay ON pay.demo = d
+    WHERE d.id IN :favoriteDemoIds
+    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
+        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
+""")
+  List<FavoriteDemoListRecord> getFavoriteDemoList(@Param("favoriteDemoIds") List<Integer> favoriteDemoIds);
+
 
 }
