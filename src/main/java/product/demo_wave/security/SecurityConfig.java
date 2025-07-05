@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/location/**").permitAll()
                         .requestMatchers("/api/demo/favorite/**").permitAll()
                         .requestMatchers("/api/demo/favorite-status**").permitAll()
+                        .requestMatchers("/api/ranking/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()
@@ -118,6 +119,9 @@ public class SecurityConfig {
             });
             http.csrf(csrf -> {
                 csrf.ignoringRequestMatchers("/api/demo/favorite-status**"); // "/api/payment/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/api/ranking/**"); // "/api/payment/**" のみ CSRF 無効化
             });
 //            http.csrf(csrf -> csrf.disable());
 
