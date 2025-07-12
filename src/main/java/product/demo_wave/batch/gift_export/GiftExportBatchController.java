@@ -1,11 +1,13 @@
 package product.demo_wave.batch.gift_export;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
+@Profile("batch")
 public class GiftExportBatchController implements CommandLineRunner {
 
 	private GiftExportBatchService giftExportBatchService;

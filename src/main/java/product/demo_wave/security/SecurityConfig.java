@@ -59,7 +59,9 @@ public class SecurityConfig {
                         .requestMatchers("/payment/**").permitAll()
                         .requestMatchers("/js/**", "/css/**", "/images/**", "favicon.ico").permitAll()
                         .requestMatchers("/resources/**", "/static/**", "/public/**").permitAll()
-                        .requestMatchers("/error").permitAll().anyRequest().authenticated();
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/lp.html").permitAll() // ← これが必要！
+                        .anyRequest().authenticated();
                     });
             http.formLogin(form -> {
                 form.usernameParameter("email")
