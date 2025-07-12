@@ -178,4 +178,7 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
           @Param("endOfMonth") LocalDateTime endOfMonth
   );
 
+  @Query("SELECT d.id FROM Demo d WHERE d.demoStartDate BETWEEN :start AND :end")
+  List<Integer> findDemoIdsByStartDateBetween(LocalDateTime start, LocalDateTime end);
+
 }
