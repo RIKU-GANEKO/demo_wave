@@ -4,7 +4,7 @@
 LOG_FILE="/tmp/demo_wave/gift_export_$(date +'%Y%m%d_%H%M%S').log"
 
 # プロファイル（必要に応じて変更）
-SPRING_PROFILE=develop
+SPRING_PROFILE=batch
 
 # JARファイルのパス
 JAR_PATH="/Users/rn-618/RikuGaneko/selfLearning/demo_wave/target/demo_wave-0.0.1-SNAPSHOT.jar"
