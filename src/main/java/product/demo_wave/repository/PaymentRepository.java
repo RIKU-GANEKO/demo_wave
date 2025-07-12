@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import product.demo_wave.batch.gift_export.PaymentSum;
 import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.Payment;
 import product.demo_wave.entity.User;
@@ -27,5 +29,13 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
           AND MONTH(p.createdAt) = MONTH(CURRENT_DATE)
     """)
 	BigDecimal getTotalDonatedAmountByUserForCurrentMonth(User user);
+
+	@Query("""
+    SELECT new product.demo_wave.batch.gift_export.PaymentSum(p.demo.id, SUM(p.donateAmount))
+    FROM Payment p
+    WHERE p.demo.id IN :demoIds
+    GROUP BY p.demo.id
+""")
+	List<PaymentSum> findTotalAmountsByDemoIds(@Param("demoIds") List<Integer> demoIds);
 
 }
