@@ -6,14 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class UserRequest {
+public class UserCreateRequest {
 	private final String name;
 	private final String profileImagePath;
 
 	@JsonCreator
-	public UserRequest(@JsonProperty("name") String name, @JsonProperty("imageUrl") String profileImagePath) {
+	public UserCreateRequest(
+			@JsonProperty("name") String name,
+			@JsonProperty("imageUrl") String profileImagePath)
+	{
 		this.name = name;
 		this.profileImagePath = profileImagePath;
 	}
 }
-

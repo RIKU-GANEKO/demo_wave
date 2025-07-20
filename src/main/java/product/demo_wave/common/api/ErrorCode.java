@@ -8,7 +8,8 @@ public enum ErrorCode {
 
 	UNAUTHORIZED("unauthorized", "APIKeyが間違っています"),
 	INTERNAL_SERVER_ERROR("server_error", "API側のエラーです"),
-	INVALID_SIGNATURE("invalid_signature", "署名が不正です");
+	INVALID_SIGNATURE("invalid_signature", "署名が不正です"),
+	DUPLICATE_FIREBASE_UID("duplicate_firebase_uid", "このFirebase UIDはすでに登録されています");
 
 	@Getter
 	private final String code;
