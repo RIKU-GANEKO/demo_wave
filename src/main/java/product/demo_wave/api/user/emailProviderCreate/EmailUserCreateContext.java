@@ -1,6 +1,4 @@
-package product.demo_wave.api.user;
-
-import java.util.List;
+package product.demo_wave.api.user.emailProviderCreate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +13,16 @@ import product.demo_wave.entity.User;
  * ユーザ情報取得用 Service
  */
 @Builder
-public class UserCreateContext {
+public class EmailUserCreateContext {
 
-//	private static final Logger logger = Logger.getLogger(UserListContext.class.getSimpleName());
+	//	private static final Logger logger = Logger.getLogger(UserListContext.class.getSimpleName());
 
 	private final String firebaseUid;
 	private final String email;
-//	private final String name;
-//	private final String profileImagePath;
-	private final UserCreateRequest request;
+	private final EmailUserRequest request;
 
 	@Setter
-	private UserCreateDBLogic userCreateDBLogic;
+	private EmailUserCreateDBLogic emailUserCreateDBLogic;
 
 	/**
 	 * エラーレスポンスを生成して返す。
@@ -46,20 +42,9 @@ public class UserCreateContext {
 	 *
 	 * @return 成功時のAPIレスポンス
 	 */
-	public Boolean checkValidation() {
-		List<String> firebaseUids = userCreateDBLogic.getFirebaseUids();
-		System.out.println("含まれているか: " + firebaseUids.contains(firebaseUid));
-		return firebaseUids.contains(firebaseUid);
-	}
-
-	/**
-	 * ユーザー作成処理
-	 *
-	 * @return 成功時のAPIレスポンス
-	 */
 	public ResponseEntity<APIResponse> postUser() {
-		User savedUser = userCreateDBLogic.saveUser(firebaseUid, email, request);
-		return new ResponseEntity<>(new UserCreateResponse(savedUser), HttpStatus.CREATED);
+		User savedUser = emailUserCreateDBLogic.saveUser(firebaseUid, email, request);
+		return new ResponseEntity<>(new EmailUserCreateResponse(savedUser), HttpStatus.CREATED);
 	}
 
 }

@@ -38,6 +38,15 @@ public class UserCreateService {
 	ResponseEntity<APIResponse> postUser(UserCreateContext userCreateContext) {
 		userCreateContext.setUserCreateDBLogic(userCreateDBLogic);
 		try {
+			// 以前同じfirebaseUidが登録されている場合はコンフリクトレスポンスを返す
+			if (userCreateContext.checkValidation()) {
+				return userCreateContext.errorResponse(
+						ErrorCode.DUPLICATE_FIREBASE_UID.getCode(),
+						ErrorCode.DUPLICATE_FIREBASE_UID.getDescription(),
+						HttpStatus.CONFLICT // 409 Conflict
+				);
+			}
+
 			return userCreateContext.postUser();
 		}
 		catch (Exception e) { // 内部的なエラーが起きた場合
