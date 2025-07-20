@@ -1,7 +1,6 @@
-package product.demo_wave.api.user;
+package product.demo_wave.api.user.emailProviderCreate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Component;
@@ -15,29 +14,23 @@ import product.demo_wave.repository.UserRepository;
 
 @Component
 @AllArgsConstructor
-public class UserCreateDBLogic {
+public class EmailUserCreateDBLogic {
 
-//	private static final Logger logger = Logger.getLogger(UserListDBLogic.class.getSimpleName());
+	//	private static final Logger logger = Logger.getLogger(UserListDBLogic.class.getSimpleName());
 
 	private final UserRepository userRepository;
 	private final AccountRepository accountRepository;
-
-	@CustomRetry
-	List<String> getFirebaseUids() {
-		List<String> firebaseUids = userRepository.findAllFirebaseUids();
-		return firebaseUids;
-	}
 
 	/**
 	 *
 	 */
 	@CustomRetry
-	User saveUser(String firebaseUid, String email, UserCreateRequest request) {
+	User saveUser(String firebaseUid, String email, EmailUserRequest request) {
 		User newUser = userRepository.saveAndFlush(toEntity(firebaseUid, email, request));
 		return newUser;
 	}
 
-	private User toEntity(String firebaseUid, String email, UserCreateRequest request) {
+	private User toEntity(String firebaseUid, String email, EmailUserRequest request) {
 
 		// 適当な account_id（例えば 1）を仮に入れておく。
 		Account account = accountRepository.findById(1)
@@ -50,7 +43,7 @@ public class UserCreateDBLogic {
 		user.setName(request.getName());
 		user.setEmail(email);
 		user.setProfileImagePath(request.getProfileImagePath());
-		user.setPassword("123456"); // 本来パスワードをDBに登録する必要はない。後でカラムから削除する
+		user.setPassword("123456");
 		user.setStatus(true);
 		user.setLastLogin(LocalDateTime.now());
 

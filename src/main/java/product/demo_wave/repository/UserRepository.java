@@ -35,4 +35,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     WHERE u.id IN :userIds
   """)
   List<UserEmail> findEmailsByUserIds(@Param("userIds") Set<Integer> userIds);
+
+  @Query("SELECT u.firebaseUid FROM User u")
+  List<String> findAllFirebaseUids();
 }
