@@ -59,6 +59,7 @@ public class WebhookContext {
 
 		try {
 			Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+			System.out.println("Received webhook event: " + event.getType());
 
 			if ("payment_intent.succeeded".equals(event.getType())) {
 				var deserializer = event.getDataObjectDeserializer();
@@ -77,8 +78,17 @@ public class WebhookContext {
 					String demoIdStr = paymentIntentNode.at("/metadata/demoId").asText(null);
 					long amountMinor = paymentIntentNode.at("/amount").asLong(0);
 
-					if (firebaseUid == null || demoIdStr == null) {
-						throw new IllegalStateException("必要なメタデータがありません");
+					System.out.println("Raw JSON metadata check:");
+					System.out.println("firebaseUid from JSON: " + firebaseUid);
+					System.out.println("demoId from JSON: " + demoIdStr);
+					System.out.println("amount from JSON: " + amountMinor);
+					System.out.println("Full metadata node: " + paymentIntentNode.at("/metadata"));
+
+					if (firebaseUid == null || firebaseUid.trim().isEmpty() || 
+					    demoIdStr == null || demoIdStr.trim().isEmpty()) {
+						System.err.println("❌ メタデータが不足しています");
+						System.err.println("Available metadata: " + paymentIntentNode.at("/metadata"));
+						throw new IllegalStateException("必要なメタデータがありません: firebaseUid=" + firebaseUid + ", demoId=" + demoIdStr);
 					}
 
 					int demoId = Integer.parseInt(demoIdStr);
@@ -104,6 +114,10 @@ public class WebhookContext {
 					webhookDBLogic.saveDonation(firebaseUid, amount, demoId);
 					sendMail(amount);
 				}
+			} else {
+				// 他のイベントタイプの場合はログだけ出して成功を返す
+				System.out.println("Ignoring webhook event type: " + event.getType());
+				return ResponseEntity.ok(SuccessResponse.of("Webhook received (ignored)"));
 			}
 
 			return ResponseEntity.ok(SuccessResponse.of("Webhook received"));

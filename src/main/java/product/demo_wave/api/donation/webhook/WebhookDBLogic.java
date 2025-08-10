@@ -28,7 +28,7 @@ public class WebhookDBLogic {
 	 *
 	 */
 	@CustomRetry
-	Payment saveDonation(String firebaseUid, BigDecimal amount, Integer demoId) {
+	public Payment saveDonation(String firebaseUid, BigDecimal amount, Integer demoId) {
 		Payment newPayment = paymentRepository.saveAndFlush(toEntity(firebaseUid, amount, demoId));
 		return newPayment;
 	}

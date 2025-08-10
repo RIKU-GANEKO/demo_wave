@@ -27,30 +27,38 @@ public class DonationController {
 
 	private DonationService donationService;
 
-	@PostMapping("/create-payment-intent")
-	public ResponseEntity<?> createPaymentIntent(
+	@PostMapping("/create-checkout-session")
+	public ResponseEntity<?> createCheckoutSession(
 			@RequestBody DonationRequestDTO request,
-			@RequestHeader(name = "Authorization") String authorizationHeader // ← Firebase トークンを受け取る
+			@RequestHeader(name = "Authorization") String authorizationHeader
 	) {
-
-		// "Bearer <token>" を分離
+		System.out.println("Received request: " + request);
+		System.out.println("Amount: " + request.getAmount());
+		System.out.println("Demo ID: " + request.getDemoId());
+		
 		String idToken = authorizationHeader.replace("Bearer ", "").trim();
+		System.out.println("Token received: " + (idToken != null && !idToken.isEmpty()));
 
-		// Firebase トークンを検証して uid / email を取得
-		FirebaseToken decodedToken;
 		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+			FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+			System.out.println("Firebase UID: " + decodedToken.getUid());
+			
+			DonationContext context = DonationContext.builder()
+					.firebaseUid(decodedToken.getUid())
+					.request(request)
+					.build();
+
+			return donationService.createCheckoutSession(context);
 		} catch (FirebaseAuthException e) {
+			System.err.println("Firebase Auth Error: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ErrorResponse("Invalid Firebase token"));
+					.body(new ErrorResponse("Invalid Firebase token: " + e.getMessage()));
+		} catch (Exception e) {
+			System.err.println("General Error: " + e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ErrorResponse("Internal server error: " + e.getMessage()));
 		}
-
-		DonationContext context = DonationContext.builder()
-				.firebaseUid(decodedToken.getUid())
-				.request(request)
-				.build();
-
-		return donationService.createPayment(context);
 	}
 
 }

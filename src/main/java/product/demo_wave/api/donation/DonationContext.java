@@ -5,6 +5,8 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.EphemeralKey;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,41 +21,51 @@ public class DonationContext {
 	private final String firebaseUid;
 	private final DonationRequestDTO request;
 
-	public ResponseEntity<DonationResponseDTO> createPayment() {
-
+	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession() {
 		Stripe.apiKey = "sk_test_51QepbEDawq4VaxvjBS5fkldp8CDPzm3Nbj2bgmcq51fiKsd4PMg0aFi9rwMw0UANAAKqWWTADwgy4EU1hJ1QJZZM00mZV2ayM2";
 
+		System.out.println("Creating Stripe session for amount: " + request.getAmount());
+		System.out.println("Demo ID: " + request.getDemoId());
+		System.out.println("Firebase UID: " + firebaseUid);
+
 		try {
-			// ① Customer作成（今回は都度作成）
-			Customer customer = Customer.create(new HashMap<>());
-
-			// ② EphemeralKey作成
-			Map<String, Object> params = new HashMap<>();
-			params.put("customer", customer.getId());
-			params.put("stripe-version", "2022-11-15");  // ハイフンに直す
-
-			EphemeralKey ephemeralKey = EphemeralKey.create(params);
-
-			// ③ PaymentIntent作成
-			PaymentIntent paymentIntent = PaymentIntent.create(Map.of(
-					"amount", request.getAmount(),
-					"currency", "jpy",
-					"customer", customer.getId(),
-					"automatic_payment_methods", Map.of("enabled", true),
-					"metadata", Map.of(
-							"demoId", String.valueOf(request.getDemoId()),
-							"firebaseUid", firebaseUid
+			// Payment Intent を明示的に作成してからCheckout Sessionに紐づける
+			SessionCreateParams params = SessionCreateParams.builder()
+					.setMode(SessionCreateParams.Mode.PAYMENT)
+					.setSuccessUrl("demo-wave://payment-success?session_id={CHECKOUT_SESSION_ID}") // セッションIDも含める
+					.setCancelUrl("demo-wave://payment-cancel?session_id={CHECKOUT_SESSION_ID}")   // セッションIDも含める
+					// .setCustomerEmail()  // 必要に応じてFirebaseから取得
+					.addLineItem(SessionCreateParams.LineItem.builder()
+							.setQuantity(1L)
+							.setPriceData(SessionCreateParams.LineItem.PriceData.builder()
+									.setCurrency("jpy")
+									.setUnitAmount((long) request.getAmount())
+									.setProductData(
+											SessionCreateParams.LineItem.PriceData.ProductData.builder()
+													.setName("Demo Donation")
+													.build()
+									)
+									.build()
+							)
+							.build()
 					)
-			));
+					// Payment Intent のメタデータを設定
+					.setPaymentIntentData(
+							SessionCreateParams.PaymentIntentData.builder()
+									.putMetadata("demoId", String.valueOf(request.getDemoId()))
+									.putMetadata("firebaseUid", firebaseUid)
+									.build()
+					)
+					.build();
 
-			// ④ DTOで返却
-			return ResponseEntity.ok(new DonationResponseDTO(
-					paymentIntent.getClientSecret(),
-					ephemeralKey.getSecret(),
-					customer.getId()
-			));
+			Session session = Session.create(params);
+			System.out.println("Stripe session created successfully: " + session.getId());
+			System.out.println("Checkout URL: " + session.getUrl());
 
+			return ResponseEntity.ok(new DonationCheckoutResponseDTO(session.getUrl()));
 		} catch (StripeException e) {
+			System.err.println("Stripe Error: " + e.getMessage());
+			e.printStackTrace();
 			throw new RuntimeException("Stripeエラー: " + e.getMessage(), e);
 		}
 	}
