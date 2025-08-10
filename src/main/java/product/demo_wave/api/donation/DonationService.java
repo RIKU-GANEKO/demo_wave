@@ -13,7 +13,7 @@ import product.demo_wave.common.api.APIResponse;
 @AllArgsConstructor
 public class DonationService {
 
-	ResponseEntity<DonationResponseDTO> createPayment(DonationContext donationContext) {
-		return donationContext.createPayment();
+	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession(DonationContext context) {
+		return context.createCheckoutSession();
 	}
 }
