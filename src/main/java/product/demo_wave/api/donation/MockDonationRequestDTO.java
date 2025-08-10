@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class DonationRequestDTO {
+public class MockDonationRequestDTO {
 
 	private final int amount;
 	private final int demoId;
 
 	@JsonCreator
-	public DonationRequestDTO(
+	public MockDonationRequestDTO(
 			@JsonProperty("amount") int amount,
 			@JsonProperty("demoId") int demoId
 	) {
