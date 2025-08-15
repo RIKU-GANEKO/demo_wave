@@ -1,154 +1,409 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout(~{::title}, ~{::main})}">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>お知らせ</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${demo.title} + ' - Demo Wave'">デモ詳細 - Demo Wave</title>
+  <meta name="description" content="Demo Waveでデモ活動の詳細情報をご覧ください">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .status-active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .status-upcoming {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    
+    .status-ended {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    }
+  </style>
 </head>
-<body>
-<main>
-    <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-        <!-- Breadcrumb Start -->
-        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="text-title-md2 font-bold text-black dark:text-white">お知らせ</h2>
+<body class="min-h-screen bg-gray-50">
+
+<!-- Header -->
+<header class="gradient-bg shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <i class="fas fa-bullhorn text-white text-lg"></i>
         </div>
-        <!-- Breadcrumb End -->
+        <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="flex items-center space-x-6">
+        <a href="/demo_wave/demo" class="text-white hover:text-yellow-300 transition-colors flex items-center">
+          <i class="fas fa-arrow-left mr-2"></i>一覧に戻る
+        </a>
+        <a href="/demo_wave/lp.html" class="text-white hover:text-yellow-300 transition-colors flex items-center">
+          <i class="fas fa-home mr-2"></i>ホーム
+        </a>
+        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
+          <i class="fas fa-sign-out-alt mr-2"></i>ログアウト
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
 
-        <!-- ====== Form Elements Section Start -->
-        <div class="grid grid-cols-1 gap-9 sm:grid-cols-2">
-
-            <div class="flex flex-col gap-9">
-                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h3 th:text="${demo.title}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
-                        <p th:text="${#temporals.format(demo.announcementTime, 'yyyy年MM月dd日 HH時mm分')}" class="text-right text-xs xl:text-base"></p>
-                    </div>
-                    <div class="flex flex-col gap-5.5 p-6.5" style="min-height: 300px;">
-                        <th:block th:if="${demo.content}">
-                            <th:block th:each="str, stat : ${demo.content.split('\r\n|\r|\n', -1)}">
-                                <th:block th:text="${str}"/>
-                                <br th:if="${!stat.last}"/>
-                            </th:block>
-                        </th:block>
-                    </div>
-                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h2>デモ時間</h2>
-                        <h3 th:text="${#temporals.format(demo.demoDate, 'yyyy年MM月dd日 HH時mm分')}" class="text-right text-xs xl:text-base"></h3>
-                    </div>
-                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h2>デモ会場</h2>
-                        <h3 th:text="${demo.demoPlace}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
-                        <h3 th:text="${demo.demoAddress}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
-                    </div>
-                    <div id="map" style="height: 400px; width: 100%;"></div> <!-- Google Mapsを表示する要素 -->
-                </div>
-                <a th:href="@{/demo}">
-                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">お知らせ一覧に戻る</button>
-                </a>
-                <form th:action="@{/demo/{id}/participant/add(id=${demo.id})}" method="post">
-                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
-                            th:text="${isParticipant} ? 'このデモ活動への参加をやめる' : 'このデモ活動に参加する'">
-                        このデモ活動に参加する <!-- デフォルト値として残しておく -->
-                    </button>
-                </form>
-                <form th:action="@{/payment/create-checkout-session}" method="post">
-                    <!-- 隠しフィールドに demo.id をセット. 支援されるデモ(demo)を特定するため -->
-                    <input type="hidden" name="demoId" th:value="${demo.id}"/>
-                    <button type="submit" class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray">
-                        このデモ活動に支援金を送る
-                    </button>
-                </form>
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 py-8">
+  <!-- Hero Section -->
+  <div class="animate-fade-in mb-8">
+    <div class="glass-effect rounded-3xl p-8 shadow-2xl">
+      <!-- Status Badge -->
+      <div class="flex justify-between items-start mb-6">
+        <span class="status-active text-white text-sm font-semibold px-4 py-2 rounded-full">
+          🔴 開催中
+        </span>
+        <span class="text-sm text-gray-500" th:text="${#temporals.format(demo.createdAt, 'yyyy年MM月dd日 HH:mm')} + ' に投稿'">
+          2025年01月15日 14:00 に投稿
+        </span>
+      </div>
+      
+      <!-- Title -->
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6" th:text="${demo.title}">
+        気候変動対策を求める緊急デモ
+      </h1>
+      
+      <!-- Quick Info Grid -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <!-- Date & Time -->
+        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-calendar-alt text-white text-lg"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">開催日時</div>
+            <div class="font-semibold text-gray-900" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
+              2025年01月15日 14:00
             </div>
-
-            <div class="col-span-1 flex flex-col gap-9">
-
-                <!-- 参加者数 -->
-                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h2>デモ参加者数</h2>
-                        <h3 th:text="${participantCount}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
-                    </div>
-                </div>
-
-                <!-- 支援金総額 -->
-                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div class="flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h2>支援金総額</h2>
-                        <h3 th:text="${donateAmount}" class="font-medium text-black dark:text-white">Textarea Fields</h3>
-                    </div>
-                </div>
-
-                <!-- コメントリスト -->
-                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h3 class="font-medium text-black dark:text-white">コメント一覧</h3>
-                    </div>
-                    <div class="p-6.5">
-                        <th:block th:each="comment : ${comments}">
-                            <div class="mb-4 border-b border-stroke pb-4 dark:border-strokedark">
-                                <p th:text="${comment.content}" class="text-black dark:text-white"></p>
-                                <p th:text="${#temporals.format(comment.createdAt, 'yyyy年MM月dd日 HH:mm')}" class="text-xs text-gray-500 dark:text-gray-400"></p>
-                            </div>
-                        </th:block>
-                    </div>
-                </div>
-
-                <!-- コメント入力フォーム -->
-                <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                        <h3 class="font-medium text-black dark:text-white">コメントを追加</h3>
-                    </div>
-                    <form th:action="@{/demo/comment/create}" method="post" class="p-6.5">
-                        <input type="hidden" th:name="demoId" th:value="${demo.id}" />
-                        <div class="mb-4">
-                    <textarea
-                            id="content"
-                            name="content"
-                            rows="4"
-                            placeholder="コメントを入力してください"
-                            class="w-full rounded border border-stroke p-3 text-sm text-black dark:border-strokedark dark:bg-boxdark dark:text-white"
-                            required></textarea>
-                        </div>
-                        <div class="text-right">
-                            <button type="submit" class="rounded bg-primary p-3 text-sm font-medium text-gray">送信</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+          </div>
         </div>
+        
+        <!-- Location -->
+        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-map-marker-alt text-white text-lg"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">開催場所</div>
+            <div class="font-semibold text-gray-900" th:text="${demo.demoPlace}">
+              渋谷駅前広場
+            </div>
+          </div>
+        </div>
+        
+        <!-- Participants -->
+        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-users text-white text-lg"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-500">参加者数</div>
+            <div class="font-semibold text-gray-900" th:text="${participantCount} + '人'">
+              245人
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Description -->
+      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-quote-left text-white"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">デモの内容</h2>
+        </div>
+        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+          <th:block th:if="${demo.content}">
+            <th:block th:each="str, stat : ${demo.content.split('\r\n|\r|\n', -1)}">
+              <th:block th:text="${str}"/>
+              <br th:if="${!stat.last}"/>
+            </th:block>
+          </th:block>
+        </div>
+      </div>
+
+      <!-- Map Section -->
+      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-map text-white"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">会場マップ</h2>
+        </div>
+        <div id="map" class="w-full h-96 rounded-xl overflow-hidden shadow-lg"></div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
+            <i class="fas fa-comments text-white"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">コメント</h2>
+        </div>
+        
+        <!-- Comment List -->
+        <div class="space-y-4 mb-8">
+          <th:block th:each="comment : ${comments}">
+            <div class="bg-gray-50 rounded-xl p-6">
+              <p class="text-gray-800 mb-3" th:text="${comment.content}">
+                とても意義のあるデモだと思います。参加させていただきます！
+              </p>
+              <p class="text-sm text-gray-500" th:text="${#temporals.format(comment.createdAt, 'yyyy年MM月dd日 HH:mm')}">
+                2025年01月14日 10:30
+              </p>
+            </div>
+          </th:block>
+          
+          <!-- Empty State -->
+          <div th:if="${#lists.isEmpty(comments)}" class="text-center py-8">
+            <i class="fas fa-comment-slash text-gray-300 text-4xl mb-4"></i>
+            <p class="text-gray-500">まだコメントがありません</p>
+          </div>
+        </div>
+        
+        <!-- Comment Form -->
+        <form th:action="@{/demo/comment/create}" method="post" class="space-y-4">
+          <input type="hidden" th:name="demoId" th:value="${demo.id}" />
+          <div>
+            <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+              コメントを追加
+            </label>
+            <textarea
+              id="content"
+              name="content"
+              rows="4"
+              placeholder="コメントを入力してください..."
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none resize-none"
+              required
+            ></textarea>
+          </div>
+          <div class="flex justify-end">
+            <button type="submit" class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <i class="fas fa-paper-plane mr-2"></i>送信
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <!-- Google Maps APIの読み込み -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE&callback=initMap" async defer></script>
-    <script th:inline="javascript">
-        // Google Maps APIの初期化関数
-        function initMap() {
-            // 緯度・経度を取得 (Thymeleafで埋め込まれる)
-            const latitude = /*[[${demo.demoAddressLatitude}]]*/ 35.6895; // デフォルト値: 東京
-            const longitude = /*[[${demo.demoAddressLongitude}]]*/ 139.6917; // デフォルト値: 東京
-            console.log("latitude: " + latitude);
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Stats Card -->
+      <div class="bg-white rounded-2xl p-6 shadow-lg animate-fade-in">
+        <h3 class="text-xl font-bold text-gray-900 mb-6">統計情報</h3>
+        
+        <div class="space-y-6">
+          <!-- Participants -->
+          <div class="text-center">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-users text-white text-2xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-purple-600" th:text="${participantCount}">245</div>
+            <div class="text-sm text-gray-500">参加者数</div>
+          </div>
+          
+          <!-- Support Amount -->
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-yen-sign text-white text-2xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-green-600" th:text="'¥' + ${donateAmount}">¥125,000</div>
+            <div class="text-sm text-gray-500">支援金総額</div>
+          </div>
+        </div>
+      </div>
 
-            // Google Mapsのオプション設定
-            const mapOptions = {
-                center: { lat: latitude, lng: longitude },
-                zoom: 15, // ズームレベル
-            };
-
-            // Google Mapsを描画
-            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-            // マーカーを追加
-            new google.maps.Marker({
-                position: { lat: latitude, lng: longitude },
-                map: map,
-                title: "デモ会場", // ツールチップ
-            });
-        }
-    </script>
-    <script src="https://js.stripe.com/v3/"></script>
-
+      <!-- Action Buttons -->
+      <div class="space-y-4 animate-fade-in">
+        <!-- Participate Button -->
+        <form th:action="@{/demo/{id}/participant/add(id=${demo.id})}" method="post" class="w-full">
+          <button type="submit" class="card-hover w-full gradient-bg text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
+            <i th:class="${isParticipant} ? 'fas fa-user-minus' : 'fas fa-user-plus'" class="mr-3"></i>
+            <span th:text="${isParticipant} ? 'このデモ活動への参加をやめる' : 'このデモ活動に参加する'">
+              このデモ活動に参加する
+            </span>
+          </button>
+        </form>
+        
+        <!-- Support Button -->
+        <form th:action="@{/payment/create-checkout-session}" method="post" class="w-full">
+          <input type="hidden" name="demoId" th:value="${demo.id}"/>
+          <button type="submit" class="card-hover w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
+            <i class="fas fa-heart mr-3"></i>
+            このデモ活動に支援金を送る
+          </button>
+        </form>
+        
+        <!-- Share Button -->
+        <button onclick="shareDemo()" class="card-hover w-full bg-gray-100 text-gray-700 font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
+          <i class="fas fa-share-alt mr-3"></i>
+          このデモをシェア
+        </button>
+      </div>
+    </div>
+  </div>
 </main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <div class="flex items-center justify-center space-x-3 mb-6">
+      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+        <i class="fas fa-bullhorn text-white text-xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
+    </div>
+    <p class="text-gray-400 mb-6">あなたの声が社会を変える力になる</p>
+    <p class="text-sm text-gray-500">&copy; 2025 Demo Wave. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE&callback=initMap" async defer></script>
+<script th:inline="javascript">
+  // Google Maps APIの初期化関数
+  function initMap() {
+    // 緯度・経度を取得 (Thymeleafで埋め込まれる)
+    const latitude = /*[[${demo.demoAddressLatitude}]]*/ 35.6895; // デフォルト値: 東京
+    const longitude = /*[[${demo.demoAddressLongitude}]]*/ 139.6917; // デフォルト値: 東京
+
+    // Google Mapsのオプション設定
+    const mapOptions = {
+      center: { lat: latitude, lng: longitude },
+      zoom: 15,
+      styles: [
+        {
+          "featureType": "all",
+          "elementType": "geometry.fill",
+          "stylers": [{"weight": "2.00"}]
+        },
+        {
+          "featureType": "all",
+          "elementType": "geometry.stroke",
+          "stylers": [{"color": "#9c9c9c"}]
+        },
+        {
+          "featureType": "all",
+          "elementType": "labels.text",
+          "stylers": [{"visibility": "on"}]
+        }
+      ]
+    };
+
+    // Google Mapsを描画
+    const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+    // カスタムマーカーを追加
+    const marker = new google.maps.Marker({
+      position: { lat: latitude, lng: longitude },
+      map: map,
+      title: "デモ会場",
+      animation: google.maps.Animation.BOUNCE
+    });
+
+    // 情報ウィンドウを追加
+    const infoWindow = new google.maps.InfoWindow({
+      content: `
+        <div style="padding: 10px;">
+          <h3 style="margin: 0 0 10px 0; color: #667eea; font-weight: bold;">デモ会場</h3>
+          <p style="margin: 0; color: #666;">${/*[[${demo.demoPlace}]]*/ '渋谷駅前広場'}</p>
+        </div>
+      `
+    });
+
+    marker.addListener('click', function() {
+      infoWindow.open(map, marker);
+    });
+  }
+
+  // シェア機能
+  function shareDemo() {
+    if (navigator.share) {
+      navigator.share({
+        title: /*[[${demo.title}]]*/ 'デモ活動',
+        text: 'Demo Waveでデモ活動の詳細をチェック！',
+        url: window.location.href
+      });
+    } else {
+      // フォールバック: URLをクリップボードにコピー
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('URLがクリップボードにコピーされました！');
+      });
+    }
+  }
+
+  // スムーズスクロール
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script>
+
+<!-- Stripe SDK -->
+<script src="https://js.stripe.com/v3/"></script>
+
 </body>
 </html>

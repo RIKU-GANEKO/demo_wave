@@ -21,7 +21,7 @@ class DemoCreatePostContext {
   }
 
   void setErrorModelAndView() {
-    this.modelAndView.setViewName("demoCreate");
+    this.modelAndView.setViewName("demo/demoCreate");
   }
 
   void setModelAndView() {

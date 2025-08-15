@@ -21,6 +21,9 @@ class MypageGetUserContext {
     @Getter
     private final ModelAndView mv;
 
+    @Setter
+    private Integer userId;
+
     private User user;
     private Account account;
     private List<Demo> participatedDemos;
@@ -51,6 +54,8 @@ class MypageGetUserContext {
         System.out.println("participatedDemos: " + participatedDemos);
         this.mv.addObject("sendDonateAmount", this.sendDonateAmount);
         System.out.println("sendDonateAmount: " + sendDonateAmount);
-        this.mv.setViewName("mypage");
+        // Add receiveDonateAmount for the template
+        this.mv.addObject("receiveDonateAmount", BigDecimal.ZERO); // TODO: implement if needed
+        this.mv.setViewName("mypage/mypage");
     }
 }

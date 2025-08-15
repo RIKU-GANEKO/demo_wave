@@ -54,6 +54,6 @@ class DemoShowGetContext {
         this.mv.addObject("comments", this.comments);
         this.mv.addObject("participantCount", this.participantCount);
         this.mv.addObject("donateAmount", this.donateAmount);
-        this.mv.setViewName("demo");
+        this.mv.setViewName("demo/demo");
     }
 }

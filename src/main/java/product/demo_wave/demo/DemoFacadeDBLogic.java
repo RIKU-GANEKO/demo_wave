@@ -24,6 +24,10 @@ import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
 import product.demo_wave.repository.UserRepository;
+import product.demo_wave.repository.CategoryRepository;
+import product.demo_wave.repository.PrefectureRepository;
+import product.demo_wave.entity.Category;
+import product.demo_wave.entity.Prefecture;
 
 @Component
 @AllArgsConstructor
@@ -33,6 +37,8 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     private final CommentRepository commentRepository;
     private final ParticipantRepository participantRepository;
     private final PaymentRepository paymentRepository;
+    private final CategoryRepository categoryRepository;
+    private final PrefectureRepository prefectureRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
 //    @CustomRetry
@@ -104,12 +110,23 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
 
         demo.setTitle(demoForm.title());
         demo.setContent(demoForm.content());
-        demo.setDemoStartDate(demoForm.demoDate());
-        demo.setDemoEndDate(demoForm.demoDate());
+        // Combine date and time to create LocalDateTime
+        demo.setDemoStartDate(demoForm.demoDate().atTime(demoForm.demoStartTime()));
+        demo.setDemoEndDate(demoForm.demoDate().atTime(demoForm.demoEndTime()));
         demo.setDemoPlace(demoForm.demoPlace());
         demo.setDemoAddressLatitude(demoForm.demoAddressLatitude());
         demo.setDemoAddressLongitude(demoForm.demoAddressLongitude());
         demo.setUser(this.getUserLogic.getUserFromCache());
+        
+        // Set category from form
+        Category category = categoryRepository.findById(demoForm.categoryId())
+            .orElseThrow(() -> new RuntimeException("Category not found"));
+        demo.setCategory(category);
+        
+        // Set prefecture from form
+        Prefecture prefecture = prefectureRepository.findById(demoForm.prefectureId())
+            .orElseThrow(() -> new RuntimeException("Prefecture not found"));
+        demo.setPrefecture(prefecture);
 //        demo.setOrganizerName("我如古陸");
 
         return demo;
@@ -190,6 +207,28 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     public BigDecimal donateAmount(Integer demoId) {
         BigDecimal donateAmount = paymentRepository.getTotalDonatedAmountByDemo(fetchDemo(demoId));
         return donateAmount;
+    }
+
+    @CustomRetry
+    public List<Category> fetchAllCategories() {
+        return categoryRepository.findAll();
+    }
+
+    @CustomRetry
+    public List<Prefecture> fetchAllPrefectures() {
+        return prefectureRepository.findAll();
+    }
+
+    @CustomRetry
+    public Category fetchCategory(Integer categoryId) {
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+
+    @CustomRetry
+    public Prefecture fetchPrefecture(Integer prefectureId) {
+        return prefectureRepository.findById(prefectureId)
+            .orElseThrow(() -> new RuntimeException("Prefecture not found"));
     }
 
 }

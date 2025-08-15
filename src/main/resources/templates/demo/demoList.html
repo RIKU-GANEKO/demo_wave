@@ -1,154 +1,321 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout(~{::title}, ~{::main})}">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>デモ活動一覧</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Wave - デモ一覧</title>
+  <meta name="description" content="Demo Waveで開催中・開催予定のデモ一覧をご覧ください">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .status-active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .status-upcoming {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    
+    .status-ended {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    }
+  </style>
 </head>
-<body>
-<main class="u-min-h-screen">
-    <div class="mx-auto h-[calc(100vh-80px)] max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-        <!-- Breadcrumb Start -->
-        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="text-title-md2 font-bold text-black dark:text-white">デモ活動</h2>
+<body class="min-h-screen bg-gray-50">
+
+<!-- Header -->
+<header class="gradient-bg shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <i class="fas fa-bullhorn text-white text-lg"></i>
         </div>
-        <!-- Breadcrumb End -->
-
-        <div class="h-198 overflow-hidden">
-            <div class="h-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark lg:flex">
-                <div class="flex h-full flex-col border-l border-stroke dark:border-strokedark w-full">
-                    <!-- ====== Demo Table Header Start -->
-                    <div class="p-4 md:p-6 xl:p-7.5">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <h2 class="text-title-sm2 font-bold text-black dark:text-white">デモ活動一覧</h2>
-                            </div>
-                            <a th:href="@{/demo/create}">
-                                <button class="flex items-center gap-2 rounded bg-meta-10 py-2 px-4.5 font-medium text-white hover:bg-opacity-80">
-                                    <svg class="fill-current" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 7H9V1C9 0.4 8.6 0 8 0C7.4 0 7 0.4 7 1V7H1C0.4 7 0 7.4 0 8C0 8.6 0.4 9 1 9H7V15C7 15.6 7.4 16 8 16C8.6 16 9 15.6 9 15V9H15C15.6 9 16 8.6 16 8C16 7.4 15.6 7 15 7Z" fill=""/>
-                                    </svg>
-                                    デモ活動登録
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                    <!-- ====== Demo Table Header End -->
-
-                    <!-- ====== Demo List Start -->
-                    <div class="h-full">
-                        <table class="h-full w-full table-auto">
-                            <thead>
-                            <tr class="flex border-y border-stroke dark:border-strokedark">
-<!--                                <th class="w-[65%] py-6 pl-4 pr-4 lg:pl-10 xl:w-1/4">-->
-<!--                                    <p class="flex cursor-pointer select-none items-center font-medium">主催者</p>-->
-<!--                                </th>-->
-                                <th class="hidden w-3/5 py-6 px-4 xl:block">
-                                    <p class="text-left font-medium">タイトル</p>
-                                </th>
-                                <th class="hidden w-3/5 py-6 px-4 xl:block">
-                                    <p class="text-left font-medium">時間</p>
-                                </th>
-                                <th class="hidden w-3/5 py-6 px-4 xl:block">
-                                    <p class="text-left font-medium">場所</p>
-                                </th>
-                                <th class="hidden w-3/5 py-6 px-4 xl:block">
-                                    <p class="text-left font-medium">参加者数</p>
-                                </th>
-<!--                                <th class="hidden w-3/5 py-6 px-4 xl:block">-->
-<!--                                    <p class="text-left font-medium">告知日</p>-->
-<!--                                </th>-->
-                            </tr>
-                            </thead>
-                            <tbody class="block h-full max-h-full overflow-auto py-4">
-                            <tr th:each="demo : ${demoList}" class="flex cursor-pointer items-center hover:bg-whiten dark:hover:bg-boxdark-2">
-<!--                                <td class="w-[65%] py-4 pl-4 pr-4 lg:pl-10 xl:w-1/4">-->
-<!--                                    <p th:text="${organizerUserName}" class="flex cursor-pointer select-none items-center text-sm font-medium sm:text-base"></p>-->
-<!--                                </td>-->
-                                <td class="hidden w-3/5 p-4 xl:block">
-                                    <a th:href="@{/demo/show(demoId=${demo.id})}">
-                                        <p th:text="${demo.title}"></p>
-                                    </a>
-                                </td>
-                                <td class="hidden w-3/5 p-4 xl:block">
-                                    <a th:href="@{/demo/show(demoId=${demo.id})}">
-                                        <p th:text="${#temporals.format(demo.demoDate, 'yyyy/MM/dd HH:mm')}"></p>
-                                    </a>
-                                </td>
-                                <td class="hidden w-3/5 p-4 xl:block">
-                                    <a th:href="@{/demo/show(demoId=${demo.id})}">
-                                        <p th:text="${demo.demoPlace}"></p>
-                                    </a>
-                                </td>
-                                <td class="hidden w-3/5 p-4 xl:block">
-                                    <a th:href="@{/demo/show(demoId=${demo.id})}">
-                                        <p th:text="${demo.participantCount}"></p>
-                                    </a>
-                                </td>
-<!--                                <td class="hidden w-3/5 p-4 xl:block">-->
-<!--                                    <p th:text="${#temporals.format(demo.announcementTime, 'yyyy/MM/dd HH:mm')}" class="text-left text-xs xl:text-base"></p>-->
-<!--                                </td>-->
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div th:if="${demoList.totalPages} != 0" class="flex items-center justify-between border-t border-stroke p-4 dark:border-strokedark sm:px-6">
-                        <p class="text-base font-medium text-black dark:text-white md:text-lg">
-                            1-<span th:text="${demoList.getTotalPages()}"></span> of <span th:text="${demoList.number} + 1"></span>
-                        </p>
-
-                        <ul class="flex flex-wrap items-center">
-                            <li th:class="${demoList.first} ? 'disabled' : ''" class="disabled">
-                                <span th:if="${demoList.first}">
-                                    <span class="flex h-9 w-9 items-center justify-center rounded-l-md border border-stroke hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark">
-                                        <svg class="fill-current" width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M7.17578 15.1156C7.00703 15.1156 6.83828 15.0593 6.72578 14.9187L0.369531 8.44995C0.116406 8.19683 0.116406 7.80308 0.369531 7.54995L6.72578 1.0812C6.97891 0.828076 7.37266 0.828076 7.62578 1.0812C7.87891 1.33433 7.87891 1.72808 7.62578 1.9812L1.71953 7.99995L7.65391 14.0187C7.90703 14.2718 7.90703 14.6656 7.65391 14.9187C7.48516 15.0312 7.34453 15.1156 7.17578 15.1156Z"
-                                                  fill=""/>
-                                        </svg>
-                                    </span>
-                                </span>
-                                <a th:if="${not demoList.first}"
-                                   class="flex h-9 w-9 items-center justify-center rounded-l-md border border-stroke hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark"
-                                   th:href="@{${path}(page=${demoList.number} - 1)}">
-                                    <svg class="fill-current" width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.17578 15.1156C7.00703 15.1156 6.83828 15.0593 6.72578 14.9187L0.369531 8.44995C0.116406 8.19683 0.116406 7.80308 0.369531 7.54995L6.72578 1.0812C6.97891 0.828076 7.37266 0.828076 7.62578 1.0812C7.87891 1.33433 7.87891 1.72808 7.62578 1.9812L1.71953 7.99995L7.65391 14.0187C7.90703 14.2718 7.90703 14.6656 7.65391 14.9187C7.48516 15.0312 7.34453 15.1156 7.17578 15.1156Z"
-                                              fill=""/>
-                                    </svg>
-                                </a>
-                            </li>
-                            <li th:each="i : ${#numbers.sequence(0, demoList.totalPages - 1)}">
-                                <span class="flex items-center justify-center border border-stroke border-l-transparent py-[5px] px-4 font-medium hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark"
-                                      th:if="${i} == ${demoList.number}" th:text="${i + 1}">1</span>
-                                <a th:if="${i} != ${demoList.number}" th:href="@{/demo(page = ${i})}"
-                                   class="flex items-center justify-center border border-stroke border-l-transparent py-[5px] px-4 font-medium hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark">
-                                    <span th:text="${i+1}">1</span>
-                                </a>
-                            </li>
-                            <li>
-                                <span th:if="${demoList.last}" class="flex h-9 w-9 items-center justify-center rounded-r-md border border-stroke border-l-transparent hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark">
-                                    <svg class="fill-current" width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.819531 15.1156C0.650781 15.1156 0.510156 15.0593 0.369531 14.9468C0.116406 14.6937 0.116406 14.3 0.369531 14.0468L6.27578 7.99995L0.369531 1.9812C0.116406 1.72808 0.116406 1.33433 0.369531 1.0812C0.622656 0.828076 1.01641 0.828076 1.26953 1.0812L7.62578 7.54995C7.87891 7.80308 7.87891 8.19683 7.62578 8.44995L1.26953 14.9187C1.15703 15.0312 0.988281 15.1156 0.819531 15.1156Z"
-                                              fill=""/>
-                                    </svg>
-                                </span>
-                                <a th:if="${!demoList.last}"
-                                   th:href="@{/demo(page = (${demoList.number} + 1))}"
-                                   class="flex h-9 w-9 items-center justify-center rounded-r-md border border-stroke border-l-transparent hover:border-primary hover:bg-gray hover:text-primary dark:border-strokedark dark:hover:border-primary dark:hover:bg-graydark">
-                                    <svg class="fill-current" width="8" height="16" viewBox="0 0 8 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.819531 15.1156C0.650781 15.1156 0.510156 15.0593 0.369531 14.9468C0.116406 14.6937 0.116406 14.3 0.369531 14.0468L6.27578 7.99995L0.369531 1.9812C0.116406 1.72808 0.116406 1.33433 0.369531 1.0812C0.622656 0.828076 1.01641 0.828076 1.26953 1.0812L7.62578 7.54995C7.87891 7.80308 7.87891 8.19683 7.62578 8.44995L1.26953 14.9187C1.15703 15.0312 0.988281 15.1156 0.819531 15.1156Z"
-                                              fill=""/>
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- ====== Demo List End -->
-                </div>
-            </div>
-        </div>
+        <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="flex items-center space-x-6">
+        <a href="/demo_wave/lp.html" class="text-white hover:text-yellow-300 transition-colors flex items-center">
+          <i class="fas fa-home mr-2"></i>ホーム
+        </a>
+        <a href="/demo_wave/mypage" class="text-white hover:text-yellow-300 transition-colors flex items-center">
+          <i class="fas fa-user mr-2"></i>マイページ
+        </a>
+        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
+          <i class="fas fa-sign-out-alt mr-2"></i>ログアウト
+        </a>
+      </nav>
     </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 py-8">
+  <!-- Page Header -->
+  <div class="text-center mb-12 animate-fade-in">
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">デモ一覧</h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      全国で開催中・開催予定のデモ活動をご覧ください
+    </p>
+  </div>
+
+  <!-- Actions Bar -->
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+    <!-- Stats -->
+    <div class="flex items-center space-x-6">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-purple-600" th:text="${#lists.size(demoList)}">12</div>
+        <div class="text-sm text-gray-500">開催中</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-600">245</div>
+        <div class="text-sm text-gray-500">今月の参加者</div>
+      </div>
+    </div>
+    
+    <!-- Create Demo Button -->
+    <a th:href="@{/demo/create}" class="card-hover">
+      <button class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl flex items-center space-x-2">
+        <i class="fas fa-plus"></i>
+        <span>デモを作成</span>
+      </button>
+    </a>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="glass-effect rounded-2xl p-6 mb-8 animate-fade-in">
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Search -->
+      <div class="flex-1">
+        <div class="relative">
+          <input 
+            type="text" 
+            placeholder="デモを検索..." 
+            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none"
+          />
+          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+      
+      <!-- Filters -->
+      <div class="flex gap-3">
+        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
+          <option>全てのカテゴリ</option>
+          <option>環境</option>
+          <option>人権</option>
+          <option>政治</option>
+          <option>社会福祉</option>
+        </select>
+        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
+          <option>全ての地域</option>
+          <option>東京都</option>
+          <option>大阪府</option>
+          <option>愛知県</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Cards Grid -->
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+    <div th:each="demo : ${demoList}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
+      <div class="p-6">
+        <!-- Status Badge -->
+        <div class="flex justify-between items-start mb-4">
+          <span class="status-active text-white text-xs font-semibold px-3 py-1 rounded-full">
+            🔴 開催中
+          </span>
+          <div class="text-right">
+            <div class="text-sm text-gray-500">参加者数</div>
+            <div class="text-lg font-bold text-purple-600" th:text="${demo.participantCount}">127</div>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2" th:text="${demo.title}">
+          気候変動対策を求める緊急デモ
+        </h3>
+
+        <!-- Info Grid -->
+        <div class="space-y-3 mb-6">
+          <!-- Date & Time -->
+          <div class="flex items-center text-gray-600">
+            <i class="fas fa-calendar-alt w-5 text-purple-500"></i>
+            <span class="ml-3 text-sm" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
+              2025年01月15日 14:00
+            </span>
+          </div>
+          
+          <!-- Location -->
+          <div class="flex items-center text-gray-600">
+            <i class="fas fa-map-marker-alt w-5 text-purple-500"></i>
+            <span class="ml-3 text-sm" th:text="${demo.demoPlace}">渋谷駅前広場</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+          <a th:href="@{/demo/show(demoId=${demo.id})}" class="flex-1">
+            <button class="w-full gradient-bg text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition-all">
+              詳細を見る
+            </button>
+          </a>
+          <button class="bg-gray-100 text-gray-600 p-2 rounded-lg hover:bg-gray-200 transition-all">
+            <i class="fas fa-heart"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (if no demos) -->
+  <div th:if="${#lists.isEmpty(demoList)}" class="text-center py-16 animate-fade-in">
+    <div class="max-w-md mx-auto">
+      <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-bullhorn text-white text-3xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-4">デモがありません</h3>
+      <p class="text-gray-600 mb-8">現在開催中・開催予定のデモがありません。<br>新しいデモを作成してみませんか？</p>
+      <a th:href="@{/demo/create}">
+        <button class="gradient-bg text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl">
+          <i class="fas fa-plus mr-2"></i>デモを作成
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div th:if="${demoList.totalPages} > 1" class="flex justify-center mt-12 animate-fade-in">
+    <nav class="flex items-center space-x-2">
+      <!-- Previous Button -->
+      <a th:href="${demoList.first} ? '#' : @{/demo(page=${demoList.number - 1})}" 
+         class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-all"
+         th:classappend="${demoList.first} ? 'opacity-50 cursor-not-allowed' : ''">
+        <i class="fas fa-chevron-left text-gray-400"></i>
+      </a>
+      
+      <!-- Page Numbers -->
+      <div th:each="i : ${#numbers.sequence(0, demoList.totalPages - 1)}" class="flex">
+        <a th:href="@{/demo(page=${i})}" 
+           th:class="${i == demoList.number} ? 'gradient-bg text-white' : 'bg-white text-gray-700 hover:bg-purple-50'"
+           class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 transition-all"
+           th:text="${i + 1}">1</a>
+      </div>
+      
+      <!-- Next Button -->
+      <a th:href="${demoList.last} ? '#' : @{/demo(page=${demoList.number + 1})}" 
+         class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-all"
+         th:classappend="${demoList.last} ? 'opacity-50 cursor-not-allowed' : ''">
+        <i class="fas fa-chevron-right text-gray-400"></i>
+      </a>
+    </nav>
+  </div>
 </main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <div class="flex items-center justify-center space-x-3 mb-6">
+      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+        <i class="fas fa-bullhorn text-white text-xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
+    </div>
+    <p class="text-gray-400 mb-6">あなたの声が社会を変える力になる</p>
+    <p class="text-sm text-gray-500">&copy; 2025 Demo Wave. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Search functionality
+  document.querySelector('input[placeholder="デモを検索..."]').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const demoCards = document.querySelectorAll('[th\\:each="demo : ${demoList}"]');
+    
+    demoCards.forEach(card => {
+      const title = card.querySelector('h3').textContent.toLowerCase();
+      const location = card.querySelector('[th\\:text="${demo.demoPlace}"]')?.textContent.toLowerCase() || '';
+      
+      if (title.includes(searchTerm) || location.includes(searchTerm)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  // Card hover effects
+  document.querySelectorAll('.card-hover').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-4px)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+
+  // Favorite button functionality
+  document.querySelectorAll('button i.fa-heart').forEach(button => {
+    button.parentElement.addEventListener('click', function(e) {
+      e.preventDefault();
+      const icon = this.querySelector('i');
+      
+      if (icon.classList.contains('fas')) {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        this.classList.remove('bg-red-100', 'text-red-600');
+        this.classList.add('bg-gray-100', 'text-gray-600');
+      } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        this.classList.remove('bg-gray-100', 'text-gray-600');
+        this.classList.add('bg-red-100', 'text-red-600');
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

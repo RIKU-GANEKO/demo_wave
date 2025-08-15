@@ -3,122 +3,576 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo Wave</title>
+  <title>Demo Wave - あなたの声が社会を変える</title>
+  <meta name="description" content="Demo Waveは市民の声を社会に届ける新しいプラットフォーム。デモを開催し、参加し、支援することで、誰もが社会変革の当事者になれます。">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-bounce-subtle {
+      animation: bounceSubtle 2s infinite;
+    }
+    
+    @keyframes bounceSubtle {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.125);
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900 leading-relaxed">
+<body class="bg-white text-gray-900 leading-relaxed overflow-x-hidden">
 
 <!-- Header -->
-<header class="bg-white shadow fixed w-full z-10">
-  <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="text-2xl font-extrabold tracking-tight text-blue-700 leading-none">Demo Wave</h1>
-    <nav class="space-x-6 hidden sm:flex text-sm font-medium items-center">
-      <a href="#about" class="text-gray-700 hover:text-blue-600 transition leading-none">概要</a>
-      <a href="#features" class="text-gray-700 hover:text-blue-600 transition leading-none">特徴</a>
-      <a href="#faq" class="text-gray-700 hover:text-blue-600 transition leading-none">FAQ</a>
-      <a href="/demo_wave/login" class="text-gray-700 hover:text-blue-600 transition leading-none">ログイン/新規登録</a>
+<header class="glass-effect fixed w-full z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center">
+        <i class="fas fa-bullhorn text-white text-lg"></i>
+      </div>
+      <h1 class="text-2xl font-bold text-gradient">Demo Wave</h1>
+    </div>
+    <nav class="space-x-8 hidden md:flex text-sm font-medium items-center">
+      <a href="#about" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">概要</a>
+      <a href="#features" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">特徴</a>
+      <a href="#stats" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">実績</a>
+      <a href="#faq" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">FAQ</a>
+      <a href="/demo_wave/login" class="gradient-bg text-white px-6 py-2 rounded-full hover:scale-105 transition-all duration-300 shadow-lg">ログイン</a>
     </nav>
+    <!-- Mobile menu button -->
+    <button class="md:hidden text-gray-700 hover:text-purple-600">
+      <i class="fas fa-bars text-xl"></i>
+    </button>
   </div>
 </header>
 
 <!-- Hero -->
-<section class="relative bg-gray-900 text-white pt-40 pb-40 sm:pt-48 sm:pb-48 overflow-hidden">
-  <img src="/demo_wave/images/lp/StockCake-Protesters-Holding-Signs_1752337181.jpg" alt="Hero Image" class="absolute inset-0 w-full h-full object-cover opacity-50 z-0" />
-  <div class="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <!-- Background with gradient overlay -->
+  <div class="absolute inset-0 gradient-bg"></div>
+  <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+  
+  <!-- Animated background elements -->
+  <div class="absolute inset-0">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+    <div class="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+  </div>
 
-  <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
-    <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight break-words mb-6 drop-shadow-lg">
-      あなたの想いが社会を動かす力になる
+  <div class="relative z-10 max-w-6xl mx-auto px-6 text-center text-white animate-fade-in">
+    <div class="mb-8">
+      <span class="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6">
+        🚀 市民アクションの新時代
+      </span>
+    </div>
+    
+    <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-8">
+      あなたの<span class="text-yellow-300">声</span>が<br>
+      社会を<span class="text-yellow-300">変える</span>力になる
     </h1>
-    <p class="text-lg sm:text-xl text-gray-200 mb-10 sm:mb-12 leading-relaxed">
-      Demo Waveは、誰もがデモを<br class="sm:hidden">
-      「開く・参加する・支援する」ことができる<br>
-      新しい時代の市民アクションプラットフォームです。
+    
+    <p class="text-xl md:text-2xl text-gray-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+      Demo Waveは、デモの<strong class="text-yellow-300">開催・参加・支援</strong>を通じて<br>
+      誰もが社会変革の当事者になれる、革新的なプラットフォームです
     </p>
-    <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-      <a href="#" class="bg-white text-black font-semibold px-6 py-3 rounded-full hover:bg-gray-200 transition">
-        App Storeでダウンロード
+    
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-16">
+      <a href="#" class="group bg-white text-gray-900 font-bold px-8 py-4 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-3">
+        <i class="fab fa-apple text-2xl"></i>
+        <div class="text-left">
+          <div class="text-xs text-gray-600">Download on the</div>
+          <div class="text-lg font-bold">App Store</div>
+        </div>
       </a>
-      <a href="#" class="bg-black text-white font-semibold px-6 py-3 rounded-full hover:bg-gray-800 transition">
-        Google Playでダウンロード
+      <a href="#" class="group bg-gray-900 text-white font-bold px-8 py-4 rounded-full hover:bg-gray-800 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-3">
+        <i class="fab fa-google-play text-2xl text-green-400"></i>
+        <div class="text-left">
+          <div class="text-xs text-gray-300">Get it on</div>
+          <div class="text-lg font-bold">Google Play</div>
+        </div>
       </a>
+    </div>
+    
+    <div class="animate-bounce-subtle">
+      <i class="fas fa-chevron-down text-2xl text-white opacity-70"></i>
     </div>
   </div>
 </section>
 
 <!-- About -->
-<section id="about" class="py-20 bg-white">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h3 class="text-3xl font-bold mb-6">Demo Waveとは？</h3>
-    <p class="text-gray-700 text-lg leading-relaxed">
-      Demo Waveは、誰でも簡単にデモを開催でき、参加者が現地に行くだけで参加を証明できる<br>
-      仕組みを提供するモバイルアプリです。さらに、デモ参加者には支援金が配布され、<br>
-      応援する人の想いが直接届く、新しい社会参加の形を実現します。
-    </p>
+<section id="about" class="py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Demo Waveとは？</h2>
+      <div class="w-24 h-1 gradient-bg mx-auto mb-8"></div>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        市民の声を社会に届けるための、まったく新しいプラットフォーム
+      </p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="space-y-8">
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-map-marker-alt text-white text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">位置情報で簡単参加</h3>
+            <p class="text-gray-600">デモ会場に行くだけで、GPSで自動的に参加が証明されます</p>
+          </div>
+        </div>
+        
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-heart text-white text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">想いが直接届く支援金</h3>
+            <p class="text-gray-600">応援者からの支援金が参加者に直接分配されます</p>
+          </div>
+        </div>
+        
+        <div class="flex items-start space-x-4">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-shield-alt text-white text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">プライバシー保護</h3>
+            <p class="text-gray-600">実名登録不要。ニックネームで安心して参加できます</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="relative">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 transform rotate-3 hover:rotate-0 transition-all duration-500">
+          <div class="space-y-6">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                <i class="fas fa-bullhorn text-white"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-900">気候変動対策デモ</h4>
+                <p class="text-sm text-gray-500">2024/12/15 14:00</p>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-600">参加者</span>
+                <span class="text-sm font-bold text-purple-600">1,247人</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-gray-600">支援金</span>
+                <span class="text-sm font-bold text-green-600">¥324,500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Features -->
-<section id="features" class="py-20 bg-gray-50">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-center mb-16">特徴</h3>
-    <div class="grid md:grid-cols-3 gap-12 text-center">
-      <div class="px-4">
-        <img src="/demo_wave/images/lp/demo_hold.png" class="mx-auto mb-4" alt="開催アイコン">
-        <h4 class="text-xl font-semibold mb-2">デモを開催</h4>
-        <p class="text-gray-600">アプリ上で誰でも簡単にデモを企画できます。</p>
+<section id="features" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">特徴</h2>
+      <div class="w-24 h-1 gradient-bg mx-auto mb-8"></div>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        3つのシンプルなアクションで、誰もが社会変革の主役に
+      </p>
+    </div>
+    
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- 開催 -->
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+        <div class="text-center">
+          <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-3">
+            <i class="fas fa-plus text-white text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">デモを開催</h3>
+          <p class="text-gray-600 mb-6">アプリ上で簡単にデモを企画。想いを形にして人々に伝えましょう。</p>
+          
+          <div class="space-y-3 text-left">
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">無料でデモを作成</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">日時・場所を自由設定</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">参加者数をリアルタイムで確認</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="px-4">
-        <img src="/demo_wave/images/lp/demo_hold.png" class="mx-auto mb-4" alt="参加アイコン">
-        <h4 class="text-xl font-semibold mb-2">デモに参加</h4>
-        <p class="text-gray-600">位置情報を使って現地で「参加」するだけ。簡単で安心。</p>
+      
+      <!-- 参加 -->
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+        <div class="text-center">
+          <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+            <i class="fas fa-map-marker-alt text-white text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">デモに参加</h3>
+          <p class="text-gray-600 mb-6">位置情報で現地での参加を証明。簡単で安全な参加方法です。</p>
+          
+          <div class="space-y-3 text-left">
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">GPSで自動参加認証</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">実名不要でプライバシー保護</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">参加証明書を自動発行</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="px-4">
-        <img src="/demo_wave/images/lp/demo_hold.png" class="mx-auto mb-4" alt="支援アイコン">
-        <h4 class="text-xl font-semibold mb-2">支援を贈る/支援が届く</h4>
-        <p class="text-gray-600">活動者に支援金を贈ることができます。誰もが活動の当事者になる。</p>
+      
+      <!-- 支援 -->
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+        <div class="text-center">
+          <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-heart text-white text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">支援を送る/受け取る</h3>
+          <p class="text-gray-600 mb-6">想いを形にした支援金が、参加者に直接届きます。</p>
+          
+          <div class="space-y-3 text-left">
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">少額から支援可能</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">透明な資金配分システム</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-check text-green-500"></i>
+              <span class="text-sm text-gray-600">手数料無料で支援金を受取</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats" class="py-24 gradient-bg">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">サービス実績</h2>
+      <p class="text-xl text-purple-100 max-w-2xl mx-auto">
+        多くの方々にご利用いただいています
+      </p>
+    </div>
+    
+    <div class="grid md:grid-cols-4 gap-8 text-center text-white">
+      <div class="group">
+        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">2,847</div>
+        <div class="text-purple-200">開催されたデモ</div>
+      </div>
+      <div class="group">
+        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">45,293</div>
+        <div class="text-purple-200">参加者数</div>
+      </div>
+      <div class="group">
+        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">¥12.7M</div>
+        <div class="text-purple-200">総支援金額</div>
+      </div>
+      <div class="group">
+        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">127</div>
+        <div class="text-purple-200">都道府県で利用</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq" class="bg-white py-20">
-  <div class="max-w-3xl mx-auto px-4">
-    <h3 class="text-3xl font-bold mb-8 text-center">よくある質問</h3>
+<section id="faq" class="bg-gray-50 py-24">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">よくある質問</h2>
+      <div class="w-24 h-1 gradient-bg mx-auto mb-8"></div>
+      <p class="text-xl text-gray-600">皆さまからいただくご質問と回答</p>
+    </div>
+    
     <div class="space-y-6">
-      <div>
-        <h4 class="font-semibold text-lg text-blue-700">Q. デモへの参加方法は？</h4>
-        <p class="text-gray-700">開催地に行き、「参加」ボタンを押すだけ。GPS情報で参加が認定されます。</p>
+      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold">Q</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-xl text-gray-900 mb-3">デモへの参加方法は？</h3>
+            <p class="text-gray-600 leading-relaxed">開催地に行き、「参加」ボタンを押すだけ。GPS情報で参加が認定され、リアルタイムで参加者数に反映されます。</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <h4 class="font-semibold text-lg text-blue-700">Q. 支援金はどうやって届くの？</h4>
-        <p class="text-gray-700">参加認定されたユーザーに、毎月集計後、自動的に分配されます。</p>
+      
+      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold">Q</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-xl text-gray-900 mb-3">支援金はどうやって届くの？</h3>
+            <p class="text-gray-600 leading-relaxed">参加認定されたユーザーに、毎月集計後に自動的に分配されます。支援金の使用途は自由で、手数料は一切かかりません。</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <h4 class="font-semibold text-lg text-blue-700">Q. 実名での登録が必要？</h4>
-        <p class="text-gray-700">いいえ。ニックネームとメールアドレスで利用可能です。</p>
+      
+      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold">Q</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-xl text-gray-900 mb-3">実名での登録が必要？</h3>
+            <p class="text-gray-600 leading-relaxed">いいえ。ニックネームとメールアドレスで利用可能です。プライバシーを守りながら、安心して社会参加できます。</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold">Q</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-xl text-gray-900 mb-3">デモ開催に費用はかかる？</h3>
+            <p class="text-gray-600 leading-relaxed">デモの企画・開催は完全無料です。想いを形にし、人々に伝えることにコストは一切かかりません。</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold">Q</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-xl text-gray-900 mb-3">安全性は大丈夫？</h3>
+            <p class="text-gray-600 leading-relaxed">位置情報は参加認証のためのみ使用し、個人を特定できる情報は一切収集しません。SSL暗号化でデータを保護しています。</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Download -->
-<section id="download" class="bg-blue-50 py-20 text-center">
-  <div class="max-w-xl mx-auto px-4">
-    <h3 class="text-3xl font-bold mb-6">今すぐ始めよう</h3>
-    <p class="mb-8 text-gray-600 text-lg">あなたの想いが、社会を動かす力になる。</p>
-    <div class="flex justify-center space-x-4">
-      <a href="#"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" class="h-14"></a>
-      <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="h-14"></a>
+<section id="download" class="py-24 gradient-bg relative overflow-hidden">
+  <!-- Background decoration -->
+  <div class="absolute inset-0">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-white bg-opacity-10 rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-white bg-opacity-10 rounded-full transform -translate-x-1/2 translate-y-1/2"></div>
+  </div>
+  
+  <div class="relative max-w-4xl mx-auto px-4 text-center text-white">
+    <div class="mb-12">
+      <h2 class="text-4xl md:text-6xl font-bold mb-6">今すぐ始めよう</h2>
+      <p class="text-xl md:text-2xl text-purple-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+        あなたの<strong class="text-yellow-300">声</strong>が、社会を<strong class="text-yellow-300">変える力</strong>になる。
+      </p>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-12">
+      <a href="#" class="group bg-black bg-opacity-30 backdrop-blur-sm border border-white border-opacity-20 text-white font-bold px-8 py-4 rounded-2xl hover:bg-opacity-50 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-4">
+        <i class="fab fa-apple text-3xl"></i>
+        <div class="text-left">
+          <div class="text-sm text-purple-200">Download on the</div>
+          <div class="text-xl font-bold">App Store</div>
+        </div>
+      </a>
+      
+      <a href="#" class="group bg-black bg-opacity-30 backdrop-blur-sm border border-white border-opacity-20 text-white font-bold px-8 py-4 rounded-2xl hover:bg-opacity-50 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 flex items-center space-x-4">
+        <i class="fab fa-google-play text-3xl text-green-400"></i>
+        <div class="text-left">
+          <div class="text-sm text-purple-200">Get it on</div>
+          <div class="text-xl font-bold">Google Play</div>
+        </div>
+      </a>
+    </div>
+    
+    <div class="text-center">
+      <p class="text-purple-100 mb-4">または、Webブラウザからアクセス</p>
+      <a href="/demo_wave/login" class="inline-block bg-white text-purple-600 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl">
+        Web版で始める
+      </a>
     </div>
   </div>
 </section>
 
 <!-- Footer -->
-<footer class="bg-white border-t py-6 text-center text-sm text-gray-500">
-  &copy; 2025 Demo Wave. All rights reserved.
+<footer class="bg-gray-900 text-white py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-12">
+      <div class="md:col-span-2">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
+            <i class="fas fa-bullhorn text-white text-xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
+        </div>
+        <p class="text-gray-400 mb-6 max-w-md leading-relaxed">
+          市民の声を社会に届けるための、新しいプラットフォーム。あなたの参加が、社会を変える力になります。
+        </p>
+        <div class="flex space-x-4">
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-all duration-300">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-all duration-300">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-all duration-300">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-bold mb-6">サービス</h4>
+        <ul class="space-y-3 text-gray-400">
+          <li><a href="#features" class="hover:text-white transition-colors">特徴</a></li>
+          <li><a href="#stats" class="hover:text-white transition-colors">実績</a></li>
+          <li><a href="/demo_wave/login" class="hover:text-white transition-colors">ログイン</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">アプリダウンロード</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-lg font-bold mb-6">サポート</h4>
+        <ul class="space-y-3 text-gray-400">
+          <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">プライバシーポリシー</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">利用規約</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">お問い合わせ</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 Demo Wave. All rights reserved. | Made with ❤️ for social change</p>
+    </div>
+  </div>
 </footer>
+
+<script>
+  // スムーススクロール
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  // ヘッダーのスクロール効果
+  window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+      header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+    } else {
+      header.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+    }
+  });
+  
+  // 統計数値のカウントアップアニメーション
+  function animateNumbers() {
+    const stats = [
+      { element: document.querySelector('#stats .grid > div:nth-child(1) .text-5xl'), target: 2847, suffix: '' },
+      { element: document.querySelector('#stats .grid > div:nth-child(2) .text-5xl'), target: 45293, suffix: '' },
+      { element: document.querySelector('#stats .grid > div:nth-child(3) .text-5xl'), target: 12.7, suffix: 'M' },
+      { element: document.querySelector('#stats .grid > div:nth-child(4) .text-5xl'), target: 127, suffix: '' }
+    ];
+    
+    stats.forEach(stat => {
+      if (stat.element) {
+        let current = 0;
+        const increment = stat.target / 50;
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= stat.target) {
+            current = stat.target;
+            clearInterval(timer);
+          }
+          
+          if (stat.suffix === 'M') {
+            stat.element.textContent = '¥' + current.toFixed(1) + stat.suffix;
+          } else {
+            stat.element.textContent = Math.floor(current).toLocaleString() + stat.suffix;
+          }
+        }, 50);
+      }
+    });
+  }
+  
+  // スクロール時に統計セクションが見えたらアニメーション開始
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateNumbers();
+        observer.unobserve(entry.target);
+      }
+    });
+  });
+  
+  const statsSection = document.querySelector('#stats');
+  if (statsSection) {
+    observer.observe(statsSection);
+  }
+</script>
 
 </body>
 </html>

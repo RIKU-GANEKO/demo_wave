@@ -41,6 +41,7 @@ class DemoService {
 	}
 
 	ModelAndView createByGet(DemoCreateGetContext demoCreateGetContext) {
+		demoCreateGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
 		demoCreateGetContext.setModelAndView();
 		return demoCreateGetContext.getModelAndView();
 	}
@@ -57,6 +58,7 @@ class DemoService {
 
 	ModelAndView createConfirmByGet(
 			DemoCreateConfirmGetContext demoCreateConfirmGetContext) {
+		demoCreateConfirmGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
 		demoCreateConfirmGetContext.setModelAndView();
 		return demoCreateConfirmGetContext.getModelAndView();
 	}

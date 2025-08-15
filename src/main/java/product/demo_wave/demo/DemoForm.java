@@ -1,7 +1,8 @@
 package product.demo_wave.demo;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,13 +20,17 @@ record DemoForm(
     @NotBlank(message = "内容を入力してください")
     String content,
 
-    @NotNull(message = "公開日時を設定してください")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime announcementTime,
+    @NotNull(message = "開催日を設定してください")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate demoDate,
 
-    @NotNull(message = "デモ日時を設定してください")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime demoDate,
+    @NotNull(message = "開始時間を設定してください")
+    @DateTimeFormat(pattern = "HH:mm")
+    LocalTime demoStartTime,
+
+    @NotNull(message = "終了時間を設定してください")
+    @DateTimeFormat(pattern = "HH:mm")
+    LocalTime demoEndTime,
 
     @Size(max = 255, message = "デモ会場は255文字以内にしてください")
     @NotBlank(message = "デモ会場を入力してください")
@@ -37,5 +42,11 @@ record DemoForm(
 
     BigDecimal demoAddressLatitude,
 
-    BigDecimal demoAddressLongitude
+    BigDecimal demoAddressLongitude,
+
+    @NotNull(message = "カテゴリを選択してください")
+    Integer categoryId,
+
+    @NotNull(message = "都道府県を選択してください")
+    Integer prefectureId
 ) {}

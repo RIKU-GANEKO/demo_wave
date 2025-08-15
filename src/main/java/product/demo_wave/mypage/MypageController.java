@@ -32,9 +32,10 @@ class MypageController {
 		return mypageService.rootByGet(mypageGetContext);
 	}
 
-	@GetMapping("{demoId}")
-	ModelAndView userByGet(ModelAndView mv) {
+	@GetMapping("{userId}")
+	ModelAndView userByGet(@PathVariable Integer userId, ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		mypageGetUserContext.setUserId(userId);
 		return mypageService.userByGet(mypageGetUserContext);
 	}
 

@@ -4,6 +4,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import product.demo_wave.entity.Category;
+import product.demo_wave.entity.Prefecture;
 
 @RequiredArgsConstructor
 class DemoCreateConfirmGetContext {
@@ -13,9 +17,18 @@ class DemoCreateConfirmGetContext {
   @Getter
   private final ModelAndView modelAndView;
 
+  @Setter
+  private DemoFacadeDBLogic demoFacadeDBLogic;
+
   void setModelAndView() {
-    this.modelAndView.addObject(demoForm);
-    this.modelAndView.setViewName("demoCreateConfirm");
+    // Get category and prefecture names for display
+    Category category = demoFacadeDBLogic.fetchCategory(demoForm.categoryId());
+    Prefecture prefecture = demoFacadeDBLogic.fetchPrefecture(demoForm.prefectureId());
+    
+    this.modelAndView.addObject("demoForm", demoForm);
+    this.modelAndView.addObject("selectedCategoryName", category.getName());
+    this.modelAndView.addObject("selectedPrefectureName", prefecture.getName());
+    this.modelAndView.setViewName("demo/demoCreateConfirm");
   }
 
 }

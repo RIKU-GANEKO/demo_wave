@@ -23,7 +23,7 @@ class DemoCreateConfirmPostContext {
   }
 
   void setModelAndView() {
-    this.redirectAttributes.addFlashAttribute(demoForm);
+    this.redirectAttributes.addFlashAttribute("demoForm", demoForm);
     this.modelAndView.setViewName("redirect:/demo/create/complete");
   }
 

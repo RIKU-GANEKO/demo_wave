@@ -50,7 +50,7 @@ INSERT INTO comment (demo_id, content, user_id, created_at, updated_at, deleted_
 INSERT INTO participant (demo_id, user_id, created_at, updated_at)
 VALUES (5, 1, NOW(), NOW());
 
-カテゴリーデータを挿入
+-- カテゴリーデータを挿入
 INSERT INTO category (name, image_url, created_at, updated_at) VALUES
 ('environment', '/images/category/environment.png', NOW(), NOW()),
 ('anti_war', '/images/category/anti_war.png', NOW(), NOW()),

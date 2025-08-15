@@ -14,7 +14,7 @@ class DemoCreateCompleteGetContext {
   private final ModelAndView modelAndView;
 
   void setModelAndView() {
-    this.modelAndView.addObject("demo", demoForm);
-    this.modelAndView.setViewName("demoCreateComplete");
+    this.modelAndView.addObject("demoForm", demoForm);
+    this.modelAndView.setViewName("demo/demoCreateComplete");
   }
 }
