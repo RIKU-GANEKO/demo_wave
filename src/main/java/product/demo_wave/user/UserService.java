@@ -71,9 +71,7 @@ class UserService {
         return userCreateConfirmPostContext.getModelAndView();
     }
 
-    void completeByGet(UserCompleteGetContext userCompleteGetContext) {
-        userCompleteGetContext.setModelAndView();
-    }
+    // 完了画面は削除 - 登録後は直接デモ一覧に遷移
 //
 //    void editByGet(UserEditGetContext userEditGetContext) throws DataAccessException, NoSuchElementException {
 //        userEditGetContext.setUserFacadeDBLogic(userFacadeDBLogic);

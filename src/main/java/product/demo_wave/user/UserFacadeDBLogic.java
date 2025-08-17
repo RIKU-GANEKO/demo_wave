@@ -17,6 +17,7 @@ import product.demo_wave.entity.User;
 import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.RolesRepository;
 import product.demo_wave.repository.UserRepository;
+import product.demo_wave.service.SupabaseService;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
 //import jp.fs.toolkit.logger.Logger;
@@ -30,6 +31,7 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
   private final UserRepository userRepository;
   private final AccountRepository accountRepository;
   private final RolesRepository roleRepository;
+  private final SupabaseService supabaseService;
 
   private final PasswordEncoder passwordEncoder;
 
@@ -78,8 +80,39 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //    logger.info("New user demo : " + user.toString());
     try {
 //      logger.info("Start creating user...");
+      // MySQLにユーザーを保存
       userRepository.saveAndFlush(user);
-//      logger.info("User created successfully");
+      
+      // Supabaseにもユーザーを作成
+      String supabaseUserId = supabaseService.createUser(
+          userForm.email(), 
+          userForm.password(), 
+          userForm.name()
+      );
+      
+      // SupabaseのユーザーIDをMySQLのユーザーに保存
+      user.setFirebaseUid(supabaseUserId);
+      
+      // プロフィール画像がアップロードされている場合はSupabase Storageに保存
+      System.out.println("プロフィール画像チェック: " + 
+        (userForm.profileImage() != null ? "存在(" + userForm.profileImage().getOriginalFilename() + ")" : "null") +
+        ", isEmpty: " + (userForm.profileImage() != null ? userForm.profileImage().isEmpty() : "N/A"));
+      
+      if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
+        System.out.println("プロフィール画像のアップロードを開始: " + userForm.profileImage().getOriginalFilename());
+        String profileImageUrl = supabaseService.uploadProfileImage(
+            userForm.profileImage(), 
+            supabaseUserId
+        );
+        user.setProfileImagePath(profileImageUrl);
+        System.out.println("プロフィール画像のアップロード完了: " + profileImageUrl);
+      } else {
+        System.out.println("プロフィール画像はアップロードされていません");
+      }
+      
+      userRepository.saveAndFlush(user);
+      
+//      logger.info("User created successfully in both MySQL and Supabase");
     } catch (Exception e) {
 //      logger.error("Error occurred while creating user " + user.getName() + " : " + e.getMessage());
       throw e;
@@ -91,6 +124,9 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //    user.setId(userForm.id());
     user.setName(userForm.name());
     user.setEmail(userForm.email());
+    
+    // firebase_uidに一時的なダミー値を設定（のちにFirebase認証で更新）
+    user.setFirebaseUid("temp_" + System.currentTimeMillis() + "_" + userForm.email().hashCode());
 
 //    Account account = accountRepository.findById(userForm.accountId())
 //        .orElseThrow(() -> new NoSuchElementException("Account not found."));

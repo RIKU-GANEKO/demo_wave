@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import product.demo_wave.AppProperties;
 
 import lombok.AllArgsConstructor;
@@ -70,8 +72,8 @@ class UserController {
      * 入力内容のチェックを行い、問題がなければ登録確認画面に遷移する
      */
     @PostMapping("/signup")
-    ModelAndView createByPost(@Validated UserForm userForm, BindingResult bindingResult, ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
-        UserCreatePostContext userCreatePostContext = new UserCreatePostContext(userForm, bindingResult, modelAndView, redirectAttributes);
+    ModelAndView createByPost(@Validated UserForm userForm, BindingResult bindingResult, ModelAndView modelAndView, RedirectAttributes redirectAttributes, HttpSession session) {
+        UserCreatePostContext userCreatePostContext = new UserCreatePostContext(userForm, bindingResult, modelAndView, redirectAttributes, session);
         return userService.createByPost(userCreatePostContext);
     }
 
@@ -87,24 +89,24 @@ class UserController {
     }
 
     /**
-     * 登録処理の実行。登録後は完了画面に遷移する
+     * 登録処理の実行。登録後はサインアップ成功画面に遷移する
      */
     @PostMapping("/create/confirm")
-    ModelAndView createConfirmByPost(@Validated UserForm userForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes) throws DataAccessException, NoSuchElementException {
-        UserCreateConfirmPostContext userCreateConfirmPostContext = new UserCreateConfirmPostContext(userForm, modelAndView, redirectAttributes);
+    ModelAndView createConfirmByPost(@Validated UserForm userForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes, HttpServletResponse response, HttpSession session) throws DataAccessException, NoSuchElementException {
+        UserCreateConfirmPostContext userCreateConfirmPostContext = new UserCreateConfirmPostContext(userForm, modelAndView, redirectAttributes, response, session);
         return userService.createConfirmByPost(userCreateConfirmPostContext);
     }
 
     /**
-     * 完了画面の表示。
-     * <li>一覧へ戻るボタンを押下すると一覧画面に遷移する
+     * サインアップ成功画面の表示
      */
-    @GetMapping("/create/complete")
-    ModelAndView createCompleteByGet(UserForm userForm, ModelAndView modelAndView) {
-        UserCompleteGetContext userCreateCompleteGetContext = new UserCompleteGetContext(userForm, modelAndView);
-        userService.completeByGet(userCreateCompleteGetContext);
-        return userCreateCompleteGetContext.getModelAndView();
+    @GetMapping("/signup/success")
+    ModelAndView signupSuccess(ModelAndView modelAndView) {
+        modelAndView.setViewName("user/userCreateSuccess");
+        return modelAndView;
     }
+
+    // 完了画面は削除 - 登録後は直接デモ一覧に遷移
 //
 //    /**
 //     * 編集画面の表示。

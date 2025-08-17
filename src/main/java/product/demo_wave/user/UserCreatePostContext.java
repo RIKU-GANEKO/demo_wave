@@ -4,6 +4,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ class UserCreatePostContext {
     private final ModelAndView modelAndView;
 
     private final RedirectAttributes redirectAttributes;
+    private final HttpSession session;
 
     @Setter
     private UserFacadeDBLogic userFacadeDBLogic;
@@ -48,10 +50,22 @@ class UserCreatePostContext {
 //        modelAndView.addObject("accountId", userForm.accountId());
 //        modelAndView.addObject("accountName", userForm.accountName());
         modelAndView.addObject("userForm", userForm);
-        modelAndView.setViewName("userCreate");
+        modelAndView.setViewName("user/signup");
     }
 
     void setModelAndView() {
+        // プロフィール画像をセッションに保存（バイト配列として）
+        if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
+            try {
+                session.setAttribute("profileImageBytes", userForm.profileImage().getBytes());
+                session.setAttribute("profileImageName", userForm.profileImage().getOriginalFilename());
+                session.setAttribute("profileImageContentType", userForm.profileImage().getContentType());
+                System.out.println("プロフィール画像をセッションに保存: " + userForm.profileImage().getOriginalFilename());
+            } catch (Exception e) {
+                System.err.println("プロフィール画像の保存に失敗: " + e.getMessage());
+            }
+        }
+        
         this.redirectAttributes.addFlashAttribute("userForm", this.userForm);
         this.modelAndView.setViewName("redirect:/user/create/confirm");
     }
