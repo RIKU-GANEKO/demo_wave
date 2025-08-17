@@ -1,6 +1,5 @@
 package product.demo_wave.mypage;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,16 +8,13 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
-import product.demo_wave.entity.Account;
 import product.demo_wave.entity.Demo;
 //import product.demo_wave.demo.CommentForm;
 //import product.demo_wave.demo.DemoForm;
 import product.demo_wave.entity.User;
 import product.demo_wave.logic.GetUserLogic;
-import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.DemoRepository;
 import product.demo_wave.repository.ParticipantRepository;
-import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.repository.UserRepository;
 
 @Component
@@ -26,8 +22,6 @@ import product.demo_wave.repository.UserRepository;
 class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     private final DemoRepository demoRepository;
     private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
-    private final PaymentRepository paymentRepository;
     private final ParticipantRepository participantRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
@@ -38,27 +32,11 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
         return user.orElse(new User());
     }
 
-    @CustomRetry
-    Account fetchAccount() {
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
-        Optional<User> user = userRepository.findById(userId);
-        Integer account_id = user.get().getAccount().getId();
-        Optional<Account> account = accountRepository.findById(account_id);
-        return account.orElse(new Account());
-    }
-
     // ログイン中のユーザーが参加した(する予定の)デモ活動を取得
     @CustomRetry
     List<Demo> fetchParticipatedDemo() {
         Integer userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findParticipatedDemoByUserId(userId);
-    }
-
-    // ログイン中のユーザーが今月支援した金額を取得
-    @CustomRetry
-    BigDecimal fetchSendDonateAmount() {
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
-        return paymentRepository.getTotalDonatedAmountByUserForCurrentMonth(fetchUser());
     }
 
 //    @CustomRetry

@@ -18,9 +18,7 @@ class MypageService {
 	ModelAndView userByGet(MypageGetUserContext mypageGetUserContext) {
 		mypageGetUserContext.setMypageFacadeDBLogic(mypageFacadeDBLogic);
 		mypageGetUserContext.fetchUser();
-		mypageGetUserContext.fetchAccount();
 		mypageGetUserContext.fetchParticipatedDemo();
-		mypageGetUserContext.fetchSendDonateAmount();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}

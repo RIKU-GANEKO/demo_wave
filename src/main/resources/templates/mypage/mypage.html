@@ -103,7 +103,7 @@
   </div>
 
   <!-- Stats Overview -->
-  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
+  <div class="grid md:grid-cols-2 gap-6 mb-8 animate-fade-in">
     <!-- Participation Count -->
     <div class="stats-card rounded-2xl p-6 text-white">
       <div class="flex items-center justify-between">
@@ -112,28 +112,6 @@
           <div class="text-sm opacity-90">参加デモ数</div>
         </div>
         <i class="fas fa-users text-2xl opacity-75"></i>
-      </div>
-    </div>
-    
-    <!-- Sent Donations -->
-    <div class="stats-card-alt rounded-2xl p-6 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-3xl font-bold">¥<span th:text="${sendDonateAmount}">12,500</span></div>
-          <div class="text-sm opacity-90">送金総額</div>
-        </div>
-        <i class="fas fa-hand-holding-heart text-2xl opacity-75"></i>
-      </div>
-    </div>
-    
-    <!-- Received Donations -->
-    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-3xl font-bold">¥<span th:text="${receiveDonateAmount}">8,000</span></div>
-          <div class="text-sm opacity-90">受取総額</div>
-        </div>
-        <i class="fas fa-coins text-2xl opacity-75"></i>
       </div>
     </div>
     
@@ -178,44 +156,6 @@
         </div>
       </div>
 
-      <!-- Bank Information -->
-      <div class="bg-white rounded-2xl p-6 shadow-lg animate-fade-in">
-        <div class="flex items-center mb-6">
-          <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-university text-white"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-900">口座情報</h2>
-        </div>
-        
-        <div class="space-y-4">
-          <div class="bg-green-50 rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">銀行名</div>
-            <div class="font-semibold text-gray-900" th:text="${account.bankName}">〇〇銀行</div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-green-50 rounded-xl p-4">
-              <div class="text-sm text-gray-500 mb-1">銀行コード</div>
-              <div class="text-gray-900" th:text="${account.bankCode}">0001</div>
-            </div>
-            <div class="bg-green-50 rounded-xl p-4">
-              <div class="text-sm text-gray-500 mb-1">支店コード</div>
-              <div class="text-gray-900" th:text="${account.branchCode}">001</div>
-            </div>
-          </div>
-          <div class="bg-green-50 rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">支店名</div>
-            <div class="text-gray-900" th:text="${account.branchName}">〇〇支店</div>
-          </div>
-          <div class="bg-green-50 rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">口座番号</div>
-            <div class="text-gray-900 font-mono" th:text="${account.accountNumber}">1234567</div>
-          </div>
-          <div class="bg-green-50 rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">口座名義</div>
-            <div class="text-gray-900" th:text="${account.accountHolder}">デモ　タロウ</div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Activity Section -->
