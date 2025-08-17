@@ -72,14 +72,23 @@
     <nav class="space-x-8 hidden md:flex text-sm font-medium items-center">
       <a href="#about" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">概要</a>
       <a href="#features" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">特徴</a>
-      <a href="#stats" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">実績</a>
       <a href="#faq" class="text-gray-700 hover:text-purple-600 transition-all duration-300 hover:scale-105">FAQ</a>
       <a href="/demo_wave/login" class="gradient-bg text-white px-6 py-2 rounded-full hover:scale-105 transition-all duration-300 shadow-lg">ログイン</a>
     </nav>
     <!-- Mobile menu button -->
-    <button class="md:hidden text-gray-700 hover:text-purple-600">
+    <button id="mobile-menu-button" class="md:hidden text-gray-700 hover:text-purple-600">
       <i class="fas fa-bars text-xl"></i>
     </button>
+  </div>
+  
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+    <div class="px-4 py-4 space-y-3">
+      <a href="#about" class="block text-gray-700 hover:text-purple-600 transition-colors py-2">概要</a>
+      <a href="#features" class="block text-gray-700 hover:text-purple-600 transition-colors py-2">特徴</a>
+      <a href="#faq" class="block text-gray-700 hover:text-purple-600 transition-colors py-2">FAQ</a>
+      <a href="/demo_wave/login" class="block gradient-bg text-white px-4 py-2 rounded-lg text-center font-medium">ログイン</a>
+    </div>
   </div>
 </header>
 
@@ -97,11 +106,6 @@
   </div>
 
   <div class="relative z-10 max-w-6xl mx-auto px-6 text-center text-white animate-fade-in">
-    <div class="mb-8">
-      <span class="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6">
-        🚀 市民アクションの新時代
-      </span>
-    </div>
     
     <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-8">
       あなたの<span class="text-yellow-300">声</span>が<br>
@@ -302,36 +306,6 @@
   </div>
 </section>
 
-<!-- Stats -->
-<section id="stats" class="py-24 gradient-bg">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">サービス実績</h2>
-      <p class="text-xl text-purple-100 max-w-2xl mx-auto">
-        多くの方々にご利用いただいています
-      </p>
-    </div>
-    
-    <div class="grid md:grid-cols-4 gap-8 text-center text-white">
-      <div class="group">
-        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">2,847</div>
-        <div class="text-purple-200">開催されたデモ</div>
-      </div>
-      <div class="group">
-        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">45,293</div>
-        <div class="text-purple-200">参加者数</div>
-      </div>
-      <div class="group">
-        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">¥12.7M</div>
-        <div class="text-purple-200">総支援金額</div>
-      </div>
-      <div class="group">
-        <div class="text-5xl font-bold mb-2 group-hover:scale-110 transition-all duration-300">127</div>
-        <div class="text-purple-200">都道府県で利用</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FAQ -->
 <section id="faq" class="bg-gray-50 py-24">
@@ -480,7 +454,6 @@
         <h4 class="text-lg font-bold mb-6">サービス</h4>
         <ul class="space-y-3 text-gray-400">
           <li><a href="#features" class="hover:text-white transition-colors">特徴</a></li>
-          <li><a href="#stats" class="hover:text-white transition-colors">実績</a></li>
           <li><a href="/demo_wave/login" class="hover:text-white transition-colors">ログイン</a></li>
           <li><a href="#" class="hover:text-white transition-colors">アプリダウンロード</a></li>
         </ul>
@@ -515,6 +488,12 @@
           block: 'start'
         });
       }
+      
+      // モバイルメニューを閉じる
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu) {
+        mobileMenu.classList.add('hidden');
+      }
     });
   });
   
@@ -528,50 +507,38 @@
     }
   });
   
-  // 統計数値のカウントアップアニメーション
-  function animateNumbers() {
-    const stats = [
-      { element: document.querySelector('#stats .grid > div:nth-child(1) .text-5xl'), target: 2847, suffix: '' },
-      { element: document.querySelector('#stats .grid > div:nth-child(2) .text-5xl'), target: 45293, suffix: '' },
-      { element: document.querySelector('#stats .grid > div:nth-child(3) .text-5xl'), target: 12.7, suffix: 'M' },
-      { element: document.querySelector('#stats .grid > div:nth-child(4) .text-5xl'), target: 127, suffix: '' }
-    ];
+  // ハンバーガーメニューの機能
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
     
-    stats.forEach(stat => {
-      if (stat.element) {
-        let current = 0;
-        const increment = stat.target / 50;
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= stat.target) {
-            current = stat.target;
-            clearInterval(timer);
-          }
-          
-          if (stat.suffix === 'M') {
-            stat.element.textContent = '¥' + current.toFixed(1) + stat.suffix;
-          } else {
-            stat.element.textContent = Math.floor(current).toLocaleString() + stat.suffix;
-          }
-        }, 50);
-      }
-    });
-  }
-  
-  // スクロール時に統計セクションが見えたらアニメーション開始
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateNumbers();
-        observer.unobserve(entry.target);
-      }
-    });
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+        
+        // アイコンの切り替え
+        const icon = mobileMenuButton.querySelector('i');
+        if (mobileMenu.classList.contains('hidden')) {
+          icon.classList.remove('fa-times');
+          icon.classList.add('fa-bars');
+        } else {
+          icon.classList.remove('fa-bars');
+          icon.classList.add('fa-times');
+        }
+      });
+      
+      // モバイルメニューのリンクがクリックされたらメニューを閉じる
+      const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+      mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.add('hidden');
+          const icon = mobileMenuButton.querySelector('i');
+          icon.classList.remove('fa-times');
+          icon.classList.add('fa-bars');
+        });
+      });
+    }
   });
-  
-  const statsSection = document.querySelector('#stats');
-  if (statsSection) {
-    observer.observe(statsSection);
-  }
 </script>
 
 </body>
