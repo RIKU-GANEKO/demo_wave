@@ -182,7 +182,184 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Supabase SDK (一時的に無効化) -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+  // 設定をサーバーから動的に取得
+  let supabase;
+  let config;
+
+  async function initializeSupabase() {
+    try {
+      const response = await fetch('/demo_wave/api/config/supabase');
+      config = await response.json();
+      
+      supabase = createClient(config.url, config.anonKey);
+      console.log('Supabase initialized with config:', config);
+    } catch (error) {
+      console.error('Failed to initialize Supabase:', error);
+    }
+  }
+
+  // 初期化
+  await initializeSupabase();
+  
+  // URLパラメータをチェック（OAuth認証後のコールバック）
+  const urlParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  
+  console.log('Current URL:', window.location.href);
+  console.log('URL Params:', Object.fromEntries(urlParams));
+  console.log('Hash Params:', Object.fromEntries(hashParams));
+  
+  // OAuth認証後のセッション確認
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  console.log('Current session:', session);
+  console.log('Session error:', sessionError);
+  
+  // OAuth認証後にaccess_tokenがある場合の処理
+  if (hashParams.get('access_token')) {
+    console.log('OAuth callback detected, processing...');
+    
+    // セッションが既に存在するかチェック
+    if (session && session.user) {
+      console.log('Authentication successful!', session.user);
+      console.log('User email:', session.user.email);
+      console.log('User name:', session.user.user_metadata?.full_name);
+      
+      alert(`ログイン成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
+      
+      // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
+      document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+      document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+      
+      // URLのハッシュをクリーンアップしてからリダイレクト
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      setTimeout(() => {
+        // デモ一覧画面に遷移
+        window.location.href = '/demo_wave/demo';
+      }, 1000);
+    }
+  }
+  
+  // デバッグ情報をチェック（ページリロード後に確認可能）
+  const debugInfo = localStorage.getItem('oauth_debug');
+  const responseInfo = localStorage.getItem('oauth_response');
+  const errorInfo = localStorage.getItem('oauth_error');
+  
+  if (debugInfo) {
+    console.log('Previous OAuth Debug Info:', JSON.parse(debugInfo));
+  }
+  if (responseInfo) {
+    console.log('Previous OAuth Response:', JSON.parse(responseInfo));
+  }
+  if (errorInfo) {
+    console.log('Previous OAuth Error:', JSON.parse(errorInfo));
+  }
+
+  window.signInWithGoogle = async function() {
+    try {
+      console.log('=== Google OAuth Start ===');
+      
+      // 既存セッションをクリア
+      console.log('Clearing existing session...');
+      await supabase.auth.signOut();
+      
+      // Cookieもクリア
+      document.cookie = 'supabase-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'supabase-user-email=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      
+      console.log('Config:', config);
+      console.log('Redirect URL:', `${window.location.origin}/demo_wave/demo`);
+      console.log('Current URL:', window.location.href);
+      
+      // デバッグ用にローカルストレージに記録
+      localStorage.setItem('oauth_debug', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        config: config,
+        redirectUrl: `${window.location.origin}/demo_wave/demo`,
+        currentUrl: window.location.href
+      }));
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/demo_wave/demo`,
+          queryParams: {
+            prompt: 'select_account'  // Googleアカウント選択を強制
+          }
+        }
+      });
+
+      console.log('=== OAuth Response ===');
+      console.log('Data:', data);
+      console.log('Error:', error);
+      
+      // レスポンスもローカルストレージに記録
+      localStorage.setItem('oauth_response', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        data: data,
+        error: error
+      }));
+
+      if (error) {
+        console.error('Supabase Google login failed:', error);
+        alert(`Googleログインに失敗しました: ${error.message}`);
+      } else {
+        console.log('OAuth request sent successfully');
+      }
+    } catch (error) {
+      console.error('Error during Google sign-in:', error);
+      localStorage.setItem('oauth_error', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        error: error.message,
+        stack: error.stack
+      }));
+      alert(`Googleログインでエラーが発生しました: ${error.message}`);
+    }
+  };
+
+  // 自動リダイレクト機能を一時的に無効化
+  /*
+  let isRedirecting = false;
+  
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth state changed:', event, session);
+    
+    if (event === 'SIGNED_IN' && session && !isRedirecting) {
+      console.log('User signed in successfully:', session.user);
+      isRedirecting = true;
+      window.location.href = '/demo_wave/demo';
+    }
+    
+    if (event === 'SIGNED_OUT') {
+      console.log('User signed out');
+      isRedirecting = false;
+    }
+  });
+
+  let sessionChecked = false;
+  window.addEventListener('load', async () => {
+    if (sessionChecked) return;
+    sessionChecked = true;
+    
+    console.log('Page loaded, checking session...');
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('Current session:', session);
+    
+    if (session && !isRedirecting) {
+      console.log('Session found, redirecting to demo...');
+      isRedirecting = true;
+      window.location.href = '/demo_wave/demo';
+    }
+  });
+  */
+</script>
+
+<!-- Firebase SDK (バックアップ用 - 後で削除予定) -->
+<!--
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
@@ -200,13 +377,12 @@
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  window.signInWithGoogle = async function() {
+  window.signInWithGoogleFirebase = async function() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const token = await user.getIdToken();
       
-      // Springバックエンドにトークンを送信
       const response = await fetch('/demo_wave/api/auth/google', {
         method: 'POST',
         headers: {
@@ -222,7 +398,6 @@
       });
 
       if (response.ok) {
-        // ログイン成功時の処理
         window.location.href = '/demo_wave/demo';
       } else {
         console.error('Google login failed');
@@ -234,6 +409,7 @@
     }
   };
 </script>
+-->
 
 <script>
   // Input field animations

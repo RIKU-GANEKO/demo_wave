@@ -1,57 +1,451 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ユーザー登録</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/signup.css}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Wave - 新規登録</title>
+  <meta name="description" content="Demo Waveに新規登録して、あなたの声を社会に届けましょう">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .hover-scale {
+      transition: all 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+    
+    .input-focus {
+      transition: all 0.3s ease;
+    }
+    
+    .input-focus:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 50px -12px rgba(102, 126, 234, 0.25);
+    }
+  </style>
 </head>
-<body class="text-center">
+<body class="min-h-screen relative overflow-hidden">
 
-<main class="form-signup w-100 m-auto">
-    <form method="post" th:action="@{/user/signup}" th:object="${userForm}">
-        <img class="mb-4" th:src="@{/images/demoWaveLogo.png}" alt="Demo Wave Logo" width="98" height="121">
-        <h1 class="h3 mb-3 fw-normal">ユーザー登録</h1>
+<!-- Background -->
+<div class="absolute inset-0 gradient-bg"></div>
+<div class="absolute inset-0 bg-black bg-opacity-20"></div>
 
-        <!-- ユーザー名入力 -->
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingUsername" name="name"
-                   th:value="${userForm.name}" placeholder="ユーザー名">
-            <label for="floatingUsername">ユーザー名</label>
+<!-- Animated background elements -->
+<div class="absolute inset-0">
+  <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+  <div class="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+  <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+</div>
+
+<!-- Main Content -->
+<div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full">
+    <!-- Signup Card -->
+    <div class="glass-effect rounded-3xl p-8 shadow-2xl animate-fade-in">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 transform -rotate-3 hover:rotate-0 transition-all duration-300">
+          <i class="fas fa-bullhorn text-white text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gradient mb-2">Demo Wave</h1>
+        <p class="text-gray-600 text-sm">新しいアカウントを作成</p>
+      </div>
+
+      <!-- Signup Form -->
+      <form method="post" th:action="@{/user/signup}" th:object="${userForm}" enctype="multipart/form-data" class="space-y-6">
+        <!-- Name Field -->
+        <div class="space-y-2">
+          <label for="name" class="block text-sm font-medium text-gray-700">
+            <i class="fas fa-user text-purple-500 mr-2"></i>ユーザー名
+          </label>
+          <input 
+            type="text" 
+            name="name" 
+            id="name"
+            th:value="${userForm.name}"
+            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none bg-white/80"
+            placeholder="あなたの名前"
+            required
+          />
         </div>
 
-        <!-- メールアドレス入力 -->
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingUserEmail" name="email"
-                   th:value="${userForm.email}" placeholder="メールアドレス">
-            <label for="floatingUserEmail">メールアドレス</label>
+        <!-- Email Field -->
+        <div class="space-y-2">
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            <i class="fas fa-envelope text-purple-500 mr-2"></i>メールアドレス
+          </label>
+          <input 
+            type="email" 
+            name="email" 
+            id="email"
+            th:value="${userForm.email}"
+            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none bg-white/80"
+            placeholder="name@example.com"
+            required
+          />
         </div>
 
-        <!-- パスワード入力 -->
-        <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="floatingPassword" name="password"
-                   th:value="${userForm.password}" placeholder="パスワード">
-            <label for="floatingPassword">パスワード</label>
+        <!-- Password Field -->
+        <div class="space-y-2">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            <i class="fas fa-lock text-purple-500 mr-2"></i>パスワード
+          </label>
+          <input 
+            type="password" 
+            name="password" 
+            id="password"
+            th:value="${userForm.password}"
+            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none bg-white/80"
+            placeholder="8文字以上のパスワード"
+            required
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            <i class="fas fa-info-circle mr-1"></i>8文字以上で英数字を含めてください
+          </p>
         </div>
 
-        <!-- エラーメッセージ -->
-        <p th:if="${signupError}" th:text="${signupError}" class="text-danger"></p>
+        <!-- Profile Image Field -->
+        <div class="space-y-2">
+          <label for="profileImage" class="block text-sm font-medium text-gray-700">
+            <i class="fas fa-image text-purple-500 mr-2"></i>プロフィール画像 <span class="text-gray-400">(オプション)</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="file" 
+              name="profileImage" 
+              id="profileImage"
+              accept="image/*"
+              class="hidden"
+              onchange="handleFileSelect(event)"
+            />
+            <button 
+              type="button" 
+              onclick="document.getElementById('profileImage').click()"
+              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none bg-white/80 text-gray-600 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            >
+              <i class="fas fa-cloud-upload-alt mr-2"></i>
+              <span id="fileSelectText">画像を選択</span>
+            </button>
+          </div>
+          <div id="imagePreview" class="hidden mt-3">
+            <div class="relative inline-block">
+              <img id="previewImg" src="" alt="プレビュー" class="w-20 h-20 object-cover rounded-xl border border-gray-200"/>
+              <button 
+                type="button" 
+                onclick="removeImage()"
+                class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">
+            <i class="fas fa-info-circle mr-1"></i>JPG、PNG形式、最大5MBまで
+          </p>
+        </div>
 
-        <!-- 登録ボタン -->
-        <button class="w-100 btn btn-lg btn-primary" type="submit">登録</button>
+        <!-- Error Message -->
+        <div th:if="${signupError}" class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+            <p th:text="${signupError}" class="text-red-700 text-sm"></p>
+          </div>
+        </div>
 
-        <!-- ログイン画面リンク -->
-        <a th:href="@{/login}" class="d-block mt-3">ログイン画面</a>
-        <p class="mt-5 mb-3 text-muted">&copy; 2017–2025</p>
-    </form>
-</main>
+        <!-- Signup Button -->
+        <button 
+          type="submit" 
+          class="hover-scale w-full gradient-bg text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-100"
+        >
+          <i class="fas fa-user-plus mr-2"></i>アカウント作成
+        </button>
 
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ltrjvnR4/Jqsma1iZgSAcQeQOU04XQmAN5X8BQY5QbiwliuJqL7eq23fQFsyjIc9" crossorigin="anonymous"></script>
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-white text-gray-500">または</span>
+          </div>
+        </div>
+
+        <!-- Google Signup Button -->
+        <button 
+          type="button" 
+          onclick="signUpWithGoogle()"
+          class="hover-scale w-full bg-white border border-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-100 flex items-center justify-center"
+        >
+          <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Googleで登録
+        </button>
+      </form>
+
+      <!-- Login Link -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-gray-600">
+          すでにアカウントをお持ちですか？
+          <a th:href="@{/login}" class="text-purple-600 hover:text-purple-800 font-medium hover:underline">
+            ログイン
+          </a>
+        </p>
+      </div>
+
+      <!-- Back to Home -->
+      <div class="mt-4 text-center">
+        <a href="/demo_wave/lp.html" class="inline-flex items-center text-sm text-gray-500 hover:text-purple-600 transition-colors">
+          <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-8 text-white/80">
+      <p class="text-sm">&copy; 2025 Demo Wave. All rights reserved.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Supabase SDK -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+  // 設定をサーバーから動的に取得
+  let supabase;
+  let config;
+
+  async function initializeSupabase() {
+    try {
+      const response = await fetch('/demo_wave/api/config/supabase');
+      config = await response.json();
+      
+      supabase = createClient(config.url, config.anonKey);
+      console.log('Supabase initialized with config:', config);
+    } catch (error) {
+      console.error('Failed to initialize Supabase:', error);
+    }
+  }
+
+  // 初期化
+  await initializeSupabase();
+  
+  // URLパラメータをチェック（OAuth認証後のコールバック）
+  const urlParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  
+  console.log('Current URL:', window.location.href);
+  console.log('URL Params:', Object.fromEntries(urlParams));
+  console.log('Hash Params:', Object.fromEntries(hashParams));
+  
+  // OAuth認証後のセッション確認
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  console.log('Current session:', session);
+  console.log('Session error:', sessionError);
+  
+  // OAuth認証後にaccess_tokenがある場合の処理
+  if (hashParams.get('access_token')) {
+    console.log('OAuth callback detected, processing...');
+    
+    // セッションが既に存在するかチェック
+    if (session && session.user) {
+      console.log('Authentication successful!', session.user);
+      console.log('User email:', session.user.email);
+      console.log('User name:', session.user.user_metadata?.full_name);
+      
+      alert(`登録成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
+      
+      // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
+      document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+      document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+      
+      // URLのハッシュをクリーンアップしてからリダイレクト
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      setTimeout(() => {
+        // デモ一覧画面に遷移
+        window.location.href = '/demo_wave/demo';
+      }, 1000);
+    }
+  }
+
+  window.signUpWithGoogle = async function() {
+    try {
+      console.log('=== Google OAuth Start (Signup) ===');
+      
+      // 既存セッションをクリア
+      console.log('Clearing existing session...');
+      await supabase.auth.signOut();
+      
+      // Cookieもクリア
+      document.cookie = 'supabase-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'supabase-user-email=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      
+      console.log('Config:', config);
+      console.log('Redirect URL:', `${window.location.origin}/demo_wave/demo`);
+      console.log('Current URL:', window.location.href);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/demo_wave/demo`,
+          queryParams: {
+            prompt: 'select_account'  // Googleアカウント選択を強制
+          }
+        }
+      });
+
+      console.log('=== OAuth Response (Signup) ===');
+      console.log('Data:', data);
+      console.log('Error:', error);
+
+      if (error) {
+        console.error('Supabase Google signup failed:', error);
+        alert(`Google登録に失敗しました: ${error.message}`);
+      } else {
+        console.log('OAuth signup request sent successfully');
+      }
+    } catch (error) {
+      console.error('Error during Google sign-up:', error);
+      alert(`Google登録でエラーが発生しました: ${error.message}`);
+    }
+  };
+</script>
+
+<script>
+  // Input field animations
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(input => {
+    input.addEventListener('focus', function() {
+      this.parentElement.classList.add('transform', 'scale-105');
+    });
+    
+    input.addEventListener('blur', function() {
+      this.parentElement.classList.remove('transform', 'scale-105');
+    });
+  });
+
+  // Profile image handling
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    const fileSelectText = document.getElementById('fileSelectText');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (file) {
+      // ファイルサイズチェック (5MB = 5 * 1024 * 1024 bytes)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('ファイルサイズが大きすぎます。5MB以下のファイルを選択してください。');
+        event.target.value = '';
+        return;
+      }
+      
+      // ファイル形式チェック
+      if (!file.type.startsWith('image/')) {
+        alert('画像ファイルを選択してください。');
+        event.target.value = '';
+        return;
+      }
+      
+      // ファイル名を表示
+      fileSelectText.textContent = file.name;
+      
+      // プレビュー表示
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        imagePreview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  function removeImage() {
+    const fileInput = document.getElementById('profileImage');
+    const fileSelectText = document.getElementById('fileSelectText');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    fileInput.value = '';
+    fileSelectText.textContent = '画像を選択';
+    imagePreview.classList.add('hidden');
+  }
+
+  // Form validation
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    if (!name || !email || !password) {
+      e.preventDefault();
+      alert('全ての項目を入力してください。');
+      return;
+    }
+    
+    if (password.length < 8) {
+      e.preventDefault();
+      alert('パスワードは8文字以上で入力してください。');
+      return;
+    }
+    
+    // プロフィール画像データをセッションストレージに保存
+    const fileInput = document.getElementById('profileImage');
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        sessionStorage.setItem('profileImageData', event.target.result);
+        sessionStorage.setItem('profileImageName', file.name);
+        console.log('プロフィール画像データをセッションストレージに保存しました:', file.name);
+        // 画像データが保存された後にフォームを送信
+        document.querySelector('form').submit();
+      };
+      reader.readAsDataURL(file);
+      // FileReaderの処理を待つためにフォーム送信を一旦停止
+      e.preventDefault();
+    } else {
+      // プロフィール画像が選択されていない場合はセッションストレージをクリア
+      sessionStorage.removeItem('profileImageData');
+      sessionStorage.removeItem('profileImageName');
+      console.log('プロフィール画像が選択されていません');
+    }
+  });
+</script>
+
 </body>
 </html>
