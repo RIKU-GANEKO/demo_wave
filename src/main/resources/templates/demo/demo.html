@@ -400,6 +400,15 @@
       }
     });
   });
+
+  // Supabase OAuth認証後のURL クリーンアップ
+  window.addEventListener('load', function() {
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      console.log('Cleaning up OAuth tokens from URL');
+      // URLからハッシュを削除してクリーンにする
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+    }
+  });
 </script>
 
 <!-- Stripe SDK -->

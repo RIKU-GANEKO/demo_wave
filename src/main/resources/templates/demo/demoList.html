@@ -60,30 +60,46 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body class="bg-gray-50 min-h-screen">
 
 <!-- Header -->
-<header class="gradient-bg shadow-lg sticky top-0 z-50">
+<header class="gradient-bg shadow-lg">
   <div class="max-w-7xl mx-auto px-4 py-4">
     <div class="flex justify-between items-center">
       <!-- Logo -->
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-          <i class="fas fa-bullhorn text-white text-lg"></i>
+        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <i class="fas fa-bullhorn text-white text-xl"></i>
         </div>
-        <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+        <div>
+          <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+          <p class="text-xs text-white opacity-80">あなたの声が社会を変える</p>
+        </div>
       </div>
       
       <!-- Navigation -->
       <nav class="flex items-center space-x-6">
-        <a href="/demo_wave/lp.html" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-home mr-2"></i>ホーム
+        <a href="/demo_wave/lp.html" class="text-white hover:text-purple-200 transition-colors flex items-center">
+          <i class="fas fa-home mr-2"></i>
+          <span class="hidden sm:block">ホーム</span>
         </a>
-        <a href="/demo_wave/mypage" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-user mr-2"></i>マイページ
+        <a href="/demo_wave/mypage" class="text-white hover:text-purple-200 transition-colors flex items-center">
+          <i class="fas fa-user-circle mr-2"></i>
+          <span class="hidden sm:block">マイページ</span>
         </a>
-        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
-          <i class="fas fa-sign-out-alt mr-2"></i>ログアウト
+        
+        <!-- User Profile -->
+        <div id="userProfile" class="flex items-center space-x-3">
+          <div id="userProfileImage" class="w-10 h-10 rounded-full overflow-hidden bg-white bg-opacity-20 flex items-center justify-center relative">
+            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden">
+            <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
+          </div>
+          <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
+        </div>
+        
+        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all">
+          <i class="fas fa-sign-out-alt mr-2"></i>
+          <span class="hidden sm:inline">ログアウト</span>
         </a>
       </nav>
     </div>
@@ -93,53 +109,56 @@
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 py-8">
   <!-- Page Header -->
-  <div class="text-center mb-12 animate-fade-in">
-    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">デモ一覧</h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-      全国で開催中・開催予定のデモ活動をご覧ください
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-bold text-gradient mb-4">デモ一覧</h2>
+    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+      現在開催中・開催予定のデモをご覧ください。あなたも参加して、社会を変える一歩を踏み出しましょう。
     </p>
   </div>
 
   <!-- Actions Bar -->
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-    <!-- Stats -->
-    <div class="flex items-center space-x-6">
-      <div class="text-center">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <!-- Demo Count -->
+    <div class="flex items-center space-x-4">
+      <div class="bg-white rounded-xl shadow-md px-6 py-3">
         <div class="text-2xl font-bold text-purple-600" th:text="${#lists.size(demoList)}">12</div>
-        <div class="text-sm text-gray-500">開催中</div>
-      </div>
-      <div class="text-center">
-        <div class="text-2xl font-bold text-blue-600">245</div>
-        <div class="text-sm text-gray-500">今月の参加者</div>
+        <div class="text-sm text-gray-500">開催中のデモ</div>
       </div>
     </div>
     
     <!-- Create Demo Button -->
-    <a th:href="@{/demo/create}" class="card-hover">
-      <button class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl flex items-center space-x-2">
+    <a th:href="@{/demo/create}">
+      <button class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center space-x-2">
         <i class="fas fa-plus"></i>
-        <span>デモを作成</span>
+        <span>新しいデモを作成</span>
       </button>
     </a>
   </div>
 
-  <!-- Search and Filters -->
-  <div class="glass-effect rounded-2xl p-6 mb-8 animate-fade-in">
-    <div class="flex flex-col md:flex-row gap-4">
+  <!-- Search and Filter -->
+  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+    <div class="flex flex-col lg:flex-row gap-4 items-center">
       <!-- Search -->
-      <div class="flex-1">
+      <div class="flex-1 w-full">
         <div class="relative">
+          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           <input 
             type="text" 
             placeholder="デモを検索..." 
-            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none"
-          />
-          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none"
+          >
         </div>
       </div>
       
-      <!-- Filters -->
-      <div class="flex gap-3">
+      <!-- Filter Buttons -->
+      <div class="flex gap-2">
+        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
+          <option>全てのカテゴリ</option>
+          <option>環境</option>
+          <option>人権</option>
+          <option>政治</option>
+          <option>社会福祉</option>
+        </select>
         <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
           <option>全てのカテゴリ</option>
           <option>環境</option>
@@ -315,6 +334,55 @@
       }
     });
   });
+
+  // ユーザー情報を取得してヘッダーに表示
+  async function loadUserProfile() {
+    try {
+      console.log('Loading user profile...');
+      const response = await fetch('/demo_wave/api/user/current');
+      console.log('Response status:', response.status);
+      
+      if (response.ok) {
+        const userInfo = await response.json();
+        console.log('User info:', userInfo);
+        
+        // ユーザー名を表示
+        document.getElementById('userName').textContent = userInfo.name;
+        document.getElementById('userName').classList.remove('hidden');
+        
+        // プロフィール画像を表示
+        const profileImg = document.getElementById('profileImg');
+        const defaultAvatar = document.getElementById('defaultAvatar');
+        
+        if (userInfo.profileImagePath) {
+          console.log('Setting profile image:', userInfo.profileImagePath);
+          profileImg.src = userInfo.profileImagePath;
+          profileImg.classList.remove('hidden');
+          defaultAvatar.classList.add('hidden');
+          // 画像の読み込みエラーが発生した場合はデフォルトアイコンを表示
+          profileImg.onerror = function() {
+            console.log('Profile image failed to load, showing default avatar');
+            this.classList.add('hidden');
+            defaultAvatar.classList.remove('hidden');
+          };
+        } else {
+          console.log('No profile image, showing default avatar');
+          profileImg.classList.add('hidden');
+          defaultAvatar.classList.remove('hidden');
+        }
+        
+        console.log('User profile loaded successfully');
+      } else {
+        const errorText = await response.text();
+        console.warn('Failed to load user profile:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }
+
+  // ページ読み込み時にユーザー情報を取得
+  loadUserProfile();
 </script>
 
 </body>
