@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
 
@@ -31,6 +32,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    
+    @Autowired
+    private SupabaseAuthenticationFilter supabaseAuthenticationFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         try {
@@ -42,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/{demoId}/comment/create/**").permitAll()
                         .requestMatchers("/api/demo/create/**").permitAll()
                         .requestMatchers("/api/user/create/**").permitAll()
+                        .requestMatchers("/api/user/current").authenticated()
                         .requestMatchers("/api/demo/participate/**").permitAll()
                         .requestMatchers("/api/demo/participation-status**").permitAll()
                         .requestMatchers("/api/user/get/**").permitAll()
@@ -52,10 +57,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/demo/favorite/**").permitAll()
                         .requestMatchers("/api/demo/favorite-status**").permitAll()
                         .requestMatchers("/api/ranking/**").permitAll()
+                        .requestMatchers("/api/config/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()
                         .requestMatchers("/user/create/complete").permitAll()
+                        .requestMatchers("/user/signup/success").permitAll()
                         .requestMatchers("/payment/**").permitAll()
                         .requestMatchers("/js/**", "/css/**", "/images/**", "favicon.ico").permitAll()
                         .requestMatchers("/resources/**", "/static/**", "/public/**").permitAll()
@@ -126,6 +133,9 @@ public class SecurityConfig {
                 csrf.ignoringRequestMatchers("/api/ranking/**"); // "/api/payment/**" のみ CSRF 無効化
             });
 //            http.csrf(csrf -> csrf.disable());
+
+            // SupabaseAuthenticationFilterを追加
+            http.addFilterBefore(supabaseAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
             return http.build();
         } catch (Exception e) {
