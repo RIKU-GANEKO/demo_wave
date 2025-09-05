@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title th:text="${demo.title} + ' - Demo Wave'">デモ詳細 - Demo Wave</title>
   <meta name="description" content="Demo Waveでデモ活動の詳細情報をご覧ください">
+  <link th:replace="common/head :: favicon"></link>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -13,7 +14,7 @@
     * { font-family: 'Inter', sans-serif; }
     
     .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     }
     
     .glass-effect {
@@ -23,7 +24,7 @@
     }
     
     .text-gradient {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -47,43 +48,140 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
     
-    .status-active {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    .status-live {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      position: relative;
+      overflow: hidden;
     }
     
-    .status-upcoming {
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    .status-live::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    .status-scheduled {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     }
     
     .status-ended {
-      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .hero-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    }
+    
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+    
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
     }
   </style>
 </head>
 <body class="min-h-screen bg-gray-50">
 
 <!-- Header -->
-<header class="gradient-bg shadow-lg sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4">
+<header class="hero-gradient shadow-2xl relative">
+  <!-- Floating orbs -->
+  <div class="floating-orb w-32 h-32 bg-blue-400 top-10 left-10 animation-delay-1000"></div>
+  <div class="floating-orb w-24 h-24 bg-indigo-400 top-20 right-20 animation-delay-2000"></div>
+  <div class="floating-orb w-20 h-20 bg-cyan-400 bottom-10 left-1/3 animation-delay-3000"></div>
+  
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
     <div class="flex justify-between items-center">
       <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-          <i class="fas fa-bullhorn text-white text-lg"></i>
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 rounded-2xl overflow-hidden relative group">
+          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
         </div>
-        <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+        <div>
+          <h1 class="text-3xl font-bold text-white tracking-tight">Demo Wave</h1>
+          <p class="text-sm text-blue-100 font-medium">あなたの声が社会を変える</p>
+        </div>
       </div>
       
       <!-- Navigation -->
-      <nav class="flex items-center space-x-6">
-        <a href="/demo_wave/demo" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-arrow-left mr-2"></i>一覧に戻る
+      <nav class="flex items-center space-x-4">
+        <a href="/demo_wave/demo" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+          <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:block font-medium">一覧に戻る</span>
         </a>
-        <a href="/demo_wave/lp.html" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-home mr-2"></i>ホーム
+        <a href="/demo_wave/lp.html" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+          <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:block font-medium">ホーム</span>
         </a>
-        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
-          <i class="fas fa-sign-out-alt mr-2"></i>ログアウト
+        <a href="/demo_wave/mypage" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+          <i class="fas fa-user-circle mr-2 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:block font-medium">マイページ</span>
+        </a>
+        
+        <!-- User Profile -->
+        <div id="userProfile" class="flex items-center space-x-3">
+          <div id="userProfileImage" class="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center relative group border border-white border-opacity-30">
+            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden group-hover:scale-110 transition-transform">
+            <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
+          </div>
+          <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
+        </div>
+        
+        <a href="/demo_wave/logout" class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300">
+          <i class="fas fa-sign-out-alt mr-2"></i>
+          <span class="hidden sm:inline">ログアウト</span>
         </a>
       </nav>
     </div>
@@ -97,9 +195,22 @@
     <div class="glass-effect rounded-3xl p-8 shadow-2xl">
       <!-- Status Badge -->
       <div class="flex justify-between items-start mb-6">
-        <span class="status-active text-white text-sm font-semibold px-4 py-2 rounded-full">
-          🔴 開催中
-        </span>
+        <!-- Dynamic Status Badge -->
+        <th:block th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}">
+          <span class="status-live text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg relative z-10">
+            <i class="fas fa-broadcast-tower mr-2"></i>LIVE
+          </span>
+        </th:block>
+        <th:block th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}">
+          <span class="status-scheduled text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
+            <i class="fas fa-clock mr-2"></i>SCHEDULED
+          </span>
+        </th:block>
+        <th:block th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}">
+          <span class="status-ended text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
+            <i class="fas fa-history mr-2"></i>ENDED
+          </span>
+        </th:block>
         <span class="text-sm text-gray-500" th:text="${#temporals.format(demo.createdAt, 'yyyy年MM月dd日 HH:mm')} + ' に投稿'">
           2025年01月15日 14:00 に投稿
         </span>
@@ -228,7 +339,7 @@
               name="content"
               rows="4"
               placeholder="コメントを入力してください..."
-              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none resize-none"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none resize-none"
               required
             ></textarea>
           </div>
@@ -253,7 +364,7 @@
             <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3">
               <i class="fas fa-users text-white text-2xl"></i>
             </div>
-            <div class="text-3xl font-bold text-purple-600" th:text="${participantCount}">245</div>
+            <div class="text-3xl font-bold text-blue-600" th:text="${participantCount}">245</div>
             <div class="text-sm text-gray-500">参加者数</div>
           </div>
           
@@ -409,6 +520,55 @@
       window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
     }
   });
+
+  // ユーザー情報を取得してヘッダーに表示
+  async function loadUserProfile() {
+    try {
+      console.log('Loading user profile...');
+      const response = await fetch('/demo_wave/api/user/current');
+      console.log('Response status:', response.status);
+      
+      if (response.ok) {
+        const userInfo = await response.json();
+        console.log('User info:', userInfo);
+        
+        // ユーザー名を表示
+        document.getElementById('userName').textContent = userInfo.name;
+        document.getElementById('userName').classList.remove('hidden');
+        
+        // プロフィール画像を表示
+        const profileImg = document.getElementById('profileImg');
+        const defaultAvatar = document.getElementById('defaultAvatar');
+        
+        if (userInfo.profileImagePath) {
+          console.log('Setting profile image:', userInfo.profileImagePath);
+          profileImg.src = userInfo.profileImagePath;
+          profileImg.classList.remove('hidden');
+          defaultAvatar.classList.add('hidden');
+          // 画像の読み込みエラーが発生した場合はデフォルトアイコンを表示
+          profileImg.onerror = function() {
+            console.log('Profile image failed to load, showing default avatar');
+            this.classList.add('hidden');
+            defaultAvatar.classList.remove('hidden');
+          };
+        } else {
+          console.log('No profile image, showing default avatar');
+          profileImg.classList.add('hidden');
+          defaultAvatar.classList.remove('hidden');
+        }
+        
+        console.log('User profile loaded successfully');
+      } else {
+        const errorText = await response.text();
+        console.warn('Failed to load user profile:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }
+
+  // ページ読み込み時にユーザー情報を取得
+  loadUserProfile();
 </script>
 
 <!-- Stripe SDK -->

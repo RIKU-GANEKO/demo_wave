@@ -24,14 +24,16 @@ import product.demo_wave.demo.DemoWithParticipantDTO;
 public interface DemoRepository extends JpaRepository<Demo, Integer> {
 
   @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
-          "i.id, i.title, i.demoPlace, i.demoStartDate, COUNT(p.id)) " +
-          "FROM Demo i " +
-          "LEFT JOIN Participant p ON i.id = p.demo.id AND p.deletedAt IS NULL " + // 修正: p.demo.id
-          "WHERE i.deletedAt IS NULL " +
-          "GROUP BY i.id, i.title, i.demoPlace, i.demoStartDate",
-          countQuery = "SELECT COUNT(i) " +
-                  "FROM Demo i " +
-                  "WHERE i.deletedAt IS NULL")
+          "d.id, d.title, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "GROUP BY d.id, d.title, d.demoPlace, d.demoStartDate, d.demoEndDate " +
+          "ORDER BY d.demoStartDate DESC",
+          countQuery = "SELECT COUNT(d) " +
+                  "FROM Demo d " +
+                  "WHERE d.deletedAt IS NULL")
   Page<DemoWithParticipantDTO> findDemoWithParticipantCounts(
           @Param("time") LocalDateTime time,
           Pageable pageable);

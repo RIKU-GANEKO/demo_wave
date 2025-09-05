@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Demo Wave - デモ一覧</title>
   <meta name="description" content="Demo Waveで開催中・開催予定のデモ一覧をご覧ください">
+  <link th:replace="common/head :: favicon"></link>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -12,92 +13,255 @@
     
     * { font-family: 'Inter', sans-serif; }
     
+    :root {
+      --primary-50: #eff6ff;
+      --primary-100: #dbeafe;
+      --primary-500: #3b82f6;
+      --primary-600: #2563eb;
+      --primary-700: #1d4ed8;
+      --primary-900: #1e3a8a;
+    }
+    
     .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     }
     
     .glass-effect {
-      backdrop-filter: blur(16px) saturate(180%);
-      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .text-gradient {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     
     .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .animate-slide-up {
+      animation: slideUp 0.8s ease-out forwards;
     }
     
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
-    .card-hover {
-      transition: all 0.3s ease;
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    .card-modern {
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      overflow: hidden;
+      will-change: transform, box-shadow;
     }
     
-    .status-active {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    .card-modern::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform;
     }
     
-    .status-upcoming {
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    .card-modern:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .card-modern:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
+    }
+    
+    .status-live {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .status-live::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    .status-scheduled {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     }
     
     .status-ended {
-      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .status-upcoming {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    }
+    
+    .status-ended {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    }
+    
+    .search-modern {
+      position: relative;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(148, 163, 184, 0.1);
+    }
+    
+    .search-modern:focus-within {
+      border-color: var(--primary-500);
+      box-shadow: 0 8px 25px -5px rgba(37, 99, 235, 0.25);
+    }
+    
+    .stat-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.15);
+    }
+    
+    .hero-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    }
+    
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+    
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .filter-pill:hover {
+      background: var(--primary-50);
+      border-color: var(--primary-300);
+      transform: translateY(-2px);
     }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
 
 <!-- Header -->
-<header class="gradient-bg shadow-lg">
-  <div class="max-w-7xl mx-auto px-4 py-4">
+<header class="hero-gradient shadow-2xl relative">
+  <!-- Floating orbs -->
+  <div class="floating-orb w-32 h-32 bg-blue-400 top-10 left-10 animation-delay-1000"></div>
+  <div class="floating-orb w-24 h-24 bg-indigo-400 top-20 right-20 animation-delay-2000"></div>
+  <div class="floating-orb w-20 h-20 bg-cyan-400 bottom-10 left-1/3 animation-delay-3000"></div>
+  
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
     <div class="flex justify-between items-center">
       <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-          <i class="fas fa-bullhorn text-white text-xl"></i>
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 rounded-2xl overflow-hidden relative group">
+          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
-          <p class="text-xs text-white opacity-80">あなたの声が社会を変える</p>
+          <h1 class="text-3xl font-bold text-white tracking-tight">Demo Wave</h1>
+          <p class="text-sm text-blue-100 font-medium">あなたの声が社会を変える</p>
         </div>
       </div>
       
       <!-- Navigation -->
-      <nav class="flex items-center space-x-6">
-        <a href="/demo_wave/lp.html" class="text-white hover:text-purple-200 transition-colors flex items-center">
-          <i class="fas fa-home mr-2"></i>
-          <span class="hidden sm:block">ホーム</span>
+      <nav class="flex items-center space-x-4">
+        <a href="/demo_wave/lp.html" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+          <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:block font-medium">ホーム</span>
         </a>
-        <a href="/demo_wave/mypage" class="text-white hover:text-purple-200 transition-colors flex items-center">
-          <i class="fas fa-user-circle mr-2"></i>
-          <span class="hidden sm:block">マイページ</span>
+        <a href="/demo_wave/mypage" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+          <i class="fas fa-user-circle mr-2 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:block font-medium">マイページ</span>
         </a>
         
         <!-- User Profile -->
         <div id="userProfile" class="flex items-center space-x-3">
-          <div id="userProfileImage" class="w-10 h-10 rounded-full overflow-hidden bg-white bg-opacity-20 flex items-center justify-center relative">
-            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden">
+          <div id="userProfileImage" class="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center relative group border border-white border-opacity-30">
+            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden group-hover:scale-110 transition-transform">
             <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
           </div>
           <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
         </div>
         
-        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-all">
+        <a href="/demo_wave/logout" class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300">
           <i class="fas fa-sign-out-alt mr-2"></i>
           <span class="hidden sm:inline">ログアウト</span>
         </a>
@@ -109,166 +273,228 @@
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 py-8">
   <!-- Page Header -->
-  <div class="text-center mb-12">
-    <h2 class="text-4xl font-bold text-gradient mb-4">デモ一覧</h2>
-    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-      現在開催中・開催予定のデモをご覧ください。あなたも参加して、社会を変える一歩を踏み出しましょう。
+  <div class="text-center mb-16 animate-fade-in">
+    <p class="text-slate-600 text-xl max-w-3xl mx-auto leading-relaxed font-medium">
+      現在開催中・開催予定のデモをご覧ください。<br>
+      <span class="text-gradient font-semibold">あなたも参加して、社会を変える一歩を踏み出しましょう。</span>
     </p>
   </div>
 
-  <!-- Actions Bar -->
-  <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-    <!-- Demo Count -->
-    <div class="flex items-center space-x-4">
-      <div class="bg-white rounded-xl shadow-md px-6 py-3">
-        <div class="text-2xl font-bold text-purple-600" th:text="${#lists.size(demoList)}">12</div>
-        <div class="text-sm text-gray-500">開催中のデモ</div>
-      </div>
-    </div>
-    
-    <!-- Create Demo Button -->
-    <a th:href="@{/demo/create}">
-      <button class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center space-x-2">
-        <i class="fas fa-plus"></i>
-        <span>新しいデモを作成</span>
-      </button>
-    </a>
-  </div>
-
   <!-- Search and Filter -->
-  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-    <div class="flex flex-col lg:flex-row gap-4 items-center">
+  <div class="search-modern rounded-3xl p-8 mb-8 animate-slide-up">
+    <div class="flex flex-col lg:flex-row gap-6 items-center">
       <!-- Search -->
-      <div class="flex-1 w-full">
-        <div class="relative">
-          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      <div class="flex-1 w-full relative">
+        <div class="relative group">
+          <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
           <input 
             type="text" 
-            placeholder="デモを検索..." 
-            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none"
+            placeholder="デモやイベントを検索..." 
+            class="w-full pl-16 pr-6 py-4 bg-transparent border-2 border-transparent rounded-2xl focus:border-blue-500 outline-none text-lg font-medium placeholder-slate-400 transition-all duration-300"
           >
         </div>
       </div>
       
-      <!-- Filter Buttons -->
-      <div class="flex gap-2">
-        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
-          <option>全てのカテゴリ</option>
-          <option>環境</option>
-          <option>人権</option>
-          <option>政治</option>
-          <option>社会福祉</option>
-        </select>
-        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
-          <option>全てのカテゴリ</option>
-          <option>環境</option>
-          <option>人権</option>
-          <option>政治</option>
-          <option>社会福祉</option>
-        </select>
-        <select class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-400 outline-none">
-          <option>全ての地域</option>
-          <option>東京都</option>
-          <option>大阪府</option>
-          <option>愛知県</option>
-        </select>
+      <!-- Filter Pills -->
+      <div class="flex flex-wrap gap-3">
+        <a href="/demo_wave/demo" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+          <i class="fas fa-globe mr-2"></i>全てのカテゴリ
+        </a>
+        <a href="/demo_wave/demo?categoryId=1" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+          <i class="fas fa-leaf mr-2"></i>環境
+        </a>
+        <a href="/demo_wave/demo?categoryId=2" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+          <i class="fas fa-balance-scale mr-2"></i>人権
+        </a>
+        <a href="/demo_wave/demo?categoryId=3" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+          <i class="fas fa-vote-yea mr-2"></i>政治
+        </a>
       </div>
     </div>
   </div>
 
+  <!-- Create Demo Button -->
+  <div class="text-right mb-12 animate-slide-up">
+    <a th:href="@{/demo/create}" class="btn-primary text-white px-8 py-4 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 inline-flex items-center group">
+      <i class="fas fa-plus mr-3 group-hover:scale-110 transition-transform"></i>
+      <span>新しいデモを作成</span>
+    </a>
+  </div>
+
   <!-- Demo Cards Grid -->
-  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-    <div th:each="demo : ${demoList}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-      <div class="p-6">
-        <!-- Status Badge -->
-        <div class="flex justify-between items-start mb-4">
-          <span class="status-active text-white text-xs font-semibold px-3 py-1 rounded-full">
-            🔴 開催中
-          </span>
-          <div class="text-right">
-            <div class="text-sm text-gray-500">参加者数</div>
-            <div class="text-lg font-bold text-purple-600" th:text="${demo.participantCount}">127</div>
+  <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-3 mb-12">
+    <div th:each="demo : ${demoList}" class="card-modern rounded-3xl shadow-xl overflow-hidden animate-fade-in group cursor-pointer" 
+         onclick="window.location.href='/demo_wave/demo/show?demoId=' + this.dataset.demoId" 
+         th:data-demo-id="${demo.id}">
+      
+      <!-- Demo Image -->
+      <div class="relative h-48 bg-gradient-to-r from-slate-100 to-blue-100 overflow-hidden rounded-t-3xl">
+        <img src="/demo_wave/images/support_disaster_place.png" 
+             alt="デモ画像" 
+             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+      </div>
+      
+      <!-- Info Bar -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-slate-200">
+        <div class="flex justify-between items-center">
+          <!-- Status Badge -->
+          <div>
+            <th:block th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}">
+              <span class="status-live text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
+                <i class="fas fa-broadcast-tower mr-2"></i>LIVE
+              </span>
+            </th:block>
+            <th:block th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}">
+              <span class="status-scheduled text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
+                <i class="fas fa-clock mr-2"></i>SCHEDULED
+              </span>
+            </th:block>
+            <th:block th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}">
+              <span class="status-ended text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
+                <i class="fas fa-history mr-2"></i>ENDED
+              </span>
+            </th:block>
+          </div>
+          
+          <!-- Participants & Support Amount -->
+          <div class="flex gap-6">
+            <!-- Participants -->
+            <div class="text-center">
+              <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">参加者</div>
+              <div class="text-xl font-bold text-slate-900" th:text="${demo.participantCount}">127</div>
+            </div>
+            <!-- Total Support Amount -->
+            <div class="text-center">
+              <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">総支援額</div>
+              <div class="text-xl font-bold text-emerald-600" th:text="${'¥' + #numbers.formatInteger(demo.totalDonationAmount ?: 0, 0, 'COMMA')}">¥15,000</div>
+            </div>
           </div>
         </div>
+      </div>
+      
 
+      <!-- Card Content -->
+      <div class="p-6">
         <!-- Title -->
-        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2" th:text="${demo.title}">
+        <h3 class="text-xl font-bold text-slate-900 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 ease-out" th:text="${demo.title}">
           気候変動対策を求める緊急デモ
         </h3>
 
         <!-- Info Grid -->
-        <div class="space-y-3 mb-6">
+        <div class="space-y-4 mb-6">
           <!-- Date & Time -->
-          <div class="flex items-center text-gray-600">
-            <i class="fas fa-calendar-alt w-5 text-purple-500"></i>
-            <span class="ml-3 text-sm" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
-              2025年01月15日 14:00
-            </span>
+          <div class="flex items-center text-slate-600 group-hover:text-blue-600 transition-colors duration-200 ease-out">
+            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors duration-200 ease-out">
+              <i class="fas fa-calendar-alt text-blue-600"></i>
+            </div>
+            <div>
+              <div class="text-xs text-slate-400 font-medium uppercase tracking-wide">開催日時</div>
+              <span class="text-sm font-semibold" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
+                2025年01月15日 14:00
+              </span>
+            </div>
           </div>
           
           <!-- Location -->
-          <div class="flex items-center text-gray-600">
-            <i class="fas fa-map-marker-alt w-5 text-purple-500"></i>
-            <span class="ml-3 text-sm" th:text="${demo.demoPlace}">渋谷駅前広場</span>
+          <div class="flex items-center text-slate-600 group-hover:text-blue-600 transition-colors duration-200 ease-out">
+            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:bg-emerald-200 transition-colors duration-200 ease-out">
+              <i class="fas fa-map-marker-alt text-emerald-600"></i>
+            </div>
+            <div>
+              <div class="text-xs text-slate-400 font-medium uppercase tracking-wide">開催場所</div>
+              <span class="text-sm font-semibold" th:text="${demo.demoPlace}">渋谷駅前広場</span>
+            </div>
           </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex gap-3">
-          <a th:href="@{/demo/show(demoId=${demo.id})}" class="flex-1">
-            <button class="w-full gradient-bg text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition-all">
-              詳細を見る
-            </button>
-          </a>
-          <button class="bg-gray-100 text-gray-600 p-2 rounded-lg hover:bg-gray-200 transition-all">
-            <i class="fas fa-heart"></i>
+          <div class="flex-1">
+            <div class="w-full btn-primary text-white font-bold py-4 px-6 rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 relative overflow-hidden text-center">
+              <span class="relative z-10">詳細を見る</span>
+            </div>
+          </div>
+          <button class="w-14 h-14 bg-gradient-to-br from-pink-100 to-red-100 text-pink-600 rounded-2xl hover:from-pink-200 hover:to-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center shadow-lg favorite-btn" 
+                  onclick="event.stopPropagation(); toggleFavorite(this)">
+            <i class="fas fa-heart text-lg"></i>
           </button>
         </div>
       </div>
+      
+      <!-- Hover Effect Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
     </div>
   </div>
 
   <!-- Empty State (if no demos) -->
-  <div th:if="${#lists.isEmpty(demoList)}" class="text-center py-16 animate-fade-in">
-    <div class="max-w-md mx-auto">
-      <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
-        <i class="fas fa-bullhorn text-white text-3xl"></i>
+  <div th:if="${#lists.isEmpty(demoList)}" class="text-center py-24 animate-fade-in">
+    <div class="max-w-lg mx-auto">
+      <div class="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl transform rotate-3">
+        <i class="fas fa-bullhorn text-white text-4xl"></i>
       </div>
-      <h3 class="text-2xl font-bold text-gray-900 mb-4">デモがありません</h3>
-      <p class="text-gray-600 mb-8">現在開催中・開催予定のデモがありません。<br>新しいデモを作成してみませんか？</p>
+      <h3 class="text-4xl font-bold text-slate-900 mb-6">デモがありません</h3>
+      <p class="text-slate-600 text-lg mb-10 leading-relaxed">
+        現在開催中・開催予定のデモがありません。<br>
+        <span class="text-gradient font-semibold">新しいデモを作成してみませんか？</span>
+      </p>
       <a th:href="@{/demo/create}">
-        <button class="gradient-bg text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl">
-          <i class="fas fa-plus mr-2"></i>デモを作成
+        <button class="btn-primary text-white font-bold px-10 py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 relative overflow-hidden">
+          <span class="relative z-10">
+            <i class="fas fa-plus mr-3"></i>デモを作成
+          </span>
         </button>
       </a>
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div th:if="${demoList.totalPages} > 1" class="flex justify-center mt-12 animate-fade-in">
+  <!-- Modern Pagination -->
+  <div th:if="${demoList.totalPages} > 1" class="flex flex-col items-center mt-16 animate-fade-in">
+    <!-- Pagination Info -->
+    <div class="text-center mb-6">
+      <p class="text-slate-600 text-sm font-medium">
+        表示中: <span class="font-bold text-blue-600" th:text="${demoList.number * demoList.size + 1}">1</span>-<span class="font-bold text-blue-600" th:text="${demoList.number * demoList.size + demoList.numberOfElements}">20</span> / 全<span class="font-bold text-blue-600" th:text="${demoList.totalElements}">127</span>件
+      </p>
+    </div>
+    
+    <!-- Pagination Controls -->
     <nav class="flex items-center space-x-2">
+      <!-- First Page -->
+      <a th:href="${demoList.first} ? '#' : @{/demo(page=0)}" 
+         class="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-lg"
+         th:classappend="${demoList.first} ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'">
+        <i class="fas fa-angle-double-left text-slate-600"></i>
+      </a>
+      
       <!-- Previous Button -->
       <a th:href="${demoList.first} ? '#' : @{/demo(page=${demoList.number - 1})}" 
-         class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-all"
-         th:classappend="${demoList.first} ? 'opacity-50 cursor-not-allowed' : ''">
-        <i class="fas fa-chevron-left text-gray-400"></i>
+         class="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-lg"
+         th:classappend="${demoList.first} ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'">
+        <i class="fas fa-chevron-left text-slate-600"></i>
       </a>
       
       <!-- Page Numbers -->
-      <div th:each="i : ${#numbers.sequence(0, demoList.totalPages - 1)}" class="flex">
+      <div th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, demoList.number - 2), T(java.lang.Math).min(demoList.totalPages - 1, demoList.number + 2))}" class="flex">
         <a th:href="@{/demo(page=${i})}" 
-           th:class="${i == demoList.number} ? 'gradient-bg text-white' : 'bg-white text-gray-700 hover:bg-purple-50'"
-           class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 transition-all"
+           th:class="${i == demoList.number} ? 'bg-blue-600 text-white shadow-xl border-blue-600 font-bold' : 'bg-white text-slate-700 hover:bg-blue-50 hover:border-blue-400 hover:scale-105'"
+           class="flex items-center justify-center w-12 h-12 rounded-xl border-2 border-slate-200 transition-all duration-300 shadow-lg font-medium"
            th:text="${i + 1}">1</a>
       </div>
       
       <!-- Next Button -->
       <a th:href="${demoList.last} ? '#' : @{/demo(page=${demoList.number + 1})}" 
-         class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-all"
-         th:classappend="${demoList.last} ? 'opacity-50 cursor-not-allowed' : ''">
-        <i class="fas fa-chevron-right text-gray-400"></i>
+         class="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-lg"
+         th:classappend="${demoList.last} ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'">
+        <i class="fas fa-chevron-right text-slate-600"></i>
+      </a>
+      
+      <!-- Last Page -->
+      <a th:href="${demoList.last} ? '#' : @{/demo(page=${demoList.totalPages - 1})}" 
+         class="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-lg"
+         th:classappend="${demoList.last} ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'">
+        <i class="fas fa-angle-double-right text-slate-600"></i>
       </a>
     </nav>
+    
   </div>
 </main>
 

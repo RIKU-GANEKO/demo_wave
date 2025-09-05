@@ -37,9 +37,9 @@ class DemoGetContext {
 
     void init() {
         if (!pageable.isPaged()) {
-            pageable = PageRequest.of(0, properties.getPageRecordsLimit(), pageable.getSort());
+            pageable = PageRequest.of(0, 30, pageable.getSort());
         }
-        System.out.println("AAAA");
+        System.out.println("AAAA - Page size: " + pageable.getPageSize());
     }
 
     void getOrganizerUserName() {

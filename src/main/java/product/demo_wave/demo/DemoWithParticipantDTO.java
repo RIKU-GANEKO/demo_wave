@@ -1,5 +1,6 @@
 package product.demo_wave.demo;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record DemoWithParticipantDTO(
@@ -7,5 +8,7 @@ public record DemoWithParticipantDTO(
 		String title,
 		String demoPlace,
 		LocalDateTime demoStartDate,
-		Long participantCount
+		LocalDateTime demoEndDate,
+		Long participantCount,
+		BigDecimal totalDonationAmount
 ) {}
