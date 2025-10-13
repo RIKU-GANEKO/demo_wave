@@ -23,21 +23,21 @@ public class UserCreateDBLogic {
 	private final AccountRepository accountRepository;
 
 	@CustomRetry
-	List<String> getFirebaseUids() {
-		List<String> firebaseUids = userRepository.findAllFirebaseUids();
-		return firebaseUids;
+	List<String> getSupabaseUids() {
+		List<String> supabaseUids = userRepository.findAllSupabaseUids();
+		return supabaseUids;
 	}
 
 	/**
 	 *
 	 */
 	@CustomRetry
-	User saveUser(String firebaseUid, String email, UserCreateRequest request) {
-		User newUser = userRepository.saveAndFlush(toEntity(firebaseUid, email, request));
+	User saveUser(String supabaseUid, String email, UserCreateRequest request) {
+		User newUser = userRepository.saveAndFlush(toEntity(supabaseUid, email, request));
 		return newUser;
 	}
 
-	private User toEntity(String firebaseUid, String email, UserCreateRequest request) {
+	private User toEntity(String supabaseUid, String email, UserCreateRequest request) {
 
 		// 適当な account_id（例えば 1）を仮に入れておく。
 		Account account = accountRepository.findById(1)
@@ -45,7 +45,7 @@ public class UserCreateDBLogic {
 
 		User user = new User();
 
-		user.setFirebaseUid(firebaseUid);
+		user.setSupabaseUid(supabaseUid);
 		user.setAccount(account);
 		user.setName(request.getName());
 		user.setEmail(email);

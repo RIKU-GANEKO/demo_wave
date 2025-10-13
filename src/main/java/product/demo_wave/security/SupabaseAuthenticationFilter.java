@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,8 +31,8 @@ public class SupabaseAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(SupabaseAuthenticationFilter.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${supabase.url}")
-    private String supabaseUrl;
+    @Autowired
+    private SupabaseJwtService supabaseJwtService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, 
@@ -39,35 +40,28 @@ public class SupabaseAuthenticationFilter extends OncePerRequestFilter {
 
         // Supabaseセッション情報をCookieから取得
         String supabaseAccessToken = getSupabaseTokenFromCookies(request);
-        
+
         if (supabaseAccessToken != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                // JWTトークンをデコード（簡易版 - 本来はライブラリを使用）
-                String[] parts = supabaseAccessToken.split("\\.");
-                if (parts.length == 3) {
-                    String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
-                    JsonNode payloadJson = objectMapper.readTree(payload);
-                    
-                    String email = payloadJson.get("email").asText();
-                    String userId = payloadJson.get("sub").asText();
-                    
-                    logger.info("Supabase authentication successful for user: {}", email);
-                    
-                    // Supabaseユーザー用の簡易UserDetailsを作成
-                    SupabaseUserDetails supabaseUser = new SupabaseUserDetails(email, userId);
-                    
-                    // Spring SecurityのAuthenticationを作成
-                    UsernamePasswordAuthenticationToken authToken = 
-                        new UsernamePasswordAuthenticationToken(
-                            supabaseUser, 
-                            null, 
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-                        );
-                    
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            } catch (Exception e) {
+                // SupabaseJwtServiceを使用してトークンを検証
+                SupabaseToken token = supabaseJwtService.verifyToken(supabaseAccessToken);
+
+                logger.info("Supabase authentication successful for user: {}", token.getEmail());
+
+                // Supabaseユーザー用の簡易UserDetailsを作成
+                SupabaseUserDetails supabaseUser = new SupabaseUserDetails(token.getEmail(), token.getUid());
+
+                // Spring SecurityのAuthenticationを作成
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                        supabaseUser,
+                        null,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            } catch (JwtException e) {
                 logger.warn("Failed to validate Supabase token: {}", e.getMessage());
             }
         }
@@ -128,12 +122,13 @@ public class SupabaseAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/demo_wave/js/") || 
-               path.startsWith("/demo_wave/css/") || 
+        return path.startsWith("/demo_wave/js/") ||
+               path.startsWith("/demo_wave/css/") ||
                path.startsWith("/demo_wave/images/") ||
                path.startsWith("/demo_wave/api/config/") ||
                path.equals("/demo_wave/login") ||
                path.equals("/demo_wave/lp.html") ||
-               path.startsWith("/demo_wave/user/signup");
+               path.equals("/demo_wave/user/signup") ||  // 新規登録フォームのみ
+               path.equals("/demo_wave/user/create/confirm");  // 確認画面のみ
     }
 }

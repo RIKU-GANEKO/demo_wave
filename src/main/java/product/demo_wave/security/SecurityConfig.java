@@ -32,12 +32,20 @@ public class SecurityConfig {
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-    
+
     @Autowired
     private SupabaseAuthenticationFilter supabaseAuthenticationFilter;
+
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         try {
+            // セッション管理を有効化
+            http.securityContext(securityContext ->
+                securityContext.requireExplicitSave(false)
+            );
+
             http.authorizeHttpRequests(authorize -> {
                 authorize
 //                        .requestMatchers("/demo").permitAll()
@@ -67,7 +75,13 @@ public class SecurityConfig {
                         .requestMatchers("/js/**", "/css/**", "/images/**", "favicon.ico").permitAll()
                         .requestMatchers("/resources/**", "/static/**", "/public/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/lp.html").permitAll() // ← これが必要！
+                        .requestMatchers("/").permitAll() // ルートパス（ホーム）を認証不要に設定
+                        .requestMatchers("/about").permitAll() // Demo Waveとはページを認証不要に設定
+                        .requestMatchers("/organizer-guide").permitAll() // 主催者向けガイドページを認証不要に設定
+                        .requestMatchers("/search").permitAll() // 検索ページを認証不要に設定
+                        .requestMatchers("/search**").permitAll() // 検索ページ（クエリパラメータ付き）を認証不要に設定
+                        .requestMatchers("/demo/show").permitAll() // デモ詳細ページを認証不要に設定
+                        .requestMatchers("/demo/show**").permitAll() // デモ詳細ページ（クエリパラメータ付き）を認証不要に設定
                         .anyRequest().authenticated();
                     });
             http.formLogin(form -> {
@@ -76,13 +90,16 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error")
-                        .defaultSuccessUrl("/demo")
                         .permitAll();
             });
             http.logout(form -> {
                 form.logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .addLogoutHandler(customLogoutHandler)  // カスタムログアウトハンドラーを追加
+                        .deleteCookies("JSESSIONID", "supabase-access-token", "supabase-refresh-token")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                         .permitAll();
             });
             // CSRFの設定を追加

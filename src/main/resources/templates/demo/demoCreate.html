@@ -3,709 +3,889 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>デモ作成 - Demo Wave</title>
+  <title>デモを作成 - Demo Wave</title>
   <meta name="description" content="Demo Waveで新しいデモ活動を作成してください">
-  <link th:replace="common/head :: favicon"></link>
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
-    * { font-family: 'Inter', sans-serif; }
-    
-    .gradient-bg {
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    .header-container {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-link {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #2563eb;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #1e40af;
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero-section {
       background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-    }
-    
-    .glass-effect {
-      backdrop-filter: blur(20px) saturate(180%);
-      background-color: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .text-gradient {
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .input-focus {
-      transition: all 0.3s ease;
-    }
-    
-    .input-focus:focus {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
-    }
-    
-    .hero-gradient {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+      padding: 48px 0;
+      margin-bottom: 40px;
       position: relative;
       overflow: hidden;
     }
-    
-    .hero-gradient::before {
+
+    .hero-section::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
     }
-    
-    .floating-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.3;
-      animation: float 6s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      transition: all 0.3s ease;
+
+    .hero-content {
       position: relative;
+      z-index: 1;
+    }
+
+    /* Progress indicator */
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .step-circle.active {
+      background-color: #2563eb;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+
+    .step-circle.inactive {
+      background-color: #e8e8e8;
+      color: #999;
+      box-shadow: none;
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .step-divider {
+      width: 40px;
+      height: 2px;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Form styles */
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       overflow: hidden;
     }
-    
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s ease, height 0.3s ease;
+
+    .form-section {
+      padding: 40px;
+      border-bottom: 1px solid #f0f0f0;
     }
-    
-    .btn-primary:hover::before {
-      width: 300px;
-      height: 300px;
+
+    .form-section:last-child {
+      border-bottom: none;
     }
-    
-    .card-hover {
-      transition: all 0.3s ease;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
     }
-    
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .section-description {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 28px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.2s;
+      background-color: white;
+    }
+
+    .form-input:hover {
+      border-color: #d1d5db;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      resize: vertical;
+      min-height: 140px;
+      transition: all 0.2s;
+      line-height: 1.6;
+    }
+
+    .form-textarea:hover {
+      border-color: #d1d5db;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .required-badge {
+      background-color: #dc2626;
+      color: white;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .optional-badge {
+      background-color: #9ca3af;
+      color: white;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .input-hint {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.5;
+    }
+
+    .input-hint i {
+      margin-top: 2px;
+      color: #2563eb;
+    }
+
+    .submit-section {
+      padding: 32px 40px;
+      background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 17px;
+      padding: 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .map-preview-container {
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-preview {
+      width: 100%;
+      height: 320px;
+      border: none;
+    }
+
+    .info-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .info-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card-content {
+      font-size: 13px;
+      color: #1e40af;
+      line-height: 1.6;
+    }
+
+    /* Character counter */
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+
+    /* Grid layout for time inputs */
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .time-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-section {
+        padding: 24px;
+      }
+
+      .progress-steps {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .step-divider {
+        width: 2px;
+        height: 20px;
+      }
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body>
 
 <!-- Header -->
-<header class="hero-gradient shadow-2xl relative">
-  <!-- Floating orbs -->
-  <div class="floating-orb w-32 h-32 bg-blue-400 top-10 left-10 animation-delay-1000"></div>
-  <div class="floating-orb w-24 h-24 bg-indigo-400 top-20 right-20 animation-delay-2000"></div>
-  <div class="floating-orb w-20 h-20 bg-cyan-400 bottom-10 left-1/3 animation-delay-3000"></div>
-  
-  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+<header class="header-container">
+  <div class="max-w-7xl mx-auto px-4 py-4">
     <div class="flex justify-between items-center">
       <!-- Logo -->
-      <div class="flex items-center space-x-4">
-        <div class="w-14 h-14 rounded-2xl overflow-hidden relative group">
-          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-white tracking-tight">Demo Wave</h1>
-          <p class="text-sm text-blue-100 font-medium">あなたの声が社会を変える</p>
-        </div>
+      <div class="flex items-center space-x-3">
+        <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+        <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
       </div>
-      
+
       <!-- Navigation -->
       <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/demo" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">一覧に戻る</span>
-        </a>
-        <a href="/demo_wave/lp.html" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">ホーム</span>
-        </a>
-        <a href="/demo_wave/mypage" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-user-circle mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">マイページ</span>
-        </a>
-        
-        <!-- User Profile -->
-        <div id="userProfile" class="flex items-center space-x-3">
-          <div id="userProfileImage" class="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center relative group border border-white border-opacity-30">
-            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden group-hover:scale-110 transition-transform">
-            <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
-          </div>
-          <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
-        </div>
-        
-        <a href="/demo_wave/logout" class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300">
-          <i class="fas fa-sign-out-alt mr-2"></i>
-          <span class="hidden sm:inline">ログアウト</span>
-        </a>
+        <a href="/demo_wave/" class="nav-link">ホーム</a>
+        <a href="/demo_wave/mypage" class="nav-link">マイページ</a>
       </nav>
     </div>
   </div>
 </header>
 
-<!-- Main Content -->
-<main class="max-w-4xl mx-auto px-4 py-8">
-  <!-- Page Header -->
-  <div class="text-center mb-12 animate-fade-in">
-    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">新しいデモを作成</h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-      あなたの声を社会に届けるデモ活動を企画しましょう
-    </p>
-  </div>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-4xl font-bold text-white mb-3">デモを作成</h1>
+    <p class="text-lg text-white opacity-90 mb-8">あなたの声を社会に届けるデモ活動を企画しましょう</p>
 
-  <!-- Form Container -->
-  <div class="bg-white rounded-3xl shadow-2xl p-8 animate-fade-in">
-    <div class="flex items-center mb-8">
-      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
-        <i class="fas fa-plus text-white text-xl"></i>
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="progress-step">
+        <div class="step-circle active">1</div>
+        <span class="step-label hidden sm:inline">基本情報入力</span>
       </div>
-      <h2 class="text-3xl font-bold text-gray-900">デモ詳細情報</h2>
+      <div class="step-divider"></div>
+      <div class="progress-step">
+        <div class="step-circle inactive">2</div>
+        <span class="step-label hidden sm:inline">内容確認</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="progress-step">
+        <div class="step-circle inactive">3</div>
+        <span class="step-label hidden sm:inline">完了</span>
+      </div>
     </div>
-    <form method="post" th:action="@{/demo/create}" th:object="${demoForm}" class="space-y-8">
+  </div>
+</section>
+
+<!-- Main Content -->
+<main class="max-w-4xl mx-auto px-4 pb-16">
+  <form method="post" th:action="@{/demo/create}" th:object="${demoForm}">
+    <div class="form-container">
+
       <!-- Basic Information Section -->
-      <div class="bg-gray-50 rounded-2xl p-6">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-info-circle text-blue-600 mr-3"></i>
-          基本情報
-        </h3>
-        <div class="space-y-6">
-          <!-- Title -->
-          <div>
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-heading text-blue-500 mr-2"></i>デモタイトル *
-            </label>
-            <input type="text"
-              id="title"
-              name="title"
-              placeholder="例：気候変動対策を求める緊急デモ"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            />
-            <p th:if="${#fields.hasErrors('title')}" class="mt-2 text-sm text-red-600" th:errors="*{title}"></p>
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-edit"></i>
           </div>
+          <div>
+            <h2 class="section-title">基本情報</h2>
+            <p class="section-description">デモの概要を入力してください</p>
+          </div>
+        </div>
 
-          <!-- Category -->
-          <div>
-            <label for="categoryId" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-tags text-blue-500 mr-2"></i>カテゴリ *
-            </label>
-            <select
-              id="categoryId"
-              name="categoryId"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            >
-              <option value="">カテゴリを選択してください</option>
-              <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-            </select>
-            <p th:if="${#fields.hasErrors('categoryId')}" class="mt-2 text-sm text-red-600" th:errors="*{categoryId}"></p>
+        <!-- Title -->
+        <div class="form-group">
+          <label for="title" class="form-label">
+            <i class="fas fa-heading text-blue-600"></i>
+            デモタイトル
+            <span class="required-badge">必須</span>
+          </label>
+          <input type="text"
+            id="title"
+            name="title"
+            placeholder="例：気候変動対策を求める緊急デモ"
+            class="form-input"
+            th:value="${demoForm?.title}"
+            maxlength="255"
+          />
+          <div class="char-counter">
+            <span id="titleCounter">0</span> / 255文字
           </div>
+          <p th:if="${#fields.hasErrors('title')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{title}"></span>
+          </p>
+        </div>
 
-          <!-- Content -->
-          <div>
-            <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-file-alt text-blue-500 mr-2"></i>デモの詳細説明 *
-            </label>
-            <textarea
-              id="content"
-              name="content"
-              rows="6"
-              placeholder="デモの目的、背景、参加者へのメッセージなどを詳しく記入してください..."
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none resize-none"
-            ></textarea>
-            <p th:if="${#fields.hasErrors('content')}" class="mt-2 text-sm text-red-600" th:errors="*{content}"></p>
-          </div>
+        <!-- Category -->
+        <div class="form-group">
+          <label for="categoryId" class="form-label">
+            <i class="fas fa-tags text-blue-600"></i>
+            カテゴリ
+            <span class="required-badge">必須</span>
+          </label>
+          <select
+            id="categoryId"
+            name="categoryId"
+            class="form-input"
+            th:value="${demoForm?.categoryId}"
+          >
+            <option value="">カテゴリを選択してください</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+          </select>
+          <p th:if="${#fields.hasErrors('categoryId')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{categoryId}"></span>
+          </p>
+        </div>
+
+        <!-- Content -->
+        <div class="form-group">
+          <label for="content" class="form-label">
+            <i class="fas fa-align-left text-blue-600"></i>
+            デモの詳細説明
+            <span class="required-badge">必須</span>
+          </label>
+          <textarea
+            id="content"
+            name="content"
+            placeholder="デモの目的、背景、参加者へのメッセージなどを詳しく記入してください&#10;&#10;例：&#10;私たちは気候変動問題に対する政府の対応が不十分であると考えています。&#10;このデモを通じて、再生可能エネルギーへの転換を加速させる政策を求めます。&#10;市民の皆様のご参加をお待ちしています。"
+            class="form-textarea"
+            th:text="${demoForm?.content}"
+          ></textarea>
+          <p class="input-hint">
+            <i class="fas fa-lightbulb"></i>
+            具体的な要求や目標を明確に記載すると、より多くの賛同を得られます
+          </p>
+          <p th:if="${#fields.hasErrors('content')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{content}"></span>
+          </p>
         </div>
       </div>
 
       <!-- Schedule Section -->
-      <div class="bg-blue-50 rounded-2xl p-6">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-calendar-alt text-blue-600 mr-3"></i>
-          開催日程
-        </h3>
-        <div class="space-y-6">
-          <!-- Demo Date -->
-          <div>
-            <label for="demoDate" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-calendar text-blue-500 mr-2"></i>開催日 *
-            </label>
-            <input type="date"
-              id="demoDate"
-              name="demoDate"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            />
-            <p th:if="${#fields.hasErrors('demoDate')}" class="mt-2 text-sm text-red-600" th:errors="*{demoDate}"></p>
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-calendar-alt"></i>
           </div>
-          
-          <!-- Time Range -->
-          <div class="grid md:grid-cols-2 gap-6">
-            <!-- Start Time -->
-            <div>
-              <label for="demoStartTime" class="block text-sm font-medium text-gray-700 mb-2">
-                <i class="fas fa-clock text-blue-500 mr-2"></i>開始時間 *
-              </label>
-              <input type="time"
-                id="demoStartTime"
-                name="demoStartTime"
-                class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-              />
-              <p th:if="${#fields.hasErrors('demoStartTime')}" class="mt-2 text-sm text-red-600" th:errors="*{demoStartTime}"></p>
-            </div>
-            
-            <!-- End Time -->
-            <div>
-              <label for="demoEndTime" class="block text-sm font-medium text-gray-700 mb-2">
-                <i class="fas fa-clock text-blue-500 mr-2"></i>終了時間 *
-              </label>
-              <input type="time"
-                id="demoEndTime"
-                name="demoEndTime"
-                class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-              />
-              <p th:if="${#fields.hasErrors('demoEndTime')}" class="mt-2 text-sm text-red-600" th:errors="*{demoEndTime}"></p>
-            </div>
+          <div>
+            <h2 class="section-title">開催日程</h2>
+            <p class="section-description">デモの開催日時を設定してください</p>
+          </div>
+        </div>
+
+        <!-- Demo Date -->
+        <div class="form-group">
+          <label for="demoDate" class="form-label">
+            <i class="fas fa-calendar text-blue-600"></i>
+            開催日
+            <span class="required-badge">必須</span>
+          </label>
+          <input type="date"
+            id="demoDate"
+            name="demoDate"
+            class="form-input"
+            th:value="${demoForm?.demoDate}"
+          />
+          <p th:if="${#fields.hasErrors('demoDate')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{demoDate}"></span>
+          </p>
+        </div>
+
+        <!-- Time Range -->
+        <div class="time-grid">
+          <!-- Start Time -->
+          <div class="form-group">
+            <label for="demoStartTime" class="form-label">
+              <i class="fas fa-clock text-blue-600"></i>
+              開始時間
+              <span class="required-badge">必須</span>
+            </label>
+            <input type="time"
+              id="demoStartTime"
+              name="demoStartTime"
+              class="form-input"
+              th:value="${demoForm?.demoStartTime}"
+            />
+            <p th:if="${#fields.hasErrors('demoStartTime')}" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span th:errors="*{demoStartTime}"></span>
+            </p>
+          </div>
+
+          <!-- End Time -->
+          <div class="form-group">
+            <label for="demoEndTime" class="form-label">
+              <i class="fas fa-clock text-blue-600"></i>
+              終了時間
+              <span class="required-badge">必須</span>
+            </label>
+            <input type="time"
+              id="demoEndTime"
+              name="demoEndTime"
+              class="form-input"
+              th:value="${demoForm?.demoEndTime}"
+            />
+            <p th:if="${#fields.hasErrors('demoEndTime')}" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span th:errors="*{demoEndTime}"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">
+            <i class="fas fa-info-circle"></i>
+            開催時間について
+          </div>
+          <div class="info-card-content">
+            集合から解散までの時間を設定してください。通常2〜3時間程度が推奨されます。
           </div>
         </div>
       </div>
 
       <!-- Location Section -->
-      <div class="bg-blue-50 rounded-2xl p-6">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-map-marker-alt text-blue-600 mr-3"></i>
-          開催場所
-        </h3>
-        <div class="space-y-6">
-          <!-- Place Name -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
           <div>
-            <label for="demoPlace" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-building text-blue-500 mr-2"></i>会場名 *
-            </label>
-            <input type="text"
-              id="demoPlace"
-              name="demoPlace"
-              placeholder="例：渋谷駅前広場、国会議事堂前など"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            />
-            <p th:if="${#fields.hasErrors('demoPlace')}" class="mt-2 text-sm text-red-600" th:errors="*{demoPlace}"></p>
+            <h2 class="section-title">開催場所</h2>
+            <p class="section-description">デモの集合場所を入力してください</p>
           </div>
-          
-          <!-- Prefecture -->
-          <div>
-            <label for="prefectureId" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-map-pin text-blue-500 mr-2"></i>都道府県 *
-            </label>
-            <select
-              id="prefectureId"
-              name="prefectureId"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            >
-              <option value="">都道府県を選択してください</option>
-              <option th:each="prefecture : ${prefectures}" th:value="${prefecture.id}" th:text="${prefecture.name}"></option>
-            </select>
-            <p th:if="${#fields.hasErrors('prefectureId')}" class="mt-2 text-sm text-red-600" th:errors="*{prefectureId}"></p>
-          </div>
-
-          <!-- Address -->
-          <div>
-            <label for="demoAddress" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fas fa-map text-blue-500 mr-2"></i>住所 *
-            </label>
-            <input type="text"
-              id="demoAddress"
-              name="demoAddress"
-              placeholder="例：渋谷区道玄坂1-1"
-              class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none"
-            />
-          </div>
-          
-          <!-- Map Button -->
-          <div class="flex justify-center">
-            <button type="button" id="showMapButton" class="card-hover gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center space-x-2">
-              <i class="fas fa-map-marked-alt"></i>
-              <span>Google Mapで確認</span>
-            </button>
-          </div>
-          
-          <!-- Map Container -->
-          <div id="map" class="w-full h-96 rounded-xl overflow-hidden shadow-lg" style="display: none;"></div>
-          
-          <!-- Hidden Fields -->
-          <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" />
-          <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
         </div>
+
+        <!-- Place Name -->
+        <div class="form-group">
+          <label for="demoPlace" class="form-label">
+            <i class="fas fa-building text-blue-600"></i>
+            会場名
+            <span class="required-badge">必須</span>
+          </label>
+          <input type="text"
+            id="demoPlace"
+            name="demoPlace"
+            placeholder="例：渋谷駅前広場"
+            class="form-input"
+            th:value="${demoForm?.demoPlace}"
+          />
+          <p class="input-hint">
+            <i class="fas fa-search-location"></i>
+            会場名を入力すると候補が表示されます。候補から選択すると自動的に住所と位置情報が設定されます
+          </p>
+          <p th:if="${#fields.hasErrors('demoPlace')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{demoPlace}"></span>
+          </p>
+        </div>
+
+        <!-- Map Preview -->
+        <div id="mapContainer" class="hidden">
+          <div class="map-preview-container">
+            <div id="map" class="map-preview"></div>
+          </div>
+          <div class="info-card" style="margin-top: 16px;">
+            <div class="info-card-title">
+              <i class="fas fa-check-circle"></i>
+              位置情報が設定されました
+            </div>
+            <div class="info-card-content" id="selectedAddress">
+              住所: <span id="addressText"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden Fields -->
+        <input type="hidden" id="demoAddress" name="demoAddress" />
+        <input type="hidden" id="prefectureId" name="prefectureId" />
+        <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" />
+        <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
       </div>
 
-      <!-- Submit Button -->
-      <div class="text-center pt-4">
-        <button type="submit" class="card-hover gradient-bg text-white font-bold px-12 py-4 rounded-xl shadow-lg text-lg flex items-center space-x-3 mx-auto">
-          <i class="fas fa-eye"></i>
-          <span>内容を確認する</span>
+      <!-- Submit Section -->
+      <div class="submit-section">
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-arrow-right"></i>
+          <span>入力内容を確認する</span>
         </button>
-        <p class="text-sm text-gray-500 mt-3">
+        <p class="text-center text-sm text-gray-500 mt-4">
           次のページで入力内容を確認できます
         </p>
       </div>
-    </form>
-  </div>
-
-
-<!--    <script>-->
-<!--        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({-->
-<!--          key: "GOOGLE_MAPS_API_KEY_REMOVED",-->
-<!--          v: "weekly",-->
-<!--          // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).-->
-<!--          // Add other bootstrap parameters as needed, using camel case.-->
-<!--        });-->
-<!--    </script>-->
-    <script
-            src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY_REMOVED&callback=initMap"
-            async
-            defer
-    ></script>
-    <script>
-        let geocoder; // Geocoder インスタンス
-    let map; // Map インスタンス
-    let latLng; // 緯度経度を保持する変数
-
-    // 初期化処理
-    function initMap() {
-        geocoder = new google.maps.Geocoder();
-
-        // 地図を初期化 (デフォルト位置)
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 35.6895, lng: 139.6917 }, // 初期位置は東京
-            zoom: 12,
-        });
-    }
-
-    // Geocoding で住所から緯度経度を取得
-    function geocodeAddress(address) {
-        if (!geocoder) {
-            alert("Google Maps API がまだ初期化されていません");
-            return;
-        }
-
-        geocoder.geocode({ address: address }, (results, status) => {
-            if (status === "OK") {
-                // 緯度経度を取得して変数に保存
-                latLng = results[0].geometry.location;
-                console.log("Geocoding results:", results);
-                console.log("Lat:", latLng.lat());
-                console.log("Lng:", latLng.lng());
-
-                // 緯度経度を隠しフィールドに設定
-                document.getElementById("demoAddressLatitude").value = latLng.lat();
-                document.getElementById("demoAddressLongitude").value = latLng.lng();
-
-                // 地図を表示
-                displayMap(latLng);
-            } else {
-                console.error("Geocode failed due to:", status);
-                alert("住所の取得に失敗しました: " + status);
-            }
-        });
-    }
-
-    // 地図を指定した緯度経度で表示
-    function displayMap(latLng) {
-        // 地図を指定した緯度経度に移動
-        map.setCenter(latLng);
-
-        // マーカーを表示
-        new google.maps.Marker({
-            position: latLng,
-            map: map,
-            title: "指定した場所",
-        });
-
-        // 地図を表示
-        document.getElementById("map").style.display = "block";  // 地図を表示する
-    }
-
-    window.onload = () => {
-        // ボタンのクリックイベントを設定
-        document.getElementById("showMapButton").addEventListener("click", () => {
-            const address = document.getElementById("demoAddress").value;
-            if (address) {
-                geocodeAddress(address);
-            } else {
-                alert("住所を入力してください");
-            }
-        });
-    };
-
-    </script>
-    <script>
-        $(function () {
-            $('#announcementTime').daterangepicker({
-                "singleDatePicker": true,
-                "timePicker": true,
-                "timePicker24Hour": true,
-                "autoApply": true,
-                "locale": {
-                    "format": "YYYY-MM-DD HH:mm",
-                    "applyLabel": "Apply",
-                    "cancelLabel": "Cancel",
-                    "fromLabel": "From",
-                    "toLabel": "To",
-                    "customRangeLabel": "Custom",
-                    "weekLabel": "W",
-                    "daysOfWeek": [
-                        "日",
-                        "月",
-                        "火",
-                        "水",
-                        "木",
-                        "金",
-                        "土"
-                    ],
-                    "monthNames": [
-                        "1月",
-                        "2月",
-                        "3月",
-                        "4月",
-                        "5月",
-                        "6月",
-                        "7月",
-                        "8月",
-                        "9月",
-                        "10月",
-                        "11月",
-                        "12月"
-                    ],
-                    "firstDay": 1
-                },
-                "showCustomRangeLabel": false,
-                startDate: moment().startOf('hour'),
-            }, function (start, end, label) {
-                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            });
-
-            // #demoDate の初期化
-            $('#demoDate').daterangepicker({
-                "singleDatePicker": true,
-                "timePicker": true,
-                "timePicker24Hour": true,
-                "autoApply": true,
-                "locale": {
-                    "format": "YYYY-MM-DD HH:mm",
-                    "applyLabel": "Apply",
-                    "cancelLabel": "Cancel",
-                    "fromLabel": "From",
-                    "toLabel": "To",
-                    "customRangeLabel": "Custom",
-                    "weekLabel": "W",
-                    "daysOfWeek": [
-                        "日", "月", "火", "水", "木", "金", "土"
-                    ],
-                    "monthNames": [
-                        "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"
-                    ],
-                    "firstDay": 1
-                },
-                "showCustomRangeLabel": false,
-                startDate: moment().startOf('hour'),
-            }, function (start, end, label) {
-                console.log('New date selected for demoDate: ' + start.format('YYYY-MM-DD HH:mm') + ' (predefined range: ' + label + ')');
-            });
-        });
-
-    // ユーザー情報を取得してヘッダーに表示
-    async function loadUserProfile() {
-      try {
-        console.log('Loading user profile...');
-        const response = await fetch('/demo_wave/api/user/current');
-        console.log('Response status:', response.status);
-        
-        if (response.ok) {
-          const userInfo = await response.json();
-          console.log('User info:', userInfo);
-          
-          // ユーザー名を表示
-          document.getElementById('userName').textContent = userInfo.name;
-          document.getElementById('userName').classList.remove('hidden');
-          
-          // プロフィール画像を表示
-          const profileImg = document.getElementById('profileImg');
-          const defaultAvatar = document.getElementById('defaultAvatar');
-          
-          if (userInfo.profileImagePath) {
-            console.log('Setting profile image:', userInfo.profileImagePath);
-            profileImg.src = userInfo.profileImagePath;
-            profileImg.classList.remove('hidden');
-            defaultAvatar.classList.add('hidden');
-            // 画像の読み込みエラーが発生した場合はデフォルトアイコンを表示
-            profileImg.onerror = function() {
-              console.log('Profile image failed to load, showing default avatar');
-              this.classList.add('hidden');
-              defaultAvatar.classList.remove('hidden');
-            };
-          } else {
-            console.log('No profile image, showing default avatar');
-            profileImg.classList.add('hidden');
-            defaultAvatar.classList.remove('hidden');
-          }
-          
-          console.log('User profile loaded successfully');
-        } else {
-          const errorText = await response.text();
-          console.warn('Failed to load user profile:', response.status, errorText);
-        }
-      } catch (error) {
-        console.error('Error loading user profile:', error);
-      }
-    }
-
-    // ページ読み込み時にユーザー情報を取得
-    loadUserProfile();
-
-    </script>
+    </div>
+  </form>
 </main>
 
-<!-- Footer -->
-<footer class="bg-gray-900 text-white py-12 mt-16">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <div class="flex items-center justify-center space-x-3 mb-6">
-      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
-        <i class="fas fa-bullhorn text-white text-xl"></i>
-      </div>
-      <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
-    </div>
-    <p class="text-gray-400 mb-6">あなたの声が社会を変える力になる</p>
-    <p class="text-sm text-gray-500">&copy; 2025 Demo Wave. All rights reserved.</p>
-  </div>
-</footer>
-
 <!-- jQuery -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-
-<!-- Google Maps API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY_REMOVED&callback=initMap" async defer></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-  let geocoder;
   let map;
-  let latLng;
+  let geocoder;
+  let autocomplete;
+  let marker;
+  let placeSelected = false;
 
-  // Google Maps initialization
-  function initMap() {
-    geocoder = new google.maps.Geocoder();
-    
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 35.6895, lng: 139.6917 },
-      zoom: 15,
-      styles: [
-        {
-          "featureType": "all",
-          "elementType": "geometry.fill",
-          "stylers": [{"weight": "2.00"}]
-        },
-        {
-          "featureType": "all",
-          "elementType": "geometry.stroke",
-          "stylers": [{"color": "#9c9c9c"}]
-        },
-        {
-          "featureType": "all",
-          "elementType": "labels.text",
-          "stylers": [{"visibility": "on"}]
-        }
-      ]
-    });
+  // Google Maps initialization - グローバルに定義
+  window.initMap = function() {
+    console.log('=== initMap called ===');
+
+    try {
+      geocoder = new google.maps.Geocoder();
+      console.log('Geocoder initialized');
+
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 35.6895, lng: 139.6917 },
+        zoom: 16,
+        zoomControl: true,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true
+      });
+      console.log('Map initialized');
+
+      // 会場名入力時のボタンを追加
+      const placeInput = document.getElementById('demoPlace');
+      if (placeInput) {
+        console.log('Place input found');
+
+        // 検索ボタンを追加
+        const searchButton = document.createElement('button');
+        searchButton.type = 'button';
+        searchButton.className = 'btn-primary px-4 py-2 rounded-lg mt-2';
+        searchButton.innerHTML = '<i class="fas fa-search mr-2"></i>この場所を検索';
+        searchButton.onclick = function() {
+          const placeName = placeInput.value;
+          if (!placeName) {
+            alert('会場名を入力してください');
+            return;
+          }
+
+          geocodePlace(placeName);
+        };
+
+        placeInput.parentElement.appendChild(searchButton);
+        console.log('Search button added');
+      }
+
+      console.log('=== initMap completed successfully ===');
+    } catch (error) {
+      console.error('Error in initMap:', error);
+    }
   }
 
   // Geocoding function
-  function geocodeAddress(address) {
+  function geocodePlace(address) {
     if (!geocoder) {
-      alert("Google Maps APIがまだ初期化されていません");
+      alert('Google Maps APIがまだ読み込まれていません');
       return;
     }
 
-    geocoder.geocode({ address: address }, (results, status) => {
-      if (status === "OK") {
-        latLng = results[0].geometry.location;
-        console.log("Geocoding results:", results);
-        console.log("Lat:", latLng.lat());
-        console.log("Lng:", latLng.lng());
+    console.log('Geocoding address:', address);
 
-        document.getElementById("demoAddressLatitude").value = latLng.lat();
-        document.getElementById("demoAddressLongitude").value = latLng.lng();
+    geocoder.geocode({
+      address: address,
+      region: 'jp'
+    }, function(results, status) {
+      if (status === 'OK' && results[0]) {
+        const place = results[0];
+        const location = place.geometry.location;
+        const lat = location.lat();
+        const lng = location.lng();
 
-        displayMap(latLng);
+        console.log('Geocoding successful:', place);
+
+        // Set hidden fields
+        document.getElementById('demoAddressLatitude').value = lat;
+        document.getElementById('demoAddressLongitude').value = lng;
+        document.getElementById('demoAddress').value = place.formatted_address || '';
+        document.getElementById('addressText').textContent = place.formatted_address || '';
+
+        // Extract prefecture from address components
+        let prefecture = '';
+        if (place.address_components) {
+          for (let component of place.address_components) {
+            if (component.types.includes('administrative_area_level_1')) {
+              prefecture = component.long_name;
+              break;
+            }
+          }
+        }
+
+        // Match prefecture to prefectureId
+        const prefectureMap = {
+          '北海道': 1, '青森県': 2, '岩手県': 3, '宮城県': 4, '秋田県': 5,
+          '山形県': 6, '福島県': 7, '茨城県': 8, '栃木県': 9, '群馬県': 10,
+          '埼玉県': 11, '千葉県': 12, '東京都': 13, '神奈川県': 14, '新潟県': 15,
+          '富山県': 16, '石川県': 17, '福井県': 18, '山梨県': 19, '長野県': 20,
+          '岐阜県': 21, '静岡県': 22, '愛知県': 23, '三重県': 24, '滋賀県': 25,
+          '京都府': 26, '大阪府': 27, '兵庫県': 28, '奈良県': 29, '和歌山県': 30,
+          '鳥取県': 31, '島根県': 32, '岡山県': 33, '広島県': 34, '山口県': 35,
+          '徳島県': 36, '香川県': 37, '愛媛県': 38, '高知県': 39, '福岡県': 40,
+          '佐賀県': 41, '長崎県': 42, '熊本県': 43, '大分県': 44, '宮崎県': 45,
+          '鹿児島県': 46, '沖縄県': 47
+        };
+
+        if (prefectureMap[prefecture]) {
+          document.getElementById('prefectureId').value = prefectureMap[prefecture];
+        }
+
+        // Show map
+        document.getElementById('mapContainer').classList.remove('hidden');
+
+        // Update map
+        map.setCenter(location);
+
+        // Remove old marker if exists
+        if (marker) {
+          marker.setMap(null);
+        }
+
+        // Add new marker
+        marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          title: address,
+          animation: google.maps.Animation.DROP
+        });
+
+        placeSelected = true;
+
+        alert('場所が設定されました: ' + place.formatted_address);
+
+        console.log('Place info set:', {
+          address: place.formatted_address,
+          prefecture: prefecture,
+          lat: lat,
+          lng: lng
+        });
       } else {
-        console.error("Geocode failed due to:", status);
-        alert("住所の取得に失敗しました: " + status);
+        console.error('Geocode failed:', status);
+        alert('場所が見つかりませんでした。別の名前で試してください。');
       }
     });
   }
 
-  // Display map function
-  function displayMap(latLng) {
-    map.setCenter(latLng);
-
-    new google.maps.Marker({
-      position: latLng,
-      map: map,
-      title: "デモ会場",
-      animation: google.maps.Animation.BOUNCE
-    });
-
-    document.getElementById("map").style.display = "block";
-  }
-
-  // Event listeners
-  window.onload = () => {
-    document.getElementById("showMapButton").addEventListener("click", () => {
-      const address = document.getElementById("demoAddress").value;
-      if (address) {
-        geocodeAddress(address);
-      } else {
-        alert("住所を入力してください");
-      }
-    });
-  };
-
-  // Form validation
+  // Character counter for title
   $(document).ready(function() {
+    const titleInput = $('#title');
+    const titleCounter = $('#titleCounter');
+
+    function updateCounter() {
+      const length = titleInput.val().length;
+      titleCounter.text(length);
+
+      if (length > 200) {
+        titleCounter.parent().css('color', '#dc2626');
+      } else {
+        titleCounter.parent().css('color', '#9ca3af');
+      }
+    }
+
+    titleInput.on('input', updateCounter);
+    updateCounter(); // Initialize
+
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('demoDate').min = today;
-    
+
     // Validate end time is after start time
     $('#demoStartTime, #demoEndTime').on('change', function() {
       const startTime = $('#demoStartTime').val();
       const endTime = $('#demoEndTime').val();
-      
+
       if (startTime && endTime && startTime >= endTime) {
         alert('終了時間は開始時間より後の時間を選択してください。');
         $('#demoEndTime').val('');
       }
     });
+
+    // Form submission validation - 位置情報の検証を削除
+    $('form').on('submit', function(e) {
+      // 位置情報がなくてもフォーム送信を許可
+      // バックエンドで会場名から位置情報を取得する
+      return true;
+    });
   });
+</script>
+
+<!-- Google Maps API - 最後にロード -->
+<script>
+  // エラーハンドリング
+  window.gm_authFailure = function() {
+    console.error('Google Maps authentication failed');
+    alert('Google Maps APIの認証に失敗しました。APIキーを確認してください。');
+  };
+</script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY_REMOVED&callback=initMap"
+  onerror="console.error('Failed to load Google Maps API')">
 </script>
 
 </body>

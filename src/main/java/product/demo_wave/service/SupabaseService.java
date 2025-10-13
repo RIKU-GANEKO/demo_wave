@@ -88,6 +88,53 @@ public class SupabaseService {
     }
 
     /**
+     * Supabaseでユーザーをログインさせてアクセストークンを取得
+     */
+    public String signInUser(String email, String password) {
+        try {
+            // Auth API endpoint for signing in
+            String endpoint = supabaseUrl + "/auth/v1/token?grant_type=password";
+
+            // リクエストボディ
+            String requestBody = String.format("""
+                {
+                    "email": "%s",
+                    "password": "%s"
+                }
+                """, email, password);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .header("Content-Type", "application/json")
+                    .header("apikey", serviceRoleKey)
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .timeout(Duration.ofSeconds(30))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+
+            logger.info("Supabase sign in response status: {}", response.statusCode());
+            logger.debug("Supabase sign in response body: {}", response.body());
+
+            if (response.statusCode() == 200) {
+                JsonNode responseJson = objectMapper.readTree(response.body());
+                String accessToken = responseJson.get("access_token").asText();
+                logger.info("Successfully signed in Supabase user: {}", email);
+                return accessToken;
+            } else {
+                logger.error("Failed to sign in Supabase user. Status: {}, Body: {}",
+                        response.statusCode(), response.body());
+                throw new RuntimeException("Failed to sign in Supabase user: " + response.body());
+            }
+
+        } catch (Exception e) {
+            logger.error("Error signing in Supabase user for email: {}", email, e);
+            throw new RuntimeException("Failed to sign in Supabase user", e);
+        }
+    }
+
+    /**
      * Supabaseユーザーを削除
      */
     public void deleteUser(String userId) {

@@ -32,9 +32,9 @@ public class FavoriteDemoListDBLogic {
 	 *
 	 * @return デモ一覧情報のレスポンスを含むリスト
 	 */
-	List<FavoriteDemoListRecord> fetchFavoriteDemoList(String firebaseUid) {
+	List<FavoriteDemoListRecord> fetchFavoriteDemoList(String supabaseUid) {
 
-		User user = fetchUser(firebaseUid);
+		User user = fetchUser(supabaseUid);
 		List<Integer> favoriteDemoId = fetchFavoriteDemoId(user);
 
 		if (favoriteDemoId.isEmpty()) {
@@ -45,8 +45,8 @@ public class FavoriteDemoListDBLogic {
 		return responses;
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

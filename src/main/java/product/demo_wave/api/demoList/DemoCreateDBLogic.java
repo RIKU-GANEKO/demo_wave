@@ -31,12 +31,12 @@ public class DemoCreateDBLogic {
 	 *
 	 */
 	@CustomRetry
-	Demo saveDemo(DemoRequest request, String firebaseUid) {
-		Demo newDemo = demoRepository.saveAndFlush(toEntity(request, firebaseUid));
+	Demo saveDemo(DemoRequest request, String supabaseUid) {
+		Demo newDemo = demoRepository.saveAndFlush(toEntity(request, supabaseUid));
 		return newDemo;
 	}
 
-	private Demo toEntity(DemoRequest request, String firebaseUid) {
+	private Demo toEntity(DemoRequest request, String supabaseUid) {
 		Demo demo = new Demo();
 
 		demo.setTitle(request.getTitle());
@@ -48,7 +48,7 @@ public class DemoCreateDBLogic {
 		demo.setDemoStartDate(request.getDemoStartDate());
 		demo.setDemoEndDate(request.getDemoEndDate());
 		demo.setCategory(fetchCategory(request.getCategoryId()));
-		demo.setUser(fetchUser(firebaseUid));
+		demo.setUser(fetchUser(supabaseUid));
 
 		return demo;
 	}
@@ -59,8 +59,8 @@ public class DemoCreateDBLogic {
 		return category.orElse(new Category());
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

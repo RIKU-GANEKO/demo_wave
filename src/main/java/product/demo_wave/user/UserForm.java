@@ -19,10 +19,7 @@ record UserForm(
 		@NotBlank(message = "メールアドレスを入力してください")
 		String email,
 
-		@Size(min = 6, max = 20, message = "パスワードは6文字以上20文字以内にしてください")
-		@Pattern(regexp = ".*[a-z].*", message = "パスワードには小文字を含めるようにしてください")
-		@Pattern(regexp = ".*[A-Z].*", message = "パスワードには大文字を含めるようにしてください")
-		@Pattern(regexp = ".*\\d.*", message = "パスワードには半角数字を含めるようにしてください")
+		@Size(min = 8, message = "パスワードは8文字以上にしてください")
 		@NotBlank(message = "パスワードを入力してください")
 		String password,
 

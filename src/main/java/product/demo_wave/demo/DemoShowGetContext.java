@@ -11,12 +11,16 @@ import lombok.Setter;
 
 import product.demo_wave.entity.Comment;
 import product.demo_wave.entity.Demo;
+import product.demo_wave.entity.Participant;
+import product.demo_wave.entity.Payment;
 
 @RequiredArgsConstructor
 class DemoShowGetContext {
     private final Integer demoId;
     private Demo demo;
     private List<Comment> comments;
+    private List<Participant> participants;
+    private List<Payment> supporters;
 
     private Boolean isParticipant;
     private Integer participantCount;
@@ -48,12 +52,22 @@ class DemoShowGetContext {
         donateAmount = demoFacadeDBLogic.donateAmount(demoId);
     }
 
+    void fetchParticipants() {
+        participants = demoFacadeDBLogic.participants(demoId);
+    }
+
+    void fetchSupporters() {
+        supporters = demoFacadeDBLogic.supporters(demoId);
+    }
+
     void setModelAndView() {
         this.mv.addObject("demo", this.demo);
         this.mv.addObject("isParticipant", this.isParticipant);
         this.mv.addObject("comments", this.comments);
         this.mv.addObject("participantCount", this.participantCount);
         this.mv.addObject("donateAmount", this.donateAmount);
+        this.mv.addObject("participants", this.participants);
+        this.mv.addObject("supporters", this.supporters);
         this.mv.setViewName("demo/demo");
     }
 }

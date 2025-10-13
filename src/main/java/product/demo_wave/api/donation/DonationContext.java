@@ -18,7 +18,7 @@ import lombok.Builder;
 @Builder
 public class DonationContext {
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final DonationRequestDTO request;
 
 	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession() {
@@ -26,7 +26,7 @@ public class DonationContext {
 
 		System.out.println("Creating Stripe session for amount: " + request.getAmount());
 		System.out.println("Demo ID: " + request.getDemoId());
-		System.out.println("Firebase UID: " + firebaseUid);
+		System.out.println("Supabase UID: " + supabaseUid);
 
 		try {
 			// Payment Intent を明示的に作成してからCheckout Sessionに紐づける
@@ -53,7 +53,7 @@ public class DonationContext {
 					.setPaymentIntentData(
 							SessionCreateParams.PaymentIntentData.builder()
 									.putMetadata("demoId", String.valueOf(request.getDemoId()))
-									.putMetadata("firebaseUid", firebaseUid)
+									.putMetadata("supabaseUid", supabaseUid)
 									.build()
 					)
 					.build();

@@ -25,12 +25,12 @@ public class EmailUserCreateDBLogic {
 	 *
 	 */
 	@CustomRetry
-	User saveUser(String firebaseUid, String email, EmailUserRequest request) {
-		User newUser = userRepository.saveAndFlush(toEntity(firebaseUid, email, request));
+	User saveUser(String supabaseUid, String email, EmailUserRequest request) {
+		User newUser = userRepository.saveAndFlush(toEntity(supabaseUid, email, request));
 		return newUser;
 	}
 
-	private User toEntity(String firebaseUid, String email, EmailUserRequest request) {
+	private User toEntity(String supabaseUid, String email, EmailUserRequest request) {
 
 		// 適当な account_id（例えば 1）を仮に入れておく。
 		Account account = accountRepository.findById(1)
@@ -38,7 +38,7 @@ public class EmailUserCreateDBLogic {
 
 		User user = new User();
 
-		user.setFirebaseUid(firebaseUid);
+		user.setSupabaseUid(supabaseUid);
 		user.setAccount(account);
 		user.setName(request.getName());
 		user.setEmail(email);

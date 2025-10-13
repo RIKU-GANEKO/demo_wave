@@ -24,7 +24,7 @@ public class DemoDonationRankingContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final String demoDate;
 
 	@Setter

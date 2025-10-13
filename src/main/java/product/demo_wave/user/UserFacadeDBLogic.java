@@ -23,7 +23,6 @@ import product.demo_wave.common.logic.BasicFacadeDBLogic;
 //import jp.fs.toolkit.logger.Logger;
 
 @Component
-@AllArgsConstructor
 class UserFacadeDBLogic extends BasicFacadeDBLogic {
 
 //  private static final Logger logger = Logger.getLogger(UserFacadeDBLogic.class.getSimpleName());
@@ -32,8 +31,25 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
   private final AccountRepository accountRepository;
   private final RolesRepository roleRepository;
   private final SupabaseService supabaseService;
-
   private final PasswordEncoder passwordEncoder;
+
+  @org.springframework.beans.factory.annotation.Value("${supabase.enabled:false}")
+  private boolean supabaseEnabled;
+
+  // コンストラクタ
+  public UserFacadeDBLogic(
+      UserRepository userRepository,
+      AccountRepository accountRepository,
+      RolesRepository roleRepository,
+      SupabaseService supabaseService,
+      PasswordEncoder passwordEncoder
+  ) {
+    this.userRepository = userRepository;
+    this.accountRepository = accountRepository;
+    this.roleRepository = roleRepository;
+    this.supabaseService = supabaseService;
+    this.passwordEncoder = passwordEncoder;
+  }
 
 //  @CustomRetry
 //  PageData<UserDTO> fetchByAccountId(Integer accountId, Pageable pageable) {
@@ -67,7 +83,15 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
   }
 
   @CustomRetry
-  void saveUser(UserForm userForm) {
+  User saveUser(UserForm userForm) {
+    // デバッグログ: UserFormの内容を確認
+    System.out.println("===== UserForm Debug =====");
+    System.out.println("Name: " + userForm.name());
+    System.out.println("Email: " + userForm.email());
+    System.out.println("Password: " + (userForm.password() != null ? "****" : "null"));
+    System.out.println("ProfileImage: " + (userForm.profileImage() != null ? userForm.profileImage().getOriginalFilename() : "null"));
+    System.out.println("==========================");
+
     User user = toEntity(userForm);
 
     // ユーザの初期設定を行う
@@ -80,43 +104,66 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //    logger.info("New user demo : " + user.toString());
     try {
 //      logger.info("Start creating user...");
-      // MySQLにユーザーを保存
+
+      // まずMySQLにユーザーを保存（supabase_uidは一時的な値）
       userRepository.saveAndFlush(user);
-      
-      // Supabaseにもユーザーを作成
-      String supabaseUserId = supabaseService.createUser(
-          userForm.email(), 
-          userForm.password(), 
-          userForm.name()
-      );
-      
-      // SupabaseのユーザーIDをMySQLのユーザーに保存
-      user.setFirebaseUid(supabaseUserId);
-      
-      // プロフィール画像がアップロードされている場合はSupabase Storageに保存
-      System.out.println("プロフィール画像チェック: " + 
-        (userForm.profileImage() != null ? "存在(" + userForm.profileImage().getOriginalFilename() + ")" : "null") +
-        ", isEmpty: " + (userForm.profileImage() != null ? userForm.profileImage().isEmpty() : "N/A"));
-      
-      if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
-        System.out.println("プロフィール画像のアップロードを開始: " + userForm.profileImage().getOriginalFilename());
-        String profileImageUrl = supabaseService.uploadProfileImage(
-            userForm.profileImage(), 
-            supabaseUserId
-        );
-        user.setProfileImagePath(profileImageUrl);
-        System.out.println("プロフィール画像のアップロード完了: " + profileImageUrl);
+
+      // Supabaseが有効な場合のみ連携
+      if (supabaseEnabled) {
+        try {
+          System.out.println("Supabase統合が有効です。ユーザーをSupabaseに作成します。");
+          System.out.println("Supabase create user - Email: " + userForm.email() + ", Name: " + userForm.name());
+
+          // Supabaseにもユーザーを作成
+          String supabaseUserId = supabaseService.createUser(
+              userForm.email(),
+              userForm.password(),
+              userForm.name()
+          );
+
+          // SupabaseのユーザーIDをMySQLのユーザーに保存
+          user.setSupabaseUid(supabaseUserId);
+
+          // プロフィール画像がアップロードされている場合はSupabase Storageに保存
+          if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
+            System.out.println("プロフィール画像のアップロードを開始: " + userForm.profileImage().getOriginalFilename());
+            String profileImageUrl = supabaseService.uploadProfileImage(
+                userForm.profileImage(),
+                supabaseUserId
+            );
+            user.setProfileImagePath(profileImageUrl);
+            System.out.println("プロフィール画像のアップロード完了: " + profileImageUrl);
+          }
+
+          // 最終的な情報をMySQLに保存
+          userRepository.saveAndFlush(user);
+
+          System.out.println("User created successfully in both MySQL and Supabase");
+        } catch (Exception supabaseException) {
+          // Supabaseへの登録が失敗した場合、MySQLに保存されたユーザーを削除
+          System.err.println("Supabase registration failed, rolling back MySQL user: " + supabaseException.getMessage());
+          userRepository.delete(user);
+          throw new RuntimeException("Failed to create user in Supabase: " + supabaseException.getMessage(), supabaseException);
+        }
       } else {
-        System.out.println("プロフィール画像はアップロードされていません");
+        System.out.println("Supabase統合は無効です。MySQLのみにユーザーを保存します。");
+
+        // プロフィール画像の処理（開発中はローカル保存または後で実装）
+        if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
+          System.out.println("プロフィール画像: " + userForm.profileImage().getOriginalFilename());
+          System.out.println("※ Supabase無効のため、画像アップロードはスキップされます");
+        }
+
+        System.out.println("User created successfully in MySQL (Supabase disabled)");
       }
-      
-      userRepository.saveAndFlush(user);
-      
-//      logger.info("User created successfully in both MySQL and Supabase");
+
+//      logger.info("User created successfully");
     } catch (Exception e) {
 //      logger.error("Error occurred while creating user " + user.getName() + " : " + e.getMessage());
       throw e;
     }
+
+    return user;
   }
 
   private User toEntity(UserForm userForm) {
@@ -125,8 +172,8 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
     user.setName(userForm.name());
     user.setEmail(userForm.email());
     
-    // firebase_uidに一時的なダミー値を設定（のちにFirebase認証で更新）
-    user.setFirebaseUid("temp_" + System.currentTimeMillis() + "_" + userForm.email().hashCode());
+    // supabase_uidに一時的なダミー値を設定（のちにSupabase認証で更新）
+    user.setSupabaseUid("temp_" + System.currentTimeMillis() + "_" + userForm.email().hashCode());
 
 //    Account account = accountRepository.findById(userForm.accountId())
 //        .orElseThrow(() -> new NoSuchElementException("Account not found."));

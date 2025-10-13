@@ -19,6 +19,9 @@ class MypageService {
 		mypageGetUserContext.setMypageFacadeDBLogic(mypageFacadeDBLogic);
 		mypageGetUserContext.fetchUser();
 		mypageGetUserContext.fetchParticipatedDemo();
+		mypageGetUserContext.fetchFavoriteDemos();
+		mypageGetUserContext.fetchSupportedDemos();
+		mypageGetUserContext.fetchPostedDemos();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}

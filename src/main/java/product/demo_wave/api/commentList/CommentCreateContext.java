@@ -19,7 +19,7 @@ public class CommentCreateContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final CommentRequest request;
 
 	@Setter
@@ -47,7 +47,7 @@ public class CommentCreateContext {
 
 		Comment responses = null;
 
-		responses = commentCreateDBLogic.saveComment(firebaseUid, request);
+		responses = commentCreateDBLogic.saveComment(supabaseUid, request);
 
 		return new ResponseEntity<>(new CommentCreateResponse(responses), HttpStatus.CREATED);
 	}

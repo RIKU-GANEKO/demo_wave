@@ -81,51 +81,63 @@
         <!-- Name Field -->
         <div class="space-y-2">
           <label for="name" class="block text-sm font-medium text-gray-700">
-            <i class="fas fa-user text-blue-500 mr-2"></i>ユーザー名
+            <i class="fas fa-user text-blue-500 mr-2"></i>ユーザー名 <span class="text-red-500">*</span>
           </label>
-          <input 
-            type="text" 
-            name="name" 
+          <input
+            type="text"
+            name="name"
             id="name"
             th:value="${userForm.name}"
-            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
+            th:classappend="${#fields.hasErrors('name')} ? 'border-red-500' : 'border-gray-200'"
+            class="input-focus w-full px-4 py-3 border rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
             placeholder="あなたの名前"
             required
           />
+          <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-xs text-red-600 mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+          </p>
         </div>
 
         <!-- Email Field -->
         <div class="space-y-2">
           <label for="email" class="block text-sm font-medium text-gray-700">
-            <i class="fas fa-envelope text-blue-500 mr-2"></i>メールアドレス
+            <i class="fas fa-envelope text-blue-500 mr-2"></i>メールアドレス <span class="text-red-500">*</span>
           </label>
-          <input 
-            type="email" 
-            name="email" 
+          <input
+            type="email"
+            name="email"
             id="email"
             th:value="${userForm.email}"
-            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
+            th:classappend="${#fields.hasErrors('email')} ? 'border-red-500' : 'border-gray-200'"
+            class="input-focus w-full px-4 py-3 border rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
             placeholder="name@example.com"
             required
           />
+          <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-xs text-red-600 mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+          </p>
         </div>
 
         <!-- Password Field -->
         <div class="space-y-2">
           <label for="password" class="block text-sm font-medium text-gray-700">
-            <i class="fas fa-lock text-blue-500 mr-2"></i>パスワード
+            <i class="fas fa-lock text-blue-500 mr-2"></i>パスワード <span class="text-red-500">*</span>
           </label>
-          <input 
-            type="password" 
-            name="password" 
+          <input
+            type="password"
+            name="password"
             id="password"
             th:value="${userForm.password}"
-            class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
+            th:classappend="${#fields.hasErrors('password')} ? 'border-red-500' : 'border-gray-200'"
+            class="input-focus w-full px-4 py-3 border rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
             placeholder="8文字以上のパスワード"
             required
           />
-          <p class="text-xs text-gray-500 mt-1">
-            <i class="fas fa-info-circle mr-1"></i>8文字以上で英数字を含めてください
+          <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-xs text-red-600 mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+          </p>
+          <p th:unless="${#fields.hasErrors('password')}" class="text-xs text-gray-500 mt-1">
+            <i class="fas fa-info-circle mr-1"></i>8文字以上で入力してください
           </p>
         </div>
 
@@ -223,7 +235,7 @@
 
       <!-- Back to Home -->
       <div class="mt-4 text-center">
-        <a href="/demo_wave/lp.html" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+        <a href="/demo_wave/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
           <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
         </a>
       </div>
@@ -275,26 +287,57 @@
   // OAuth認証後にaccess_tokenがある場合の処理
   if (hashParams.get('access_token')) {
     console.log('OAuth callback detected, processing...');
-    
+
     // セッションが既に存在するかチェック
     if (session && session.user) {
       console.log('Authentication successful!', session.user);
       console.log('User email:', session.user.email);
       console.log('User name:', session.user.user_metadata?.full_name);
-      
-      alert(`登録成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
-      
-      // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
-      document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
-      document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
-      
-      // URLのハッシュをクリーンアップしてからリダイレクト
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      setTimeout(() => {
-        // デモ一覧画面に遷移
-        window.location.href = '/demo_wave/demo';
-      }, 1000);
+
+      try {
+        // バックエンドAPIにユーザー登録リクエストを送信
+        console.log('Calling backend API to register user...');
+        const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+            profileImagePath: session.user.user_metadata?.avatar_url || null
+          })
+        });
+
+        console.log('Backend API response status:', registerResponse.status);
+        const registerData = await registerResponse.json();
+        console.log('Backend API response:', registerData);
+
+        if (registerResponse.ok || registerResponse.status === 409) {
+          // 登録成功または既に登録済み（409 Conflict）の場合
+          console.log('User registered or already exists');
+
+          // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
+          document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+          document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+
+          alert(`登録成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
+
+          // URLのハッシュをクリーンアップしてからリダイレクト
+          window.history.replaceState({}, document.title, window.location.pathname);
+
+          setTimeout(() => {
+            // ホーム画面に遷移
+            window.location.href = '/demo_wave/';
+          }, 1000);
+        } else {
+          console.error('User registration failed:', registerData);
+          alert(`登録に失敗しました: ${registerData.errorDescription || 'エラーが発生しました'}`);
+        }
+      } catch (error) {
+        console.error('Error during user registration:', error);
+        alert(`登録処理でエラーが発生しました: ${error.message}`);
+      }
     }
   }
 
@@ -311,13 +354,13 @@
       document.cookie = 'supabase-user-email=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       
       console.log('Config:', config);
-      console.log('Redirect URL:', `${window.location.origin}/demo_wave/demo`);
+      console.log('Redirect URL:', `${window.location.origin}/demo_wave/user/signup`);
       console.log('Current URL:', window.location.href);
-      
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/demo_wave/demo`,
+          redirectTo: `${window.location.origin}/demo_wave/user/signup`,
           queryParams: {
             prompt: 'select_account'  // Googleアカウント選択を強制
           }

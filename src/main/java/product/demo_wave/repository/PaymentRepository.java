@@ -38,4 +38,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 """)
 	List<PaymentSum> findTotalAmountsByDemoIds(@Param("demoIds") List<Integer> demoIds);
 
+	// デモの支援者リストを取得（削除されていないもののみ）
+	List<Payment> findByDemoAndDeletedAtIsNull(Demo demo);
+
+	// ユーザーが支援したデモのリストを取得（削除されていないもののみ、重複を除く）
+	@Query("SELECT DISTINCT p.demo FROM Payment p WHERE p.user = :user AND p.deletedAt IS NULL ORDER BY p.demo.demoStartDate DESC")
+	List<Demo> findDistinctDemosByUserAndDeletedAtIsNull(@Param("user") User user);
+
 }

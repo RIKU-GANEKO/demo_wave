@@ -74,31 +74,31 @@ public class WebhookContext {
 					JsonNode paymentIntentNode = root.at("/data/object");
 
 					// 必要な値をJsonNodeから取得
-					String firebaseUid = paymentIntentNode.at("/metadata/firebaseUid").asText(null);
+					String supabaseUid = paymentIntentNode.at("/metadata/supabaseUid").asText(null);
 					String demoIdStr = paymentIntentNode.at("/metadata/demoId").asText(null);
 					long amountMinor = paymentIntentNode.at("/amount").asLong(0);
 
 					System.out.println("Raw JSON metadata check:");
-					System.out.println("firebaseUid from JSON: " + firebaseUid);
+					System.out.println("supabaseUid from JSON: " + supabaseUid);
 					System.out.println("demoId from JSON: " + demoIdStr);
 					System.out.println("amount from JSON: " + amountMinor);
 					System.out.println("Full metadata node: " + paymentIntentNode.at("/metadata"));
 
-					if (firebaseUid == null || firebaseUid.trim().isEmpty() || 
+					if (supabaseUid == null || supabaseUid.trim().isEmpty() || 
 					    demoIdStr == null || demoIdStr.trim().isEmpty()) {
 						System.err.println("❌ メタデータが不足しています");
 						System.err.println("Available metadata: " + paymentIntentNode.at("/metadata"));
-						throw new IllegalStateException("必要なメタデータがありません: firebaseUid=" + firebaseUid + ", demoId=" + demoIdStr);
+						throw new IllegalStateException("必要なメタデータがありません: supabaseUid=" + supabaseUid + ", demoId=" + demoIdStr);
 					}
 
 					int demoId = Integer.parseInt(demoIdStr);
 					BigDecimal amount = BigDecimal.valueOf(amountMinor);
 
-					System.out.println("firebaseUid: " + firebaseUid);
+					System.out.println("firebaseUid: " + supabaseUid);
 					System.out.println("amount: " + amount);
 					System.out.println("demoId: " + demoId);
 
-					webhookDBLogic.saveDonation(firebaseUid, amount, demoId);
+					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
 					sendMail(amount);
 
 				} else {
@@ -107,11 +107,11 @@ public class WebhookContext {
 							new IllegalStateException("Missing payment intent object"));
 
 					Map<String, String> metadata = paymentIntent.getMetadata();
-					String firebaseUid = metadata.get("firebaseUid");
+					String supabaseUid = metadata.get("supabaseUid");
 					Integer demoId = Integer.parseInt(metadata.get("demoId"));
 					BigDecimal amount = BigDecimal.valueOf(paymentIntent.getAmount());
 
-					webhookDBLogic.saveDonation(firebaseUid, amount, demoId);
+					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
 					sendMail(amount);
 				}
 			} else {

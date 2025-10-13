@@ -28,17 +28,17 @@ public class TodayDemoListDBLogic {
 	 *
 	 * @return デモ一覧情報のレスポンスを含むリスト
 	 */
-	List<TodayDemoListRecord> fetchTodayDemoList(String firebaseUid) {
+	List<TodayDemoListRecord> fetchTodayDemoList(String supabaseUid) {
 
-		User user = fetchUser(firebaseUid);
+		User user = fetchUser(supabaseUid);
 		Integer userId = user.getId();
 
 		List<TodayDemoListRecord> responses = demoRepository.getTodayDemoList(userId);
 		return responses;
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

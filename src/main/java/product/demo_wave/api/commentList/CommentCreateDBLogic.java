@@ -28,17 +28,17 @@ public class CommentCreateDBLogic {
 	 *
 	 */
 	@CustomRetry
-	Comment saveComment(String firebaseUid, CommentRequest request) {
-		Comment newComment = commentRepository.saveAndFlush(toEntity(firebaseUid, request));
+	Comment saveComment(String supabaseUid, CommentRequest request) {
+		Comment newComment = commentRepository.saveAndFlush(toEntity(supabaseUid, request));
 		return newComment;
 	}
 
-	private Comment toEntity(String firebaseUid, CommentRequest request) {
+	private Comment toEntity(String supabaseUid, CommentRequest request) {
 		Comment comment = new Comment();
 
 		comment.setDemo(fetchDemo(request.getDemoId()));
 		comment.setContent(request.getContent());
-		comment.setUser(fetchUser(firebaseUid));
+		comment.setUser(fetchUser(supabaseUid));
 
 		return comment;
 	}
@@ -49,8 +49,8 @@ public class CommentCreateDBLogic {
 		return demo.orElse(new Demo());
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

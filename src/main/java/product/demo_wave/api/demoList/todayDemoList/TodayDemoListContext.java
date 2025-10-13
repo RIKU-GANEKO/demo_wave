@@ -21,7 +21,7 @@ public class TodayDemoListContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 
 	@Setter
 	private TodayDemoListDBLogic todayDemoListDBLogic;
@@ -48,7 +48,7 @@ public class TodayDemoListContext {
 		List<TodayDemoListRecord> responses = null;
 
 		System.out.println("contextまでOK");
-		responses = todayDemoListDBLogic.fetchTodayDemoList(firebaseUid);
+		responses = todayDemoListDBLogic.fetchTodayDemoList(supabaseUid);
 
 		return new ResponseEntity<>(new TodayDemoListResponse(responses), HttpStatus.OK);
 	}

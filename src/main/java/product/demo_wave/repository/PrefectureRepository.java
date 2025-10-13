@@ -12,4 +12,6 @@ public interface PrefectureRepository extends JpaRepository<Prefecture, Integer>
 
   Optional<Prefecture> findById(Integer prefectureId);
 
+  Optional<Prefecture> findByName(String name);
+
 }

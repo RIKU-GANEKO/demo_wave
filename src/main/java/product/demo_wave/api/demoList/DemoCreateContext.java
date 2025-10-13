@@ -20,7 +20,7 @@ public class DemoCreateContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final DemoRequest request;
 
 	@Setter
@@ -48,7 +48,7 @@ public class DemoCreateContext {
 
 		Demo responses = null;
 
-		responses = demoCreateDBLogic.saveDemo(request, firebaseUid);
+		responses = demoCreateDBLogic.saveDemo(request, supabaseUid);
 
 		return new ResponseEntity<>(new DemoCreateResponse(responses), HttpStatus.CREATED);
 	}

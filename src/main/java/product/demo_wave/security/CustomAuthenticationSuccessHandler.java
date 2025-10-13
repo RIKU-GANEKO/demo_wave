@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -30,14 +31,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			Authentication authentication) throws IOException, ServletException {
 
 		Object principal = authentication.getPrincipal();
-		
+
 		// Supabase認証の場合はスキップ
 		if (principal instanceof SupabaseUserDetails) {
 			System.out.println("Supabase authentication - skipping user update");
-			response.sendRedirect("/demo_wave/demo");
+			response.sendRedirect(request.getContextPath() + "/");
 			return;
 		}
-		
+
 		// 既存のユーザー認証の場合
 		if (principal instanceof UsersDetails) {
 			UsersDetails usersDetails = (UsersDetails) principal;
@@ -47,6 +48,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			userRepository.save(user);
 		}
 
-		response.sendRedirect("/");
+		// リダイレクト先を決定
+		String targetUrl = request.getParameter("returnUrl");
+		System.out.println("################### returnUrl parameter: " + targetUrl);
+		if (targetUrl != null && !targetUrl.isEmpty() && targetUrl.startsWith("/")) {
+			// returnUrlパラメータがある場合はそこにリダイレクト（既にコンテキストパスを含む）
+			System.out.println("################### Redirecting to: " + targetUrl);
+			response.sendRedirect(targetUrl);
+		} else {
+			// なければトップページにリダイレクト
+			System.out.println("################### Redirecting to home: " + request.getContextPath() + "/");
+			response.sendRedirect(request.getContextPath() + "/");
+		}
 	}
 }

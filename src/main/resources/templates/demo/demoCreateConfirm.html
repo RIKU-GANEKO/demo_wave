@@ -5,206 +5,425 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>デモ作成確認 - Demo Wave</title>
   <meta name="description" content="Demo Waveでデモ作成内容を確認してください">
-  <link th:replace="common/head :: favicon"></link>
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
-    * { font-family: 'Inter', sans-serif; }
-    
-    .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
     }
-    
-    .glass-effect {
-      backdrop-filter: blur(16px) saturate(180%);
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+
+    body {
+      background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+      min-height: 100vh;
     }
-    
-    .text-gradient {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+
+    /* Header styles */
+    .header-container {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    
-    .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
+
+    .nav-link {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.2s;
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .nav-link:hover {
+      color: #2563eb;
     }
-    
-    .card-hover {
-      transition: all 0.3s ease;
+
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      padding: 48px 0;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
     }
-    
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Progress indicator */
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .step-circle.active {
+      background-color: #2563eb;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+
+    .step-circle.completed {
+      background-color: #10b981;
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .step-circle.inactive {
+      background-color: #e8e8e8;
+      color: #999;
+      box-shadow: none;
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .step-divider {
+      width: 40px;
+      height: 2px;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .step-divider.completed {
+      background-color: rgba(16, 185, 129, 0.8);
+    }
+
+    /* Confirmation container */
+    .confirm-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .confirm-section {
+      padding: 32px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .confirm-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .confirm-item {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .confirm-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .confirm-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .confirm-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    .action-section {
+      padding: 32px;
+      background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+    }
+
+    .btn-back {
+      background-color: white;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 16px 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-back:hover {
+      background-color: #f9fafb;
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 16px 32px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    @media (max-width: 640px) {
+      .confirm-section {
+        padding: 24px;
+      }
+
+      .progress-steps {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .step-divider {
+        width: 2px;
+        height: 20px;
+      }
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body>
 
 <!-- Header -->
-<header class="gradient-bg shadow-lg sticky top-0 z-50">
+<header class="header-container">
   <div class="max-w-7xl mx-auto px-4 py-4">
     <div class="flex justify-between items-center">
       <!-- Logo -->
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-          <i class="fas fa-bullhorn text-white text-lg"></i>
-        </div>
-        <h1 class="text-2xl font-bold text-white">Demo Wave</h1>
+        <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+        <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
       </div>
-      
+
       <!-- Navigation -->
-      <nav class="flex items-center space-x-6">
-        <a href="/demo_wave/demo" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-list mr-2"></i>一覧へ
-        </a>
-        <a href="/demo_wave/lp.html" class="text-white hover:text-yellow-300 transition-colors flex items-center">
-          <i class="fas fa-home mr-2"></i>ホーム
-        </a>
-        <a href="/demo_wave/logout" class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-full hover:bg-opacity-30 transition-all">
-          <i class="fas fa-sign-out-alt mr-2"></i>ログアウト
-        </a>
+      <nav class="flex items-center space-x-4">
+        <a href="/demo_wave/" class="nav-link">ホーム</a>
+        <a href="/demo_wave/mypage" class="nav-link">マイページ</a>
       </nav>
     </div>
   </div>
 </header>
 
-<!-- Main Content -->
-<main class="max-w-4xl mx-auto px-4 py-8">
-  <!-- Page Header -->
-  <div class="text-center mb-12 animate-fade-in">
-    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">デモ作成内容確認</h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-      以下の内容でデモを作成します。確認後、「作成して公開」ボタンを押してください。
-    </p>
-  </div>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-4xl font-bold text-white mb-3">入力内容の確認</h1>
+    <p class="text-lg text-white opacity-90 mb-8">以下の内容でデモを作成します</p>
 
-  <!-- Confirmation Form -->
-  <div class="bg-white rounded-3xl shadow-2xl p-8 animate-fade-in">
-    <form method="post" th:action="@{/demo/create/confirm}" th:object="${demoForm}" class="space-y-8">
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="progress-step">
+        <div class="step-circle completed">
+          <i class="fas fa-check"></i>
+        </div>
+        <span class="step-label hidden sm:inline">基本情報入力</span>
+      </div>
+      <div class="step-divider completed"></div>
+      <div class="progress-step">
+        <div class="step-circle active">2</div>
+        <span class="step-label hidden sm:inline">内容確認</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="progress-step">
+        <div class="step-circle inactive">3</div>
+        <span class="step-label hidden sm:inline">完了</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<main class="max-w-4xl mx-auto px-4 pb-16">
+  <form method="post" th:action="@{/demo/create/confirm}" th:object="${demoForm}">
+    <div class="confirm-container">
+
       <!-- Basic Information Section -->
-      <div class="bg-gray-50 rounded-2xl p-6 mb-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-info-circle text-purple-600 mr-3"></i>
-          基本情報
-        </h3>
-        <div class="space-y-4">
-          <!-- Title -->
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">タイトル</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${demoForm.title}"></div>
-            <input type="hidden" th:value="${demoForm.title}" name="title" id="title">
+      <div class="confirm-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-edit"></i>
           </div>
-          <!-- Category -->
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">カテゴリ</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${selectedCategoryName}"></div>
-            <input type="hidden" th:value="${demoForm.categoryId}" name="categoryId" id="categoryId">
+          <div>
+            <h2 class="section-title">基本情報</h2>
           </div>
-          <!-- Content -->
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">デモの詳細説明</div>
-            <div class="text-gray-900 whitespace-pre-wrap" th:text="${demoForm.content}"></div>
-            <input type="hidden" th:value="${demoForm.content}" name="content" id="content">
-          </div>
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">デモタイトル</div>
+          <div class="confirm-value" th:text="${demoForm.title}"></div>
+          <input type="hidden" th:value="${demoForm.title}" name="title" id="title">
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">カテゴリ</div>
+          <div class="confirm-value" th:text="${selectedCategoryName}"></div>
+          <input type="hidden" th:value="${demoForm.categoryId}" name="categoryId" id="categoryId">
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">デモの詳細説明</div>
+          <div class="confirm-value" style="white-space: pre-wrap;" th:text="${demoForm.content}"></div>
+          <input type="hidden" th:value="${demoForm.content}" name="content" id="content">
         </div>
       </div>
 
       <!-- Schedule Section -->
-      <div class="bg-blue-50 rounded-2xl p-6 mb-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-calendar-alt text-blue-600 mr-3"></i>
-          開催日程
-        </h3>
-        <div class="space-y-4">
-          <!-- Demo Date -->
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">開催日</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${#temporals.format(demoForm.demoDate, 'yyyy年MM月dd日')}"></div>
-            <input type="hidden" th:value="${demoForm.demoDate}" name="demoDate" id="demoDate">
+      <div class="confirm-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-calendar-alt"></i>
           </div>
-          <!-- Time Range -->
-          <div class="grid md:grid-cols-2 gap-4">
-            <div class="bg-white rounded-xl p-4">
-              <div class="text-sm text-gray-500 mb-1">開始時間</div>
-              <div class="text-lg font-semibold text-gray-900" th:text="${demoForm.demoStartTime}"></div>
-              <input type="hidden" th:value="${demoForm.demoStartTime}" name="demoStartTime" id="demoStartTime">
-            </div>
-            <div class="bg-white rounded-xl p-4">
-              <div class="text-sm text-gray-500 mb-1">終了時間</div>
-              <div class="text-lg font-semibold text-gray-900" th:text="${demoForm.demoEndTime}"></div>
-              <input type="hidden" th:value="${demoForm.demoEndTime}" name="demoEndTime" id="demoEndTime">
-            </div>
+          <div>
+            <h2 class="section-title">開催日程</h2>
+          </div>
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">開催日</div>
+          <div class="confirm-value" th:text="${#temporals.format(demoForm.demoDate, 'yyyy年MM月dd日')}"></div>
+          <input type="hidden" th:value="${demoForm.demoDate}" name="demoDate" id="demoDate">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="confirm-item">
+            <div class="confirm-label">開始時間</div>
+            <div class="confirm-value" th:text="${demoForm.demoStartTime}"></div>
+            <input type="hidden" th:value="${demoForm.demoStartTime}" name="demoStartTime" id="demoStartTime">
+          </div>
+
+          <div class="confirm-item">
+            <div class="confirm-label">終了時間</div>
+            <div class="confirm-value" th:text="${demoForm.demoEndTime}"></div>
+            <input type="hidden" th:value="${demoForm.demoEndTime}" name="demoEndTime" id="demoEndTime">
           </div>
         </div>
       </div>
 
       <!-- Location Section -->
-      <div class="bg-green-50 rounded-2xl p-6 mb-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <i class="fas fa-map-marker-alt text-green-600 mr-3"></i>
-          開催場所
-        </h3>
-        <div class="space-y-4">
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">都道府県</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${selectedPrefectureName}"></div>
-            <input type="hidden" th:value="${demoForm.prefectureId}" name="prefectureId" id="prefectureId">
+      <div class="confirm-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-map-marker-alt"></i>
           </div>
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">会場名</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${demoForm.demoPlace}"></div>
-            <input type="hidden" th:value="${demoForm.demoPlace}" name="demoPlace" id="demoPlace">
-          </div>
-          <div class="bg-white rounded-xl p-4">
-            <div class="text-sm text-gray-500 mb-1">住所</div>
-            <div class="text-lg font-semibold text-gray-900" th:text="${demoForm.demoAddress}"></div>
-            <input type="hidden" th:value="${demoForm.demoAddress}" name="demoAddress" id="demoAddress">
-            <input type="hidden" th:value="${demoForm.demoAddressLatitude}" name="demoAddressLatitude" id="demoAddressLatitude">
-            <input type="hidden" th:value="${demoForm.demoAddressLongitude}" name="demoAddressLongitude" id="demoAddressLongitude">
+          <div>
+            <h2 class="section-title">開催場所</h2>
           </div>
         </div>
-      </div>
-      <!-- Action Buttons -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-        <a href="/demo_wave/demo/create" class="card-hover">
-          <button type="button" class="w-full sm:w-auto bg-gray-100 text-gray-700 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
-            <i class="fas fa-arrow-left"></i>
-            <span>戻って修正する</span>
-          </button>
-        </a>
-        <button type="submit" class="card-hover w-full sm:w-auto gradient-bg text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
-          <i class="fas fa-check-circle"></i>
-          <span>作成して公開</span>
-        </button>
-      </div>
-    </form>
-  </div>
-</main>
 
-<!-- Footer -->
-<footer class="bg-gray-900 text-white py-12 mt-16">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <div class="flex items-center justify-center space-x-3 mb-6">
-      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
-        <i class="fas fa-bullhorn text-white text-xl"></i>
+        <div class="confirm-item">
+          <div class="confirm-label">会場名</div>
+          <div class="confirm-value" th:text="${demoForm.demoPlace}"></div>
+          <input type="hidden" th:value="${demoForm.demoPlace}" name="demoPlace" id="demoPlace">
+        </div>
+
+        <!-- Hidden fields -->
+        <input type="hidden" th:value="${demoForm.prefectureId}" name="prefectureId" id="prefectureId">
+        <input type="hidden" th:value="${demoForm.demoAddress}" name="demoAddress" id="demoAddress">
+        <input type="hidden" th:value="${demoForm.demoAddressLatitude}" name="demoAddressLatitude" id="demoAddressLatitude">
+        <input type="hidden" th:value="${demoForm.demoAddressLongitude}" name="demoAddressLongitude" id="demoAddressLongitude">
       </div>
-      <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
+
+      <!-- Action Buttons -->
+      <div class="action-section">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/demo_wave/demo/create">
+            <button type="button" class="btn-back w-full sm:w-auto">
+              <i class="fas fa-arrow-left"></i>
+              <span>戻って修正する</span>
+            </button>
+          </a>
+          <button type="submit" class="btn-submit w-full sm:w-auto">
+            <i class="fas fa-check-circle"></i>
+            <span>作成して公開</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <p class="text-gray-400 mb-6">あなたの声が社会を変える力になる</p>
-    <p class="text-sm text-gray-500">&copy; 2025 Demo Wave. All rights reserved.</p>
-  </div>
-</footer>
+  </form>
+</main>
 
 </body>
 </html>

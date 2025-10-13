@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
+import product.demo_wave.service.SupabaseService;
 
 @Service
 @AllArgsConstructor
 class UserService {
     private final UserFacadeDBLogic userFacadeDBLogic;
+    private final SupabaseService supabaseService;
 
 //    void rootByGet(UserGetContext userGetContext) {
 //        userGetContext.setUserFacadeDBLogic(userFacadeDBLogic);
@@ -52,7 +54,12 @@ class UserService {
 
         if (userCreatePostContext.hasErrors()) {
             userCreatePostContext.setErrorModelAndView();
-            System.out.println("エラーがあります");
+            System.out.println("===== バリデーションエラー =====");
+            System.out.println("エラー内容: " + userCreatePostContext.getBindingResult().getAllErrors());
+            userCreatePostContext.getBindingResult().getAllErrors().forEach(error -> {
+                System.out.println("- " + error.getDefaultMessage());
+            });
+            System.out.println("================================");
             return userCreatePostContext.getModelAndView();
         }
 
@@ -66,6 +73,7 @@ class UserService {
 
     ModelAndView createConfirmByPost(UserCreateConfirmPostContext userCreateConfirmPostContext) throws DataAccessException, NoSuchElementException {
         userCreateConfirmPostContext.setUserFacadeDBLogic(userFacadeDBLogic);
+        userCreateConfirmPostContext.setSupabaseService(supabaseService);
         userCreateConfirmPostContext.saveUser();
         userCreateConfirmPostContext.setModelAndView();
         return userCreateConfirmPostContext.getModelAndView();

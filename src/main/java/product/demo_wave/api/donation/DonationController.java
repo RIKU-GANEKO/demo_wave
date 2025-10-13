@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import io.jsonwebtoken.JwtException;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.common.api.ErrorResponse;
+import product.demo_wave.security.SupabaseJwtService;
+import product.demo_wave.security.SupabaseToken;
 
 /**
  * <pre>
@@ -26,6 +26,7 @@ import product.demo_wave.common.api.ErrorResponse;
 public class DonationController {
 
 	private DonationService donationService;
+	private SupabaseJwtService supabaseJwtService;
 
 	@PostMapping("/create-checkout-session")
 	public ResponseEntity<?> createCheckoutSession(
@@ -40,19 +41,19 @@ public class DonationController {
 		System.out.println("Token received: " + (idToken != null && !idToken.isEmpty()));
 
 		try {
-			FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-			System.out.println("Firebase UID: " + decodedToken.getUid());
-			
+			SupabaseToken decodedToken = supabaseJwtService.verifyToken(idToken);
+			System.out.println("Supabase UID: " + decodedToken.getUid());
+
 			DonationContext context = DonationContext.builder()
-					.firebaseUid(decodedToken.getUid())
+					.supabaseUid(decodedToken.getUid())
 					.request(request)
 					.build();
 
 			return donationService.createCheckoutSession(context);
-		} catch (FirebaseAuthException e) {
-			System.err.println("Firebase Auth Error: " + e.getMessage());
+		} catch (JwtException e) {
+			System.err.println("Supabase Auth Error: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ErrorResponse("Invalid Firebase token: " + e.getMessage()));
+					.body(new ErrorResponse("Invalid Supabase token: " + e.getMessage()));
 		} catch (Exception e) {
 			System.err.println("General Error: " + e.getMessage());
 			e.printStackTrace();

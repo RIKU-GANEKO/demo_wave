@@ -40,10 +40,8 @@ public class UsersDetailsService implements UserDetailsService {
 	public User getCurrentlyLoggedInUser() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (principal instanceof UsersDetails) {
-			System.out.println(" user details : " + ((UsersDetails) principal).getUser());
 			return ((UsersDetails) principal).getUser();
 		}
-		System.out.println(" user details : null ");
 		return null;
 	}
 }

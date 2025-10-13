@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
   Optional<User> findById(Integer userId);
 
-  Optional<User> findByFirebaseUid(String firebaseUid);
+  Optional<User> findBySupabaseUid(String supabaseUid);
 
 //  Page<User> findByAccount(Pageable pageable, Account account);
 
@@ -36,6 +36,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
   """)
   List<UserEmail> findEmailsByUserIds(@Param("userIds") Set<Integer> userIds);
 
-  @Query("SELECT u.firebaseUid FROM User u")
-  List<String> findAllFirebaseUids();
+  @Query("SELECT u.supabaseUid FROM User u")
+  List<String> findAllSupabaseUids();
 }

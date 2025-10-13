@@ -217,6 +217,27 @@
       border-color: var(--primary-300);
       transform: translateY(-2px);
     }
+
+    .filter-pill.active {
+      background: var(--primary-500);
+      color: white;
+      border-color: var(--primary-600);
+      transform: translateY(-2px);
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
@@ -243,7 +264,7 @@
       
       <!-- Navigation -->
       <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/lp.html" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
+        <a href="/demo_wave/" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
           <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
           <span class="hidden sm:block font-medium">ホーム</span>
         </a>
@@ -297,18 +318,24 @@
       
       <!-- Filter Pills -->
       <div class="flex flex-wrap gap-3">
-        <a href="/demo_wave/demo" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+        <button id="filter-all" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 active" data-filter="all">
           <i class="fas fa-globe mr-2"></i>全てのカテゴリ
-        </a>
-        <a href="/demo_wave/demo?categoryId=1" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+        </button>
+        <button id="filter-category-1" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300" data-filter="category" data-category="1">
           <i class="fas fa-leaf mr-2"></i>環境
-        </a>
-        <a href="/demo_wave/demo?categoryId=2" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+        </button>
+        <button id="filter-category-2" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300" data-filter="category" data-category="2">
           <i class="fas fa-balance-scale mr-2"></i>人権
-        </a>
-        <a href="/demo_wave/demo?categoryId=3" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300">
+        </button>
+        <button id="filter-category-3" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300" data-filter="category" data-category="3">
           <i class="fas fa-vote-yea mr-2"></i>政治
-        </a>
+        </button>
+        <button id="filter-upcoming" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300" data-filter="upcoming">
+          <i class="fas fa-calendar-plus mr-2"></i>開催予定のみ
+        </button>
+        <button id="filter-favorites" class="filter-pill px-6 py-3 rounded-full font-medium text-slate-700 hover:text-blue-600 transition-all duration-300" data-filter="favorites">
+          <i class="fas fa-heart mr-2"></i>お気に入り
+        </button>
       </div>
     </div>
   </div>
@@ -327,18 +354,11 @@
          onclick="window.location.href='/demo_wave/demo/show?demoId=' + this.dataset.demoId" 
          th:data-demo-id="${demo.id}">
       
-      <!-- Demo Image -->
-      <div class="relative h-48 bg-gradient-to-r from-slate-100 to-blue-100 overflow-hidden rounded-t-3xl">
-        <img src="/demo_wave/images/support_disaster_place.png" 
-             alt="デモ画像" 
-             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-      </div>
-      
       <!-- Info Bar -->
       <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-slate-200">
-        <div class="flex justify-between items-center">
-          <!-- Status Badge -->
-          <div>
+        <div class="flex justify-between items-center flex-wrap gap-3">
+          <!-- Status Badge & Category -->
+          <div class="flex gap-3 items-center">
             <th:block th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}">
               <span class="status-live text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
                 <i class="fas fa-broadcast-tower mr-2"></i>LIVE
@@ -354,8 +374,10 @@
                 <i class="fas fa-history mr-2"></i>ENDED
               </span>
             </th:block>
+            <!-- Category Badge -->
+            <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-full" th:text="${demo.categoryName}">環境</span>
           </div>
-          
+
           <!-- Participants & Support Amount -->
           <div class="flex gap-6">
             <!-- Participants -->
@@ -376,12 +398,33 @@
       <!-- Card Content -->
       <div class="p-6">
         <!-- Title -->
-        <h3 class="text-xl font-bold text-slate-900 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 ease-out" th:text="${demo.title}">
+        <h3 class="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200 ease-out" th:text="${demo.title}">
           気候変動対策を求める緊急デモ
         </h3>
 
+        <!-- Description -->
+        <p class="text-slate-600 text-sm mb-4 line-clamp-3" th:text="${demo.content}">
+          環境破壊を食い止め、持続可能な未来を実現するために、私たちの声を政府に届けましょう。気候変動は待ったなしの課題です。
+        </p>
+
         <!-- Info Grid -->
         <div class="space-y-4 mb-6">
+          <!-- Organizer & Prefecture -->
+          <div class="flex items-center gap-4">
+            <div class="flex items-center text-slate-600">
+              <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center mr-2">
+                <i class="fas fa-user text-amber-600 text-sm"></i>
+              </div>
+              <span class="text-xs font-medium" th:text="${demo.organizerName}">主催者名</span>
+            </div>
+            <div class="flex items-center text-slate-600">
+              <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-2">
+                <i class="fas fa-map-pin text-indigo-600 text-sm"></i>
+              </div>
+              <span class="text-xs font-medium" th:text="${demo.prefectureName}">東京都</span>
+            </div>
+          </div>
+
           <!-- Date & Time -->
           <div class="flex items-center text-slate-600 group-hover:text-blue-600 transition-colors duration-200 ease-out">
             <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors duration-200 ease-out">
@@ -389,12 +432,12 @@
             </div>
             <div>
               <div class="text-xs text-slate-400 font-medium uppercase tracking-wide">開催日時</div>
-              <span class="text-sm font-semibold" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
-                2025年01月15日 14:00
+              <span class="text-sm font-semibold" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm') + ' ~ ' + #temporals.format(demo.demoEndDate, 'HH:mm')}">
+                2025年01月15日 14:00 ~ 16:00
               </span>
             </div>
           </div>
-          
+
           <!-- Location -->
           <div class="flex items-center text-slate-600 group-hover:text-blue-600 transition-colors duration-200 ease-out">
             <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mr-3 group-hover:bg-emerald-200 transition-colors duration-200 ease-out">
@@ -414,9 +457,9 @@
               <span class="relative z-10">詳細を見る</span>
             </div>
           </div>
-          <button class="w-14 h-14 bg-gradient-to-br from-pink-100 to-red-100 text-pink-600 rounded-2xl hover:from-pink-200 hover:to-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center shadow-lg favorite-btn" 
+          <button class="w-14 h-14 bg-gray-100 text-gray-600 rounded-2xl hover:bg-gray-200 hover:scale-110 transition-all duration-300 flex items-center justify-center shadow-lg favorite-btn"
                   onclick="event.stopPropagation(); toggleFavorite(this)">
-            <i class="fas fa-heart text-lg"></i>
+            <i class="far fa-heart text-lg"></i>
           </button>
         </div>
       </div>
@@ -513,20 +556,131 @@
 </footer>
 
 <script>
-  // Search functionality
-  document.querySelector('input[placeholder="デモを検索..."]').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const demoCards = document.querySelectorAll('[th\\:each="demo : ${demoList}"]');
-    
+  // Global filter state
+  let currentFilters = {
+    search: '',
+    category: 'all',
+    upcoming: false,
+    favorites: false
+  };
+
+  // Apply all filters
+  function applyFilters() {
+    const demoCards = document.querySelectorAll('[data-demo-id]');
+    let visibleCount = 0;
+
     demoCards.forEach(card => {
-      const title = card.querySelector('h3').textContent.toLowerCase();
-      const location = card.querySelector('[th\\:text="${demo.demoPlace}"]')?.textContent.toLowerCase() || '';
-      
-      if (title.includes(searchTerm) || location.includes(searchTerm)) {
+      let shouldShow = true;
+
+      // Search filter (title, location)
+      if (currentFilters.search) {
+        const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const location = card.querySelector('[th\\:text="${demo.demoPlace}"]')?.textContent.toLowerCase() || '';
+        const searchMatch = title.includes(currentFilters.search) || location.includes(currentFilters.search);
+        shouldShow = shouldShow && searchMatch;
+      }
+
+      // Category filter - for now, simulate based on demo titles since we don't have category data
+      if (currentFilters.category !== 'all') {
+        const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        let categoryMatch = false;
+
+        switch(currentFilters.category) {
+          case '1': // 環境
+            categoryMatch = title.includes('環境') || title.includes('気候') || title.includes('温暖化') || title.includes('エコ');
+            break;
+          case '2': // 人権
+            categoryMatch = title.includes('人権') || title.includes('平等') || title.includes('差別') || title.includes('権利');
+            break;
+          case '3': // 政治
+            categoryMatch = title.includes('政治') || title.includes('選挙') || title.includes('政策') || title.includes('改革');
+            break;
+        }
+        shouldShow = shouldShow && categoryMatch;
+      }
+
+      // Upcoming filter
+      if (currentFilters.upcoming) {
+        const statusBadge = card.querySelector('.status-scheduled');
+        shouldShow = shouldShow && statusBadge !== null;
+      }
+
+      // Favorites filter
+      if (currentFilters.favorites) {
+        const favoriteBtn = card.querySelector('.favorite-btn i');
+        const isFavorited = favoriteBtn && favoriteBtn.classList.contains('fas');
+        shouldShow = shouldShow && isFavorited;
+      }
+
+      if (shouldShow) {
         card.style.display = 'block';
+        visibleCount++;
       } else {
         card.style.display = 'none';
       }
+    });
+
+    // Update pagination info
+    updatePaginationInfo(visibleCount);
+  }
+
+  // Update pagination information based on filtered results
+  function updatePaginationInfo(visibleCount) {
+    const paginationInfo = document.querySelector('.text-center.mb-6 p');
+    if (paginationInfo && visibleCount !== undefined) {
+      paginationInfo.innerHTML = `表示中: <span class="font-bold text-blue-600">1</span>-<span class="font-bold text-blue-600">${visibleCount}</span> / 全<span class="font-bold text-blue-600">${visibleCount}</span>件`;
+    }
+
+    // Hide pagination controls when filtering
+    const paginationControls = document.querySelector('nav.flex.items-center.space-x-2');
+    if (paginationControls) {
+      const isFiltered = currentFilters.search || currentFilters.category !== 'all' || currentFilters.upcoming || currentFilters.favorites;
+      paginationControls.style.display = isFiltered ? 'none' : 'flex';
+    }
+  }
+
+  // Search functionality
+  document.querySelector('input[placeholder="デモやイベントを検索..."]').addEventListener('input', function(e) {
+    currentFilters.search = e.target.value.toLowerCase();
+    applyFilters();
+  });
+
+  // Filter button functionality
+  document.querySelectorAll('.filter-pill').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Remove active class from all buttons
+      document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+
+      // Add active class to clicked button
+      this.classList.add('active');
+
+      const filterType = this.dataset.filter;
+
+      // Reset all filters except search
+      currentFilters.category = 'all';
+      currentFilters.upcoming = false;
+      currentFilters.favorites = false;
+
+      // Set new filter based on button clicked
+      switch(filterType) {
+        case 'all':
+          // All filters already reset above
+          break;
+        case 'category':
+          currentFilters.category = this.dataset.category;
+          break;
+        case 'upcoming':
+          currentFilters.upcoming = true;
+          break;
+        case 'favorites':
+          currentFilters.favorites = true;
+          break;
+      }
+
+      console.log('Filter applied:', currentFilters); // Debug log
+      applyFilters();
     });
   });
 
@@ -541,25 +695,102 @@
     });
   });
 
-  // Favorite button functionality
-  document.querySelectorAll('button i.fa-heart').forEach(button => {
-    button.parentElement.addEventListener('click', function(e) {
-      e.preventDefault();
-      const icon = this.querySelector('i');
-      
-      if (icon.classList.contains('fas')) {
+  // Favorite button functionality with API integration
+  async function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const demoCard = button.closest('[data-demo-id]');
+    const demoId = demoCard.dataset.demoId;
+    const isFavorited = icon.classList.contains('fas');
+
+    try {
+      if (isFavorited) {
+        // Remove from favorites - Note: DELETE API would be needed for proper implementation
+        // For now, we'll skip the actual removal and just update UI
+        console.log('Removing from favorites:', demoId);
+
+        // Update UI
         icon.classList.remove('fas');
         icon.classList.add('far');
-        this.classList.remove('bg-red-100', 'text-red-600');
-        this.classList.add('bg-gray-100', 'text-gray-600');
+        button.classList.remove('bg-gradient-to-br', 'from-pink-100', 'to-red-100', 'text-pink-600');
+        button.classList.add('bg-gray-100', 'text-gray-600');
       } else {
-        icon.classList.remove('far');
-        icon.classList.add('fas');
-        this.classList.remove('bg-gray-100', 'text-gray-600');
-        this.classList.add('bg-red-100', 'text-red-600');
+        // Add to favorites
+        const response = await fetch('/demo_wave/api/demo/favorite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${await getFirebaseToken()}`
+          },
+          body: JSON.stringify({
+            demoId: parseInt(demoId)
+          })
+        });
+
+        if (response.ok) {
+          // Update UI
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          button.classList.remove('bg-gray-100', 'text-gray-600');
+          button.classList.add('bg-gradient-to-br', 'from-pink-100', 'to-red-100', 'text-pink-600');
+        } else {
+          console.error('Failed to add to favorites');
+          alert('お気に入りの追加に失敗しました');
+        }
       }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('お気に入りの操作中にエラーが発生しました');
+    }
+  }
+
+  // Get Firebase token helper function
+  async function getFirebaseToken() {
+    // This would need to be implemented based on your Firebase auth setup
+    // For now, return a placeholder - you'll need to integrate with your existing auth system
+    return 'your-firebase-token';
+  }
+
+  // Load favorite status for all demos
+  async function loadFavoriteStatuses() {
+    const demoCards = document.querySelectorAll('[data-demo-id]');
+
+    for (const card of demoCards) {
+      const demoId = card.dataset.demoId;
+      const favoriteBtn = card.querySelector('.favorite-btn');
+      const icon = favoriteBtn.querySelector('i');
+
+      try {
+        const response = await fetch(`/demo_wave/api/demo/favorite-status?demoId=${demoId}`, {
+          headers: {
+            'Authorization': `Bearer ${await getFirebaseToken()}`
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && result.data.isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            favoriteBtn.classList.remove('bg-gray-100', 'text-gray-600');
+            favoriteBtn.classList.add('bg-gradient-to-br', 'from-pink-100', 'to-red-100', 'text-pink-600');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading favorite status for demo', demoId, error);
+      }
+    }
+  }
+
+  // Initialize favorite buttons
+  document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleFavorite(this);
     });
   });
+
+  // Load favorite statuses on page load
+  // loadFavoriteStatuses(); // Uncomment when Firebase token function is implemented
 
   // ユーザー情報を取得してヘッダーに表示
   async function loadUserProfile() {

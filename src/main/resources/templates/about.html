@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Waveとは | Demo Wave</title>
+    <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #2563eb;
+        }
+
+        .image-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/demo_wave/" class="flex items-center space-x-3">
+                    <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+                    <span class="text-2xl font-bold text-[#2563eb]">Demo Wave</span>
+                </a>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="/demo_wave/" class="text-gray-700 hover:text-[#2563eb] transition">デモを探す</a>
+                    <a href="/demo_wave/about" class="text-[#2563eb] font-semibold">Demo Waveとは</a>
+                    <a href="/demo_wave/login" class="bg-[#2563eb] text-white px-6 py-2 rounded-full hover:bg-[#1e40af] transition">ログイン</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold mb-6">Demo Waveとは</h1>
+            <p class="text-xl max-w-3xl mx-auto leading-relaxed">
+                デモ活動を通じて、あなたの声を社会に届けるプラットフォーム。<br>
+                参加、支援、そして新しい社会運動の波を一緒に作りましょう。
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">私たちのミッション</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
+                Demo Waveは、市民の声を可視化し、社会課題の解決に向けた行動を支援するプラットフォームです。
+            </p>
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+                <div class="image-section rounded-lg overflow-hidden shadow-lg">
+                    <img src="/demo_wave/images/lp/StockCake-Protesters-Holding-Signs_1752337181.jpg" alt="デモ活動の様子" class="w-full h-96 object-cover">
+                </div>
+                <div>
+                    <p class="text-gray-700 leading-relaxed text-lg mb-4">
+                        現代社会では、様々な課題が山積しています。環境問題、人権問題、政治的な課題など、
+                        一人ひとりが声を上げることが重要になっています。
+                    </p>
+                    <p class="text-gray-700 leading-relaxed text-lg mb-4">
+                        しかし、デモ活動への参加は情報が分散していたり、どう関わればいいか分からなかったりと、
+                        ハードルが高いのが現状です。
+                    </p>
+                    <p class="text-gray-700 leading-relaxed text-lg">
+                        <span class="font-bold text-[#2563eb]">Demo Wave</span>は、そんな課題を解決します。
+                        デモ活動の情報を一元化し、誰もが簡単に参加・支援できる仕組みを提供することで、
+                        より多くの人々が社会運動に関わることができる世界を目指しています。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">Demo Waveの特徴</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                デモ活動をより身近に、より効果的にするための機能を提供しています。
+            </p>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">デモを探す</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        環境、人権、政治など、様々なカテゴリーからあなたが関心のあるデモ活動を簡単に見つけることができます。
+                        地域や開催日時で絞り込み検索も可能です。
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">参加する</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        ワンクリックでデモ活動への参加表明ができます。主催者や他の参加者とコミュニケーションを取りながら、
+                        一緒に社会を変える力になりましょう。
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">支援する</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        直接参加できなくても大丈夫。寄付やお気に入り登録を通じて、デモ活動を支援することができます。
+                        あなたの想いが活動の力になります。
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">主催する</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        あなた自身がデモ活動を主催することもできます。開催場所、日時、目的などを登録して、
+                        同じ想いを持つ仲間を集めましょう。
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">可視化する</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        参加人数や寄付金額などのデータを可視化。デモ活動の影響力を数字で示すことで、
+                        社会への訴求力を高めることができます。
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white p-8 rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">つながる</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        同じ想いを持つ人々とつながり、ネットワークを広げることができます。
+                        一人の声から、大きな波を作り出しましょう。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">使い方</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Demo Waveの使い方はとてもシンプル。3つのステップで始められます。
+            </p>
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold flex-shrink-0">1</div>
+                        <div class="ml-6">
+                            <h3 class="text-2xl font-bold mb-3">アカウント登録</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                メールアドレスまたはSNSアカウントで簡単に登録できます。
+                                無料で全ての機能をご利用いただけます。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold flex-shrink-0">2</div>
+                        <div class="ml-6">
+                            <h3 class="text-2xl font-bold mb-3">デモを探す</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                カテゴリー、地域、日時などから、あなたが関心のあるデモ活動を探しましょう。
+                                お気に入り機能で気になるデモを保存することもできます。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold flex-shrink-0">3</div>
+                        <div class="ml-6">
+                            <h3 class="text-2xl font-bold mb-3">参加・支援する</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                デモに参加表明したり、寄付で支援したり、SNSでシェアしたり。
+                                あなたのできる方法で、社会運動に関わりましょう。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-section rounded-lg overflow-hidden shadow-lg">
+                    <img src="/demo_wave/images/lp/demo_crowd.png" alt="デモ参加の様子" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <div class="max-w-4xl mx-auto" style="display: none;">
+                <div class="flex flex-col md:flex-row items-center mb-12">
+                    <div class="md:w-1/3 mb-6 md:mb-0">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold mx-auto">1</div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-bold mb-3">アカウント登録</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            メールアドレスまたはSNSアカウントで簡単に登録できます。
+                            無料で全ての機能をご利用いただけます。
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center mb-12">
+                    <div class="md:w-1/3 mb-6 md:mb-0">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold mx-auto">2</div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-bold mb-3">デモを探す</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            カテゴリー、地域、日時などから、あなたが関心のあるデモ活動を探しましょう。
+                            お気に入り機能で気になるデモを保存することもできます。
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/3 mb-6 md:mb-0">
+                        <div class="w-24 h-24 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-4xl font-bold mx-auto">3</div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-bold mb-3">参加・支援する</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            デモに参加表明したり、寄付で支援したり、SNSでシェアしたり。
+                            あなたのできる方法で、社会運動に関わりましょう。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Demo Wave Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">なぜDemo Waveが必要なのか</h2>
+            <div class="max-w-4xl mx-auto">
+                <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                    民主主義社会において、市民が声を上げることは重要な権利です。しかし、現代のデモ活動には多くの課題が存在します。
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-xl font-bold mb-3 text-[#2563eb]">情報の分散</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            デモ活動の情報は様々なSNSや掲示板に散らばっており、自分が関心のある活動を見つけることが困難です。
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-xl font-bold mb-3 text-[#2563eb]">参加のハードル</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            初めてデモに参加する人にとって、どこでどのように参加すればいいのか、情報が不足していることが多いです。
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-xl font-bold mb-3 text-[#2563eb]">影響力の可視化不足</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            デモ活動がどれだけの人々に支持されているのか、その影響力を数値化・可視化する仕組みが不十分です。
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="text-xl font-bold mb-3 text-[#2563eb]">継続的な支援の難しさ</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            直接参加できない人が、他の方法で活動を支援する手段が限られています。
+                        </p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed text-lg">
+                    <span class="font-bold text-[#2563eb]">Demo Wave</span>は、これらの課題を解決するために生まれました。
+                    情報を一元化し、参加への障壁を下げ、活動の影響力を可視化することで、
+                    より多くの人々が社会運動に関わることができる環境を作ります。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">こんな使い方ができます</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Demo Waveは様々な社会活動に活用できます
+            </p>
+            <div class="max-w-5xl mx-auto space-y-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">環境保護活動</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                気候変動対策、プラスチック削減、森林保護など、環境問題に関するデモ活動を企画・参加。
+                                同じ想いを持つ人々と協力して、持続可能な社会の実現を目指します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">人権擁護</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                ジェンダー平等、労働者の権利、マイノリティの権利など、人権に関する課題に声を上げる。
+                                平等で公正な社会の実現に向けて行動します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">地域コミュニティ</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                地域開発、公共施設の改善、交通問題など、身近な地域課題に対する活動。
+                                住民の声を行政に届け、より良いコミュニティを作ります。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">政策提言</h4>
+                            <p class="text-gray-600 leading-relaxed">
+                                教育制度改革、医療制度の改善、税制の見直しなど、国や自治体の政策に対する提言活動。
+                                市民の立場から政策形成に参画します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">私たちの価値観</h2>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-12">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">公平性</h3>
+                    <p class="text-gray-600">
+                        誰もが平等に声を上げられる場を提供します
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">透明性</h3>
+                    <p class="text-gray-600">
+                        すべての活動を可視化し、信頼性を確保します
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-[#2563eb] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-[#2563eb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">行動力</h3>
+                    <p class="text-gray-600">
+                        考えるだけでなく、実際の行動を後押しします
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 section-title">よくある質問</h2>
+            <div class="max-w-3xl mx-auto mt-12 space-y-4">
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">Demo Waveの利用は無料ですか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        はい、Demo Waveのすべての基本機能は無料でご利用いただけます。
+                        デモの検索、参加表明、お気に入り登録、デモの開催など、主要な機能に料金は発生しません。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">デモを開催するにはどうすればいいですか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        アカウント登録後、「デモを作成する」ボタンから必要な情報（タイトル、日時、場所、目的など）を入力するだけで簡単に開催できます。
+                        作成したデモは即座に公開され、他のユーザーが検索・参加できるようになります。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">参加表明をキャンセルできますか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        はい、参加表明はいつでもキャンセルできます。
+                        デモ詳細ページの「参加をキャンセル」ボタンをクリックすることで、参加表明を取り消すことができます。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">寄付はどのように使われますか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        寄付金は各デモの主催者が活動費用（会場費、資料作成費、広報費など）に使用します。
+                        すべての寄付金の使途はデモページで公開され、透明性が確保されています。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">個人情報の取り扱いは安全ですか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        Demo Waveでは、最新のセキュリティ技術を使用してユーザーの個人情報を保護しています。
+                        収集した情報は、サービスの提供とユーザー体験の向上のためにのみ使用され、第三者に提供されることはありません。
+                        詳しくは<a href="#" class="text-[#2563eb] underline">プライバシーポリシー</a>をご確認ください。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">どのような種類のデモ活動が対象ですか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        環境、人権、政治、地域コミュニティなど、平和的で建設的な社会運動であれば、どのようなテーマのデモ活動でも開催・参加できます。
+                        ただし、暴力を扇動したり、特定の個人や団体を誹謗中傷する内容は禁止されています。
+                    </p>
+                </details>
+                <details class="bg-white p-6 rounded-lg shadow-md">
+                    <summary class="font-bold text-lg cursor-pointer">オンラインでのデモ活動も開催できますか？</summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">
+                        はい、オンライン開催のデモ活動にも対応しています。
+                        開催場所の項目でオンライン会議ツールのURLを記載することで、リモートでの参加が可能なデモ活動を企画できます。
+                    </p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="hero-gradient text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">さあ、あなたも始めましょう</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">
+                Demo Waveで、あなたの声を社会に届けませんか？<br>
+                今すぐ無料で始められます。
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/demo_wave/user/create" class="bg-white text-[#2563eb] px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition">
+                    無料で始める
+                </a>
+                <a href="/demo_wave/" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-[#2563eb] transition">
+                    デモを探す
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Demo Wave. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

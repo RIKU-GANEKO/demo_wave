@@ -11,4 +11,6 @@ import product.demo_wave.entity.Category;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
   Optional<Category> findById(Integer categoryId);
+
+  Optional<Category> findByName(String name);
 }

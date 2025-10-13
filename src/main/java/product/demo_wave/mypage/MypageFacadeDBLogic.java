@@ -23,6 +23,8 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     private final DemoRepository demoRepository;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
+    private final product.demo_wave.repository.FavoriteDemoRepository favoriteDemoRepository;
+    private final product.demo_wave.repository.PaymentRepository paymentRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
     @CustomRetry
@@ -37,6 +39,30 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     List<Demo> fetchParticipatedDemo() {
         Integer userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findParticipatedDemoByUserId(userId);
+    }
+
+    // ログイン中のユーザーがお気に入りに登録したデモ活動を取得
+    @CustomRetry
+    List<Demo> fetchFavoriteDemos() {
+        User user = fetchUser();
+        return favoriteDemoRepository.findAllByUserAndDeletedAtIsNull(user)
+                .stream()
+                .map(favoriteDemo -> favoriteDemo.getDemo())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    // ログイン中のユーザーが支援したデモ活動を取得
+    @CustomRetry
+    List<Demo> fetchSupportedDemos() {
+        User user = fetchUser();
+        return paymentRepository.findDistinctDemosByUserAndDeletedAtIsNull(user);
+    }
+
+    // ログイン中のユーザーが投稿したデモ活動を取得
+    @CustomRetry
+    List<Demo> fetchPostedDemos() {
+        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        return demoRepository.findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
     }
 
 //    @CustomRetry

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>デモを探す - Demo Wave</title>
+  <meta name="description" content="Demo Waveでデモを探す。カテゴリーや地域で絞り込んで、あなたが参加したいデモを見つけよう。">
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Demo Card Styles -->
+  <th:block th:replace="~{common/demoCard :: demoCardStyles}"></th:block>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f8f8f8;
+    }
+
+    /* Header styles - Same as home page */
+    .header-container {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-link {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #2563eb;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #1e40af;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: white;
+      color: #2563eb;
+      border: 2px solid #2563eb;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background-color: #eff6ff;
+    }
+
+    /* Filter Section - Horizontal layout below header */
+    .search-filter-section {
+      background-color: #ffffff;
+      border-bottom: 2px solid #e8e8e8;
+      padding: 20px 0;
+      position: sticky;
+      top: 73px;
+      z-index: 999;
+    }
+
+    /* Filter buttons */
+    .filter-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .filter-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .filter-button {
+      padding: 10px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 24px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 150px;
+    }
+
+    .filter-button:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .filter-button.active {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      z-index: 1001;
+      margin-top: 8px;
+      padding: 8px;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.2s;
+      font-size: 14px;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f0f7ff;
+    }
+
+    .dropdown-item.active {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 600;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Header - Same as home page -->
+  <header class="header-container">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3">
+          <a href="/demo_wave/" class="flex items-center space-x-3">
+            <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+            <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
+          </a>
+        </div>
+
+        <!-- Search Box (Desktop) -->
+        <div class="hidden md:block flex-1 max-w-md mx-8">
+          <form action="/demo_wave/search" method="get" class="relative">
+            <input
+              type="text"
+              name="keyword"
+              placeholder="キーワードで検索..."
+              th:value="${keyword}"
+              class="w-full px-4 py-2 pr-10 border-2 border-gray-300 rounded-full focus:outline-none focus:border-blue-600 transition-colors"
+              style="font-size: 14px;">
+            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-700">
+              <i class="fas fa-search"></i>
+            </button>
+            <input type="hidden" name="categoryId" th:value="${selectedCategoryId}">
+            <input type="hidden" name="prefectureId" th:value="${selectedPrefectureId}">
+            <input type="hidden" name="sort" th:value="${sort}">
+          </form>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="/demo_wave/search" class="nav-link">デモを探す</a>
+          <a href="/demo_wave/about" class="nav-link">Demo Waveとは</a>
+          <a href="/demo_wave/login" class="btn-secondary px-6 py-2 rounded-full">ログイン</a>
+          <a href="/demo_wave/user/create" class="btn-primary px-6 py-2 rounded-full">新規登録</a>
+        </nav>
+
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-3">
+        <a href="/demo_wave/search" class="block nav-link py-2">デモを探す</a>
+        <a href="/demo_wave/about" class="block nav-link py-2">Demo Waveとは</a>
+        <a href="/demo_wave/login" class="block btn-secondary px-6 py-2 rounded-full text-center">ログイン</a>
+        <a href="/demo_wave/user/create" class="block btn-primary px-6 py-2 rounded-full text-center">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter Section - Horizontal below header -->
+  <section class="search-filter-section">
+    <div class="max-w-7xl mx-auto px-4">
+      <!-- Filters Row -->
+      <div class="filter-group">
+        <span class="filter-label">絞り込み:</span>
+
+        <!-- Category Filter -->
+        <div class="filter-dropdown">
+          <button class="filter-button" id="categoryButton" onclick="toggleDropdown('categoryDropdown')">
+            <i class="fas fa-tag"></i>
+            <span id="categoryLabel">カテゴリー</span>
+            <i class="fas fa-chevron-down ml-auto"></i>
+          </button>
+          <div class="dropdown-content" id="categoryDropdown">
+            <div class="dropdown-item" th:classappend="${selectedCategoryId == null} ? 'active' : ''" onclick="selectCategory(null, 'すべて')">
+              すべて
+            </div>
+            <div th:each="category : ${categories}"
+                 class="dropdown-item"
+                 th:classappend="${category.id == selectedCategoryId} ? 'active' : ''"
+                 th:data-category-id="${category.id}"
+                 th:data-category-name="${category.name}"
+                 onclick="selectCategoryFromData(this)"
+                 th:text="${category.name}">
+            </div>
+          </div>
+        </div>
+
+        <!-- Prefecture Filter -->
+        <div class="filter-dropdown">
+          <button class="filter-button" id="prefectureButton" onclick="toggleDropdown('prefectureDropdown')">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="prefectureLabel">地域</span>
+            <i class="fas fa-chevron-down ml-auto"></i>
+          </button>
+          <div class="dropdown-content" id="prefectureDropdown">
+            <div class="dropdown-item" th:classappend="${selectedPrefectureId == null} ? 'active' : ''" onclick="selectPrefecture(null, 'すべて')">
+              すべて
+            </div>
+            <div th:each="prefecture : ${prefectures}"
+                 class="dropdown-item"
+                 th:classappend="${prefecture.id == selectedPrefectureId} ? 'active' : ''"
+                 th:data-prefecture-id="${prefecture.id}"
+                 th:data-prefecture-name="${prefecture.name}"
+                 onclick="selectPrefectureFromData(this)"
+                 th:text="${prefecture.name}">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sort Filter -->
+        <div class="filter-dropdown">
+          <button class="filter-button" id="sortButton" onclick="toggleDropdown('sortDropdown')">
+            <i class="fas fa-sort"></i>
+            <span id="sortLabel">新着順</span>
+            <i class="fas fa-chevron-down ml-auto"></i>
+          </button>
+          <div class="dropdown-content" id="sortDropdown">
+            <div class="dropdown-item" th:classappend="${sort == 'newest'} ? 'active' : ''" onclick="selectSort('newest', '新着順')">新着順</div>
+            <div class="dropdown-item" th:classappend="${sort == 'donation'} ? 'active' : ''" onclick="selectSort('donation', '支援総額順')">支援総額順</div>
+            <div class="dropdown-item" th:classappend="${sort == 'participants'} ? 'active' : ''" onclick="selectSort('participants', '参加者数順')">参加者数順</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">デモを探す</h2>
+      <p class="text-gray-600">
+        <span th:text="${#lists.size(demos)}">0</span>件のデモが見つかりました
+      </p>
+    </div>
+
+    <!-- Demo Cards Grid -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <th:block th:each="demo : ${demos}">
+        <th:block th:replace="~{common/demoCard :: demoCard(${demo})}"></th:block>
+      </th:block>
+    </div>
+
+    <!-- No Results -->
+    <div th:if="${#lists.isEmpty(demos)}" style="text-align: center; padding: 80px 20px;">
+      <i class="fas fa-search" style="font-size: 64px; color: #ccc; margin-bottom: 16px;"></i>
+      <p style="font-size: 18px; color: #666;">条件に一致するデモが見つかりませんでした</p>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Get current parameters
+    let currentCategoryId = /*[[${selectedCategoryId}]]*/ null;
+    let currentPrefectureId = /*[[${selectedPrefectureId}]]*/ null;
+    let currentKeyword = /*[[${keyword}]]*/ '';
+    let currentSort = /*[[${sort}]]*/ 'newest';
+
+    // Initialize labels
+    window.addEventListener('DOMContentLoaded', function() {
+      // Set category label
+      if (currentCategoryId) {
+        const categories = /*[[${categories}]]*/ [];
+        const selectedCategory = categories.find(c => c.id === currentCategoryId);
+        if (selectedCategory) {
+          document.getElementById('categoryLabel').textContent = selectedCategory.name;
+          document.getElementById('categoryButton').classList.add('active');
+        }
+      }
+
+      // Set prefecture label
+      if (currentPrefectureId) {
+        const prefectures = /*[[${prefectures}]]*/ [];
+        const selectedPrefecture = prefectures.find(p => p.id === currentPrefectureId);
+        if (selectedPrefecture) {
+          document.getElementById('prefectureLabel').textContent = selectedPrefecture.name;
+          document.getElementById('prefectureButton').classList.add('active');
+        }
+      }
+
+      // Set sort label
+      const sortLabels = {
+        'newest': '新着順',
+        'donation': '支援総額順',
+        'participants': '参加者数順'
+      };
+      if (currentSort && sortLabels[currentSort]) {
+        document.getElementById('sortLabel').textContent = sortLabels[currentSort];
+      } else {
+        document.getElementById('sortLabel').textContent = '新着順';
+      }
+    });
+
+    // Toggle dropdown
+    function toggleDropdown(dropdownId) {
+      console.log('Toggling dropdown:', dropdownId);
+      const dropdown = document.getElementById(dropdownId);
+      const allDropdowns = document.querySelectorAll('.dropdown-content');
+
+      allDropdowns.forEach(d => {
+        if (d.id !== dropdownId) {
+          d.classList.remove('show');
+        }
+      });
+
+      dropdown.classList.toggle('show');
+      console.log('Dropdown classes:', dropdown.className);
+    }
+
+    // Close dropdowns when clicking outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.matches('.filter-button') && !e.target.closest('.filter-button')) {
+        document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+      }
+    });
+
+    // Select category
+    function selectCategory(categoryId, categoryName) {
+      console.log('Select category:', categoryId, categoryName);
+      console.log('Current state:', {currentCategoryId, currentPrefectureId, currentKeyword, currentSort});
+      currentCategoryId = categoryId;
+      document.getElementById('categoryLabel').textContent = categoryName;
+      document.getElementById('categoryButton').classList.toggle('active', categoryId !== null);
+      toggleDropdown('categoryDropdown');
+      updateURL(currentCategoryId, currentPrefectureId, currentKeyword, currentSort);
+    }
+
+    // Select category from data attribute
+    function selectCategoryFromData(element) {
+      console.log('selectCategoryFromData called', element);
+      const categoryId = element.dataset.categoryId ? parseInt(element.dataset.categoryId) : null;
+      const categoryName = element.dataset.categoryName;
+      console.log('Parsed data:', categoryId, categoryName);
+      selectCategory(categoryId, categoryName);
+    }
+
+    // Select prefecture
+    function selectPrefecture(prefectureId, prefectureName) {
+      currentPrefectureId = prefectureId;
+      document.getElementById('prefectureLabel').textContent = prefectureName;
+      document.getElementById('prefectureButton').classList.toggle('active', prefectureId !== null);
+      toggleDropdown('prefectureDropdown');
+      updateURL(currentCategoryId, currentPrefectureId, currentKeyword, currentSort);
+    }
+
+    // Select prefecture from data attribute
+    function selectPrefectureFromData(element) {
+      const prefectureId = element.dataset.prefectureId ? parseInt(element.dataset.prefectureId) : null;
+      const prefectureName = element.dataset.prefectureName;
+      selectPrefecture(prefectureId, prefectureName);
+    }
+
+    // Select sort
+    function selectSort(sort, sortLabel) {
+      currentSort = sort;
+      document.getElementById('sortLabel').textContent = sortLabel;
+      toggleDropdown('sortDropdown');
+      updateURL(currentCategoryId, currentPrefectureId, currentKeyword, currentSort);
+    }
+
+    // Update URL with all parameters
+    function updateURL(categoryId, prefectureId, keyword, sort) {
+      console.log('updateURL called with:', {categoryId, prefectureId, keyword, sort});
+      const params = new URLSearchParams();
+
+      if (categoryId) params.set('categoryId', categoryId);
+      if (prefectureId) params.set('prefectureId', prefectureId);
+      if (keyword) params.set('keyword', keyword);
+      if (sort && sort !== 'newest') params.set('sort', sort);
+
+      const url = params.toString() ? `/demo_wave/search?${params.toString()}` : '/demo_wave/search';
+      console.log('Navigating to:', url);
+      window.location.href = url;
+    }
+    /*]]>*/
+  </script>
+</body>
+</html>

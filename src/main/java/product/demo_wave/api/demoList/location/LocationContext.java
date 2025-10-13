@@ -22,7 +22,7 @@ public class LocationContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final LocationRequest request;
 
 	@Setter
@@ -94,7 +94,7 @@ public class LocationContext {
 
 		LocationLogs responses = null;
 
-		responses = locationDBLogic.saveLocationLogs(firebaseUid, request, isWithinRadius);
+		responses = locationDBLogic.saveLocationLogs(supabaseUid, request, isWithinRadius);
 
 		return new ResponseEntity<>(new LocationResponse(responses), HttpStatus.OK);
 	}

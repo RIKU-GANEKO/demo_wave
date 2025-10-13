@@ -19,7 +19,7 @@ public class UserCreateContext {
 
 //	private static final Logger logger = Logger.getLogger(UserListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final String email;
 //	private final String name;
 //	private final String profileImagePath;
@@ -47,9 +47,9 @@ public class UserCreateContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public Boolean checkValidation() {
-		List<String> firebaseUids = userCreateDBLogic.getFirebaseUids();
-		System.out.println("含まれているか: " + firebaseUids.contains(firebaseUid));
-		return firebaseUids.contains(firebaseUid);
+		List<String> supabaseUids = userCreateDBLogic.getSupabaseUids();
+		System.out.println("含まれているか: " + supabaseUids.contains(supabaseUid));
+		return supabaseUids.contains(supabaseUid);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class UserCreateContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> postUser() {
-		User savedUser = userCreateDBLogic.saveUser(firebaseUid, email, request);
+		User savedUser = userCreateDBLogic.saveUser(supabaseUid, email, request);
 		return new ResponseEntity<>(new UserCreateResponse(savedUser), HttpStatus.CREATED);
 	}
 

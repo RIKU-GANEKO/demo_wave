@@ -37,7 +37,6 @@ record DemoForm(
     String demoPlace,
 
     @Size(max = 255, message = "デモ住所は255文字以内にしてください")
-    @NotBlank(message = "デモ住所を入力してください")
     String demoAddress,
 
     BigDecimal demoAddressLatitude,
@@ -47,6 +46,5 @@ record DemoForm(
     @NotNull(message = "カテゴリを選択してください")
     Integer categoryId,
 
-    @NotNull(message = "都道府県を選択してください")
     Integer prefectureId
 ) {}

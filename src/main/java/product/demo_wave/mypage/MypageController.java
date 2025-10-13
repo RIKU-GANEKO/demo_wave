@@ -39,6 +39,51 @@ class MypageController {
 		return mypageService.userByGet(mypageGetUserContext);
 	}
 
+	@GetMapping("/demos")
+	ModelAndView demosByGet(ModelAndView mv) {
+		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setPageType("demos");
+		return mypageService.userByGet(mypageGetUserContext);
+	}
+
+	@GetMapping("/participated")
+	ModelAndView participatedByGet(ModelAndView mv) {
+		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setPageType("participated");
+		return mypageService.userByGet(mypageGetUserContext);
+	}
+
+	@GetMapping("/favorites")
+	ModelAndView favoritesByGet(ModelAndView mv) {
+		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setPageType("favorites");
+		return mypageService.userByGet(mypageGetUserContext);
+	}
+
+	@GetMapping("/supported")
+	ModelAndView supportedByGet(ModelAndView mv) {
+		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setPageType("supported");
+		return mypageService.userByGet(mypageGetUserContext);
+	}
+
+	@GetMapping("/settings")
+	ModelAndView settingsByGet(ModelAndView mv) {
+		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
+		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setPageType("settings");
+		return mypageService.userByGet(mypageGetUserContext);
+	}
+
 //	@GetMapping("/show")
 //	ModelAndView showByGet(@RequestParam("demoId") Integer demoId, ModelAndView mv) {
 //		demoShowGetContext demoShowGetContext = new demoShowGetContext(demoId, mv);

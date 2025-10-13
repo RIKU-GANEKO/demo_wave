@@ -25,4 +25,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
   // `demoId` を元に participant の合計数を取得
   Integer countByDemo(Demo demo);
 
+  // デモの参加者リストを取得（削除されていないもののみ）
+  List<Participant> findByDemoAndDeletedAtIsNull(Demo demo);
+
 }

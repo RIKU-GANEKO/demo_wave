@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class EmailUserResponseDTO {
-	private String firebaseUid;
+	private String supabaseUid;
 	private String email;
 	private String name;
 	private String profileImagePath;

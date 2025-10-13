@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,179 +9,123 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
-    * { font-family: 'Inter', sans-serif; }
-    
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+
     .gradient-bg {
       background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     }
-    
-    .glass-effect {
-      backdrop-filter: blur(16px) saturate(180%);
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .text-gradient {
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .card-hover {
-      transition: all 0.3s ease;
-    }
-    
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .status-live {
-      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-      position: relative;
+
+    .progress-bar {
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 9999px;
       overflow: hidden;
+      position: relative;
     }
-    
-    .status-live::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
+
+    .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      animation: shimmer 2s infinite;
-    }
-    
-    .status-scheduled {
-      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-    }
-    
-    .status-ended {
-      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-    }
-    
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-    
-    .hero-gradient {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+      background: linear-gradient(90deg, #2563eb, #3b82f6);
+      transition: width 0.5s ease;
       position: relative;
       overflow: hidden;
     }
-    
-    .hero-gradient::before {
+
+    .progress-fill::after {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+      right: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
     }
-    
-    .floating-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.3;
-      animation: float 6s ease-in-out infinite;
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
+
+    .tab-button {
+      padding: 12px 24px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      font-weight: 500;
     }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+
+    .tab-button:hover {
+      color: #2563eb;
     }
-    
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s ease, height 0.3s ease;
+
+    .tab-button.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
     }
-    
-    .btn-primary:hover::before {
-      width: 300px;
-      height: 300px;
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .status-ongoing {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .status-scheduled {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    .status-ended {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    }
+
+    .action-card {
+      position: sticky;
+      top: 20px;
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body class="bg-gray-50">
 
 <!-- Header -->
-<header class="hero-gradient shadow-2xl relative">
-  <!-- Floating orbs -->
-  <div class="floating-orb w-32 h-32 bg-blue-400 top-10 left-10 animation-delay-1000"></div>
-  <div class="floating-orb w-24 h-24 bg-indigo-400 top-20 right-20 animation-delay-2000"></div>
-  <div class="floating-orb w-20 h-20 bg-cyan-400 bottom-10 left-1/3 animation-delay-3000"></div>
-  
-  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4">
     <div class="flex justify-between items-center">
-      <!-- Logo -->
-      <div class="flex items-center space-x-4">
-        <div class="w-14 h-14 rounded-2xl overflow-hidden relative group">
-          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-white tracking-tight">Demo Wave</h1>
-          <p class="text-sm text-blue-100 font-medium">あなたの声が社会を変える</p>
-        </div>
-      </div>
-      
-      <!-- Navigation -->
+      <a href="/demo_wave/" class="flex items-center space-x-3">
+        <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+        <span class="text-2xl font-bold text-blue-600">Demo Wave</span>
+      </a>
       <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/demo" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">一覧に戻る</span>
+        <a href="/demo_wave/" class="text-gray-600 hover:text-blue-600 transition px-4 py-2">
+          <i class="fas fa-home mr-2"></i>ホーム
         </a>
-        <a href="/demo_wave/lp.html" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">ホーム</span>
-        </a>
-        <a href="/demo_wave/mypage" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-user-circle mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">マイページ</span>
-        </a>
-        
-        <!-- User Profile -->
-        <div id="userProfile" class="flex items-center space-x-3">
-          <div id="userProfileImage" class="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center relative group border border-white border-opacity-30">
-            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden group-hover:scale-110 transition-transform">
-            <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
-          </div>
-          <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
-        </div>
-        
-        <a href="/demo_wave/logout" class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300">
-          <i class="fas fa-sign-out-alt mr-2"></i>
-          <span class="hidden sm:inline">ログアウト</span>
+        <a href="/demo_wave/login" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+          ログイン
         </a>
       </nav>
     </div>
@@ -190,221 +134,323 @@
 
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 py-8">
-  <!-- Hero Section -->
-  <div class="animate-fade-in mb-8">
-    <div class="glass-effect rounded-3xl p-8 shadow-2xl">
-      <!-- Status Badge -->
-      <div class="flex justify-between items-start mb-6">
-        <!-- Dynamic Status Badge -->
-        <th:block th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}">
-          <span class="status-live text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg relative z-10">
-            <i class="fas fa-broadcast-tower mr-2"></i>LIVE
-          </span>
-        </th:block>
-        <th:block th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}">
-          <span class="status-scheduled text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
-            <i class="fas fa-clock mr-2"></i>SCHEDULED
-          </span>
-        </th:block>
-        <th:block th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}">
-          <span class="status-ended text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">
-            <i class="fas fa-history mr-2"></i>ENDED
-          </span>
-        </th:block>
-        <span class="text-sm text-gray-500" th:text="${#temporals.format(demo.createdAt, 'yyyy年MM月dd日 HH:mm')} + ' に投稿'">
-          2025年01月15日 14:00 に投稿
+  <!-- Title & Status -->
+  <div class="mb-6">
+    <div class="mb-4">
+      <th:block th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}">
+        <span class="status-badge status-ongoing">
+          <i class="fas fa-broadcast-tower mr-2"></i>開催中
         </span>
-      </div>
-      
-      <!-- Title -->
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6" th:text="${demo.title}">
+      </th:block>
+      <th:block th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}">
+        <span class="status-badge status-scheduled">
+          <i class="fas fa-clock mr-2"></i>開催予定
+        </span>
+      </th:block>
+      <th:block th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}">
+        <span class="status-badge status-ended">
+          <i class="fas fa-history mr-2"></i>開催済
+        </span>
+      </th:block>
+    </div>
+    <div class="flex items-start justify-between mb-4">
+      <h1 class="text-4xl font-bold text-gray-900 flex-1" th:text="${demo.title}">
         気候変動対策を求める緊急デモ
       </h1>
-      
-      <!-- Quick Info Grid -->
-      <div class="grid md:grid-cols-3 gap-6 mb-8">
-        <!-- Date & Time -->
-        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
-          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-calendar-alt text-white text-lg"></i>
-          </div>
-          <div>
-            <div class="text-sm text-gray-500">開催日時</div>
-            <div class="font-semibold text-gray-900" th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">
-              2025年01月15日 14:00
-            </div>
-          </div>
-        </div>
-        
-        <!-- Location -->
-        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
-          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-map-marker-alt text-white text-lg"></i>
-          </div>
-          <div>
-            <div class="text-sm text-gray-500">開催場所</div>
-            <div class="font-semibold text-gray-900" th:text="${demo.demoPlace}">
-              渋谷駅前広場
-            </div>
-          </div>
-        </div>
-        
-        <!-- Participants -->
-        <div class="flex items-center bg-white bg-opacity-70 rounded-2xl p-4">
-          <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-users text-white text-lg"></i>
-          </div>
-          <div>
-            <div class="text-sm text-gray-500">参加者数</div>
-            <div class="font-semibold text-gray-900" th:text="${participantCount} + '人'">
-              245人
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Favorite Button -->
+      <button id="favoriteBtn"
+              class="ml-4 flex-shrink-0 w-14 h-14 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-md"
+              th:data-demo-id="${demo.id}"
+              onclick="toggleFavorite()">
+        <i id="favoriteIcon" class="far fa-heart text-2xl text-blue-600"></i>
+      </button>
     </div>
+    <p class="text-gray-600">
+      <i class="fas fa-calendar mr-2"></i>
+      <span th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')} + ' 〜 ' + ${#temporals.format(demo.demoEndDate, 'HH:mm')}">
+        2025年1月15日 14:00 〜 17:00
+      </span>
+    </p>
   </div>
 
-  <!-- Content Grid -->
+  <!-- Content Grid - Tabs and Action Card -->
   <div class="grid lg:grid-cols-3 gap-8">
-    <!-- Main Content -->
-    <div class="lg:col-span-2 space-y-8">
-      <!-- Description -->
-      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
-        <div class="flex items-center mb-6">
-          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-quote-left text-white"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-900">デモの内容</h2>
+    <!-- Tabs -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden" id="leftTabContainer">
+        <div class="border-b border-gray-200">
+          <nav class="flex">
+            <button class="tab-button active" onclick="switchTab('overview')">
+              <i class="fas fa-info-circle mr-2"></i>概要
+            </button>
+            <button class="tab-button" onclick="switchTab('comments')">
+              <i class="fas fa-comment mr-2"></i>コメント
+            </button>
+            <button class="tab-button" onclick="switchTab('participants')">
+              <i class="fas fa-users mr-2"></i>参加者
+            </button>
+            <button class="tab-button" onclick="switchTab('supporters')">
+              <i class="fas fa-heart mr-2"></i>支援者
+            </button>
+          </nav>
         </div>
-        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-          <th:block th:if="${demo.content}">
-            <th:block th:each="str, stat : ${demo.content.split('\r\n|\r|\n', -1)}">
-              <th:block th:text="${str}"/>
-              <br th:if="${!stat.last}"/>
+
+        <!-- Tab: Overview -->
+        <div id="tab-overview" class="tab-content active p-8">
+          <h2 class="text-2xl font-bold mb-6">デモについて</h2>
+          <div class="prose max-w-none text-gray-700 leading-relaxed space-y-4">
+            <th:block th:if="${demo.content}">
+              <th:block th:each="str, stat : ${demo.content.split('\r\n|\r|\n', -1)}">
+                <p th:text="${str}"></p>
+              </th:block>
             </th:block>
-          </th:block>
-        </div>
-      </div>
-
-      <!-- Map Section -->
-      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
-        <div class="flex items-center mb-6">
-          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-map text-white"></i>
+            <th:block th:unless="${demo.content}">
+              <p class="text-gray-500">詳細情報はありません。</p>
+            </th:block>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900">会場マップ</h2>
-        </div>
-        <div id="map" class="w-full h-96 rounded-xl overflow-hidden shadow-lg"></div>
-      </div>
 
-      <!-- Comments Section -->
-      <div class="bg-white rounded-2xl p-8 shadow-lg animate-fade-in">
-        <div class="flex items-center mb-6">
-          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center mr-4">
-            <i class="fas fa-comments text-white"></i>
+          <div class="mt-8 pt-8 border-t border-gray-200">
+            <h3 class="text-xl font-bold mb-4">開催情報</h3>
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                  <i class="fas fa-map-marker-alt text-blue-600"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-sm text-gray-500">開催場所</div>
+                  <div class="font-semibold" th:text="${demo.demoPlace}">渋谷駅前広場</div>
+                </div>
+              </div>
+
+              <!-- Google Map -->
+              <div class="w-full h-64 rounded-xl overflow-hidden border border-gray-200" th:if="${demo.demoAddressLatitude != null and demo.demoAddressLongitude != null}">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameborder="0"
+                  style="border:0"
+                  th:src="'https://www.google.com/maps?q=' + ${demo.demoAddressLatitude} + ',' + ${demo.demoAddressLongitude} + '&output=embed'"
+                  allowfullscreen>
+                </iframe>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                  <i class="fas fa-calendar-alt text-blue-600"></i>
+                </div>
+                <div>
+                  <div class="text-sm text-gray-500">開催日時</div>
+                  <div class="font-semibold">
+                    <span th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日 HH:mm')}">2025年1月15日 14:00</span>
+                    〜
+                    <span th:text="${#temporals.format(demo.demoEndDate, 'HH:mm')}">17:00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900">コメント</h2>
         </div>
-        
-        <!-- Comment List -->
-        <div class="space-y-4 mb-8">
-          <th:block th:each="comment : ${comments}">
-            <div class="bg-gray-50 rounded-xl p-6">
-              <p class="text-gray-800 mb-3" th:text="${comment.content}">
-                とても意義のあるデモだと思います。参加させていただきます！
-              </p>
-              <p class="text-sm text-gray-500" th:text="${#temporals.format(comment.createdAt, 'yyyy年MM月dd日 HH:mm')}">
-                2025年01月14日 10:30
-              </p>
+
+        <!-- Tab: Comments -->
+        <div id="tab-comments" class="tab-content p-8">
+          <h2 class="text-2xl font-bold mb-6">コメント</h2>
+
+          <!-- Comment List -->
+          <div class="space-y-6 mb-8">
+            <th:block th:if="${comments != null and !comments.isEmpty()}">
+              <div th:each="comment : ${comments}" class="bg-gray-50 rounded-xl p-4">
+                <div class="flex items-start space-x-3">
+                  <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    <th:block th:if="${comment.user?.profileImagePath != null and !comment.user.profileImagePath.isEmpty()}">
+                      <img th:src="${comment.user.profileImagePath}" alt="プロフィール画像" class="w-10 h-10 rounded-full object-cover">
+                    </th:block>
+                    <th:block th:unless="${comment.user?.profileImagePath != null and !comment.user.profileImagePath.isEmpty()}">
+                      <i class="fas fa-user"></i>
+                    </th:block>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-2 mb-2">
+                      <span class="font-semibold" th:text="${comment.user?.name ?: '匿名ユーザー'}">ユーザー名</span>
+                      <span class="text-sm text-gray-500" th:text="${#temporals.format(comment.createdAt, 'yyyy/MM/dd HH:mm')}">2025/01/15 14:00</span>
+                    </div>
+                    <p class="text-gray-700" th:text="${comment.content}">コメント内容</p>
+                  </div>
+                </div>
+              </div>
+            </th:block>
+            <th:block th:unless="${comments != null and !comments.isEmpty()}">
+              <p class="text-center text-gray-500 py-8">まだコメントがありません</p>
+            </th:block>
+          </div>
+
+          <!-- Comment Form -->
+          <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/demo/comment/create}" method="post" class="space-y-4">
+              <input type="hidden" th:name="demoId" th:value="${demo.id}" />
+              <div>
+                <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">
+                  コメントを投稿
+                </label>
+                <textarea
+                  id="content"
+                  name="content"
+                  rows="4"
+                  placeholder="コメントを入力してください..."
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  required
+                ></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button type="submit" class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
+                  <i class="fas fa-paper-plane mr-2"></i>投稿する
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div sec:authorize="!isAuthenticated()" class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+            <p class="text-gray-700 mb-4">コメントを投稿するにはログインが必要です</p>
+            <a href="/demo_wave/login" class="inline-block gradient-bg text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
+              <i class="fas fa-sign-in-alt mr-2"></i>ログインする
+            </a>
+          </div>
+        </div>
+
+        <!-- Tab: Participants -->
+        <div id="tab-participants" class="tab-content p-8">
+          <h2 class="text-2xl font-bold mb-6">参加者 (<span th:text="${participantCount}">245</span>人)</h2>
+
+          <th:block th:if="${participants != null and !participants.isEmpty()}">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div th:each="participant : ${participants}" class="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-4 flex-shrink-0">
+                  <th:block th:if="${participant.user?.profileImagePath != null and !participant.user.profileImagePath.isEmpty()}">
+                    <img th:src="${participant.user.profileImagePath}" alt="プロフィール画像" class="w-12 h-12 rounded-full object-cover">
+                  </th:block>
+                  <th:block th:unless="${participant.user?.profileImagePath != null and !participant.user.profileImagePath.isEmpty()}">
+                    <i class="fas fa-user"></i>
+                  </th:block>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-900" th:text="${participant.user?.name ?: '匿名ユーザー'}">ユーザー名</p>
+                  <p class="text-sm text-gray-500" th:text="'参加表明日: ' + ${#temporals.format(participant.createdAt, 'yyyy/MM/dd')}">参加表明日: 2025/01/10</p>
+                </div>
+              </div>
             </div>
           </th:block>
-          
-          <!-- Empty State -->
-          <div th:if="${#lists.isEmpty(comments)}" class="text-center py-8">
-            <i class="fas fa-comment-slash text-gray-300 text-4xl mb-4"></i>
-            <p class="text-gray-500">まだコメントがありません</p>
-          </div>
+
+          <th:block th:unless="${participants != null and !participants.isEmpty()}">
+            <div class="text-center py-12">
+              <div class="inline-block w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-users text-gray-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-500">まだ参加者がいません</p>
+            </div>
+          </th:block>
         </div>
-        
-        <!-- Comment Form -->
-        <form th:action="@{/demo/comment/create}" method="post" class="space-y-4">
-          <input type="hidden" th:name="demoId" th:value="${demo.id}" />
-          <div>
-            <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-              コメントを追加
-            </label>
-            <textarea
-              id="content"
-              name="content"
-              rows="4"
-              placeholder="コメントを入力してください..."
-              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none resize-none"
-              required
-            ></textarea>
-          </div>
-          <div class="flex justify-end">
-            <button type="submit" class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
-              <i class="fas fa-paper-plane mr-2"></i>送信
-            </button>
-          </div>
-        </form>
+
+        <!-- Tab: Supporters -->
+        <div id="tab-supporters" class="tab-content p-8">
+          <h2 class="text-2xl font-bold mb-6">支援者</h2>
+
+          <th:block th:if="${supporters != null and !supporters.isEmpty()}">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div th:each="supporter : ${supporters}" class="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                <th:block th:if="${supporter.user?.profileImagePath != null and !supporter.user.profileImagePath.isEmpty()}">
+                  <img th:src="${supporter.user.profileImagePath}" alt="プロフィール画像" class="w-12 h-12 rounded-full object-cover mr-4 flex-shrink-0">
+                </th:block>
+                <th:block th:unless="${supporter.user?.profileImagePath != null and !supporter.user.profileImagePath.isEmpty()}">
+                  <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-4 flex-shrink-0">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </th:block>
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-900" th:text="${supporter.user?.name ?: '匿名ユーザー'}">ユーザー名</p>
+                  <p class="text-sm text-gray-500">
+                    <span th:text="${supporter.donateAmount != null ? #numbers.formatInteger(supporter.donateAmount, 0, 'COMMA') + '円' : '金額非公開'}">1,000円</span>
+                    <span class="mx-2">•</span>
+                    <span th:text="'支援日: ' + ${#temporals.format(supporter.createdAt, 'yyyy/MM/dd')}">支援日: 2025/01/10</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </th:block>
+
+          <th:block th:unless="${supporters != null and !supporters.isEmpty()}">
+            <div class="text-center py-12">
+              <div class="inline-block w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-heart text-gray-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-500">まだ支援者がいません</p>
+            </div>
+          </th:block>
+        </div>
       </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="space-y-6">
-      <!-- Stats Card -->
-      <div class="bg-white rounded-2xl p-6 shadow-lg animate-fade-in">
-        <h3 class="text-xl font-bold text-gray-900 mb-6">統計情報</h3>
-        
-        <div class="space-y-6">
-          <!-- Participants -->
-          <div class="text-center">
-            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <i class="fas fa-users text-white text-2xl"></i>
-            </div>
-            <div class="text-3xl font-bold text-blue-600" th:text="${participantCount}">245</div>
-            <div class="text-sm text-gray-500">参加者数</div>
+    <!-- Right Column - Action Card -->
+    <div class="lg:col-span-1">
+      <div class="action-card bg-white rounded-2xl shadow-xl p-6 space-y-6" id="rightActionCard">
+        <!-- Stats -->
+        <div>
+          <div class="text-3xl font-bold text-gray-900 mb-2">
+            <span th:text="${participantCount}">245</span><span class="text-lg text-gray-500">人</span>
           </div>
-          
-          <!-- Support Amount -->
-          <div class="text-center">
-            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <i class="fas fa-yen-sign text-white text-2xl"></i>
-            </div>
-            <div class="text-3xl font-bold text-green-600" th:text="'¥' + ${donateAmount}">¥125,000</div>
-            <div class="text-sm text-gray-500">支援金総額</div>
+          <div class="text-sm text-gray-500">が参加を表明</div>
+        </div>
+
+        <!-- Donation Amount -->
+        <div class="pt-6 border-t border-gray-200">
+          <div class="text-2xl font-bold text-green-600 mb-2">
+            ¥<span th:text="${donateAmount != null ? #numbers.formatDecimal(donateAmount, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+          </div>
+          <div class="text-sm text-gray-500">支援金総額</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-4 pt-6 border-t border-gray-200">
+          <!-- Logged In Users -->
+          <div sec:authorize="isAuthenticated()" class="space-y-3">
+            <form th:action="@{/demo/{id}/participant/add(id=${demo.id})}" method="post" class="w-full">
+              <button type="submit" class="w-full gradient-bg text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
+                <i th:class="${isParticipant} ? 'fas fa-user-minus' : 'fas fa-user-plus'" class="mr-2 group-hover:scale-110 transition-transform"></i>
+                <span th:text="${isParticipant} ? '参加をキャンセル' : 'このデモに参加する'">
+                  このデモに参加する
+                </span>
+              </button>
+            </form>
+
+            <form th:action="@{/payment/create-checkout-session}" method="post" class="w-full">
+              <input type="hidden" name="demoId" th:value="${demo.id}"/>
+              <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
+                <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i>
+                支援金を送る
+              </button>
+            </form>
+          </div>
+
+          <!-- Not Logged In Users -->
+          <div sec:authorize="!isAuthenticated()">
+            <a href="/demo_wave/login" class="block w-full gradient-bg text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all duration-200 text-center group">
+              <i class="fas fa-sign-in-alt mr-2 inline-block group-hover:scale-110 transition-transform"></i>
+              ログインして参加・支援する
+            </a>
+          </div>
+
+          <!-- Share Button -->
+          <button onclick="shareDemo()" class="w-full bg-white text-gray-700 font-semibold py-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 flex items-center justify-center group">
+            <i class="fas fa-share-alt mr-2 group-hover:scale-110 transition-transform"></i>
+            シェアする
+          </button>
+        </div>
+
+        <!-- Time Info -->
+        <div class="pt-6 border-t border-gray-200 space-y-2 text-sm text-gray-600">
+          <div class="flex items-center">
+            <i class="fas fa-clock mr-2 text-gray-400"></i>
+            <span th:text="'投稿日: ' + ${#temporals.format(demo.createdAt, 'yyyy/MM/dd')}">投稿日: 2025/01/10</span>
           </div>
         </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="space-y-4 animate-fade-in">
-        <!-- Participate Button -->
-        <form th:action="@{/demo/{id}/participant/add(id=${demo.id})}" method="post" class="w-full">
-          <button type="submit" class="card-hover w-full gradient-bg text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
-            <i th:class="${isParticipant} ? 'fas fa-user-minus' : 'fas fa-user-plus'" class="mr-3"></i>
-            <span th:text="${isParticipant} ? 'このデモ活動への参加をやめる' : 'このデモ活動に参加する'">
-              このデモ活動に参加する
-            </span>
-          </button>
-        </form>
-        
-        <!-- Support Button -->
-        <form th:action="@{/payment/create-checkout-session}" method="post" class="w-full">
-          <input type="hidden" name="demoId" th:value="${demo.id}"/>
-          <button type="submit" class="card-hover w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
-            <i class="fas fa-heart mr-3"></i>
-            このデモ活動に支援金を送る
-          </button>
-        </form>
-        
-        <!-- Share Button -->
-        <button onclick="shareDemo()" class="card-hover w-full bg-gray-100 text-gray-700 font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center">
-          <i class="fas fa-share-alt mr-3"></i>
-          このデモをシェア
-        </button>
       </div>
     </div>
   </div>
@@ -413,166 +459,169 @@
 <!-- Footer -->
 <footer class="bg-gray-900 text-white py-12 mt-16">
   <div class="max-w-7xl mx-auto px-4 text-center">
-    <div class="flex items-center justify-center space-x-3 mb-6">
-      <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
-        <i class="fas fa-bullhorn text-white text-xl"></i>
-      </div>
-      <h3 class="text-2xl font-bold text-gradient">Demo Wave</h3>
+    <div class="flex items-center justify-center space-x-3 mb-4">
+      <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+      <h3 class="text-xl font-bold">Demo Wave</h3>
     </div>
-    <p class="text-gray-400 mb-6">あなたの声が社会を変える力になる</p>
-    <p class="text-sm text-gray-500">&copy; 2025 Demo Wave. All rights reserved.</p>
+    <p class="text-gray-400">&copy; 2025 Demo Wave. All rights reserved.</p>
   </div>
 </footer>
 
-<!-- Google Maps API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE&callback=initMap" async defer></script>
-<script th:inline="javascript">
-  // Google Maps APIの初期化関数
-  function initMap() {
-    // 緯度・経度を取得 (Thymeleafで埋め込まれる)
-    const latitude = /*[[${demo.demoAddressLatitude}]]*/ 35.6895; // デフォルト値: 東京
-    const longitude = /*[[${demo.demoAddressLongitude}]]*/ 139.6917; // デフォルト値: 東京
-
-    // Google Mapsのオプション設定
-    const mapOptions = {
-      center: { lat: latitude, lng: longitude },
-      zoom: 15,
-      styles: [
-        {
-          "featureType": "all",
-          "elementType": "geometry.fill",
-          "stylers": [{"weight": "2.00"}]
-        },
-        {
-          "featureType": "all",
-          "elementType": "geometry.stroke",
-          "stylers": [{"color": "#9c9c9c"}]
-        },
-        {
-          "featureType": "all",
-          "elementType": "labels.text",
-          "stylers": [{"visibility": "on"}]
-        }
-      ]
-    };
-
-    // Google Mapsを描画
-    const map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-    // カスタムマーカーを追加
-    const marker = new google.maps.Marker({
-      position: { lat: latitude, lng: longitude },
-      map: map,
-      title: "デモ会場",
-      animation: google.maps.Animation.BOUNCE
+<script>
+  function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
     });
 
-    // 情報ウィンドウを追加
-    const infoWindow = new google.maps.InfoWindow({
-      content: `
-        <div style="padding: 10px;">
-          <h3 style="margin: 0 0 10px 0; color: #667eea; font-weight: bold;">デモ会場</h3>
-          <p style="margin: 0; color: #666;">${/*[[${demo.demoPlace}]]*/ '渋谷駅前広場'}</p>
-        </div>
-      `
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active');
     });
 
-    marker.addListener('click', function() {
-      infoWindow.open(map, marker);
-    });
+    // Show selected tab
+    document.getElementById('tab-' + tabName).classList.add('active');
+
+    // Add active class to clicked button
+    event.target.closest('.tab-button').classList.add('active');
   }
 
-  // シェア機能
   function shareDemo() {
     if (navigator.share) {
       navigator.share({
-        title: /*[[${demo.title}]]*/ 'デモ活動',
-        text: 'Demo Waveでデモ活動の詳細をチェック！',
+        title: document.title,
         url: window.location.href
       });
     } else {
-      // フォールバック: URLをクリップボードにコピー
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        alert('URLがクリップボードにコピーされました！');
+      navigator.clipboard.writeText(window.location.href);
+      alert('URLをコピーしました！');
+    }
+  }
+
+  // Favorite functionality
+  function toggleFavorite() {
+    const button = document.getElementById('favoriteBtn');
+    const icon = document.getElementById('favoriteIcon');
+    const demoId = button.dataset.demoId;
+    const isFavorited = icon.classList.contains('fas');
+
+    if (isFavorited) {
+      // Remove from favorites
+      fetch('/demo_wave/api/demo/favorite', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ demoId: parseInt(demoId) })
+      })
+      .then(response => {
+        if (response.status === 401) {
+          // Not logged in, redirect to login
+          sessionStorage.setItem('pendingFavorite', demoId);
+          const returnUrl = window.location.pathname + window.location.search;
+          alert('お気に入り機能を使用するにはログインが必要です');
+          window.location.href = '/demo_wave/login?returnUrl=' + encodeURIComponent(returnUrl);
+        } else if (response.ok) {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          button.classList.remove('border-blue-600', 'bg-blue-50');
+          button.classList.add('border-gray-300');
+        } else {
+          alert('お気に入りの削除に失敗しました');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('通信エラーが発生しました');
+      });
+    } else {
+      // Add to favorites
+      fetch('/demo_wave/api/demo/favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ demoId: parseInt(demoId) })
+      })
+      .then(response => {
+        if (response.status === 401) {
+          // Not logged in, redirect to login
+          sessionStorage.setItem('pendingFavorite', demoId);
+          const returnUrl = window.location.pathname + window.location.search;
+          alert('お気に入り機能を使用するにはログインが必要です');
+          window.location.href = '/demo_wave/login?returnUrl=' + encodeURIComponent(returnUrl);
+        } else if (response.ok) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          button.classList.remove('border-gray-300');
+          button.classList.add('border-blue-600', 'bg-blue-50');
+        } else {
+          alert('お気に入りの追加に失敗しました');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('通信エラーが発生しました');
       });
     }
   }
 
-  // スムーズスクロール
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    });
-  });
+  // Load favorite status on page load
+  window.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('favoriteBtn');
+    const icon = document.getElementById('favoriteIcon');
+    const demoId = button.dataset.demoId;
 
-  // Supabase OAuth認証後のURL クリーンアップ
-  window.addEventListener('load', function() {
-    if (window.location.hash && window.location.hash.includes('access_token')) {
-      console.log('Cleaning up OAuth tokens from URL');
-      // URLからハッシュを削除してクリーンにする
-      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-    }
-  });
+    console.log('Demo ID:', demoId);
+    console.log('Button element:', button);
 
-  // ユーザー情報を取得してヘッダーに表示
-  async function loadUserProfile() {
-    try {
-      console.log('Loading user profile...');
-      const response = await fetch('/demo_wave/api/user/current');
-      console.log('Response status:', response.status);
-      
-      if (response.ok) {
-        const userInfo = await response.json();
-        console.log('User info:', userInfo);
-        
-        // ユーザー名を表示
-        document.getElementById('userName').textContent = userInfo.name;
-        document.getElementById('userName').classList.remove('hidden');
-        
-        // プロフィール画像を表示
-        const profileImg = document.getElementById('profileImg');
-        const defaultAvatar = document.getElementById('defaultAvatar');
-        
-        if (userInfo.profileImagePath) {
-          console.log('Setting profile image:', userInfo.profileImagePath);
-          profileImg.src = userInfo.profileImagePath;
-          profileImg.classList.remove('hidden');
-          defaultAvatar.classList.add('hidden');
-          // 画像の読み込みエラーが発生した場合はデフォルトアイコンを表示
-          profileImg.onerror = function() {
-            console.log('Profile image failed to load, showing default avatar');
-            this.classList.add('hidden');
-            defaultAvatar.classList.remove('hidden');
-          };
-        } else {
-          console.log('No profile image, showing default avatar');
-          profileImg.classList.add('hidden');
-          defaultAvatar.classList.remove('hidden');
+    // Check for pending favorite (user just logged in)
+    const pendingFavorite = sessionStorage.getItem('pendingFavorite');
+    if (pendingFavorite && pendingFavorite === demoId) {
+      // Add to favorites
+      fetch('/demo_wave/api/demo/favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ demoId: parseInt(demoId) })
+      })
+      .then(response => {
+        if (response.ok) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          button.classList.remove('border-gray-300');
+          button.classList.add('border-blue-600', 'bg-blue-50');
         }
-        
-        console.log('User profile loaded successfully');
-      } else {
-        const errorText = await response.text();
-        console.warn('Failed to load user profile:', response.status, errorText);
-      }
-    } catch (error) {
-      console.error('Error loading user profile:', error);
+      })
+      .catch(error => console.error('Error adding pending favorite:', error))
+      .finally(() => {
+        sessionStorage.removeItem('pendingFavorite');
+      });
     }
-  }
 
-  // ページ読み込み時にユーザー情報を取得
-  loadUserProfile();
+    // Load favorite status (will work if user is logged in via session)
+    fetch(`/demo_wave/api/demo/favorite-status?demoId=${demoId}`)
+    .then(response => {
+      console.log('Favorite status response:', response.status);
+      if (response.ok) {
+        return response.json();
+      }
+      return null;
+    })
+    .then(data => {
+      console.log('Favorite status data:', data);
+      if (data && data.favorite && data.favorite.isFavorite) {
+        console.log('Setting favorite icon to filled');
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        button.classList.remove('border-gray-300');
+        button.classList.add('border-blue-600', 'bg-blue-50');
+      }
+    })
+    .catch(error => console.error('Error loading favorite status:', error));
+  });
 </script>
-
-<!-- Stripe SDK -->
-<script src="https://js.stripe.com/v3/"></script>
 
 </body>
 </html>

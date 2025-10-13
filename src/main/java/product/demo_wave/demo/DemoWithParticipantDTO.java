@@ -6,9 +6,14 @@ import java.time.LocalDateTime;
 public record DemoWithParticipantDTO(
 		Integer id,
 		String title,
+		String content,
 		String demoPlace,
 		LocalDateTime demoStartDate,
 		LocalDateTime demoEndDate,
 		Long participantCount,
-		BigDecimal totalDonationAmount
+		BigDecimal totalDonationAmount,
+		Integer categoryId,
+		String categoryName,
+		String prefectureName,
+		String organizerName
 ) {}

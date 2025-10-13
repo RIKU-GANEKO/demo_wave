@@ -10,56 +10,96 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
+
     * { font-family: 'Inter', sans-serif; }
-    
+
     .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     }
-    
+
     .glass-effect {
       backdrop-filter: blur(16px) saturate(180%);
       background-color: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    
+
     .text-gradient {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
+
     .animate-fade-in {
       animation: fadeIn 0.8s ease-out;
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    
+
     .hover-scale {
       transition: all 0.3s ease;
     }
-    
+
     .hover-scale:hover {
       transform: scale(1.05);
     }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-content {
+      text-align: center;
+      color: white;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #ffffff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
-<body class="min-h-screen relative overflow-hidden">
+<body class="min-h-screen relative overflow-hidden bg-blue-50">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <h2 class="text-xl font-bold mb-2">アカウントを作成中...</h2>
+    <p class="text-sm opacity-80">しばらくお待ちください</p>
+  </div>
+</div>
 
 <!-- Background -->
-<div class="absolute inset-0 gradient-bg"></div>
-<div class="absolute inset-0 bg-black bg-opacity-20"></div>
-
-<!-- Animated background elements -->
-<div class="absolute inset-0">
-  <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-  <div class="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-  <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-</div>
+<div class="absolute inset-0 bg-blue-50"></div>
 
 <!-- Main Content -->
 <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
@@ -68,8 +108,8 @@
     <div class="glass-effect rounded-3xl p-8 shadow-2xl animate-fade-in">
       <!-- Header -->
       <div class="text-center mb-8">
-        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4 transform -rotate-3 hover:rotate-0 transition-all duration-300">
-          <i class="fas fa-check text-white text-2xl"></i>
+        <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4">
+          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover">
         </div>
         <h1 class="text-3xl font-bold text-gradient mb-2">内容確認</h1>
         <p class="text-gray-600 text-sm">登録内容をご確認ください</p>
@@ -78,17 +118,17 @@
       <!-- User Information Display -->
       <div class="space-y-6 mb-8">
         <!-- Profile Image -->
-        <div class="bg-gray-50 rounded-xl p-4 text-center" id="profileImageSection">
+        <div class="bg-white/80 rounded-xl p-4 text-center border border-gray-200" id="profileImageSection">
           <div class="flex items-center justify-center mb-4">
-            <i class="fas fa-image text-purple-500 mr-2"></i>
+            <i class="fas fa-image text-blue-500 mr-2"></i>
             <label class="text-sm font-medium text-gray-700">プロフィール画像</label>
           </div>
           <div id="profileImagePreview" class="hidden">
-            <img id="profilePreviewImg" src="" alt="プロフィール画像プレビュー" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-purple-200">
+            <img id="profilePreviewImg" src="" alt="プロフィール画像プレビュー" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-blue-200">
             <p class="text-xs text-gray-500 mt-2" id="profileImageName"></p>
           </div>
           <div id="noProfileImage" class="text-gray-500">
-            <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
+            <div class="w-20 h-20 bg-gray-100 rounded-full mx-auto flex items-center justify-center">
               <i class="fas fa-user text-gray-400 text-2xl"></i>
             </div>
             <p class="text-xs text-gray-500 mt-2">画像が選択されていません</p>
@@ -96,27 +136,27 @@
         </div>
 
         <!-- Name -->
-        <div class="bg-gray-50 rounded-xl p-4">
+        <div class="bg-white/80 rounded-xl p-4 border border-gray-200">
           <div class="flex items-center mb-2">
-            <i class="fas fa-user text-purple-500 mr-2"></i>
+            <i class="fas fa-user text-blue-500 mr-2"></i>
             <label class="text-sm font-medium text-gray-700">ユーザー名</label>
           </div>
           <p class="text-gray-900 font-medium" th:text="${userForm.name}"></p>
         </div>
 
         <!-- Email -->
-        <div class="bg-gray-50 rounded-xl p-4">
+        <div class="bg-white/80 rounded-xl p-4 border border-gray-200">
           <div class="flex items-center mb-2">
-            <i class="fas fa-envelope text-purple-500 mr-2"></i>
+            <i class="fas fa-envelope text-blue-500 mr-2"></i>
             <label class="text-sm font-medium text-gray-700">メールアドレス</label>
           </div>
           <p class="text-gray-900 font-medium" th:text="${userForm.email}"></p>
         </div>
 
         <!-- Password -->
-        <div class="bg-gray-50 rounded-xl p-4">
+        <div class="bg-white/80 rounded-xl p-4 border border-gray-200">
           <div class="flex items-center mb-2">
-            <i class="fas fa-lock text-purple-500 mr-2"></i>
+            <i class="fas fa-lock text-blue-500 mr-2"></i>
             <label class="text-sm font-medium text-gray-700">パスワード</label>
           </div>
           <p class="text-gray-900 font-medium">●●●●●●●●</p>
@@ -127,14 +167,15 @@
       <!-- Buttons -->
       <div class="space-y-4">
         <!-- Submit Button -->
-        <form method="post" th:action="@{/user/create/confirm}" th:object="${userForm}" enctype="multipart/form-data" class="w-full">
+        <form id="signupForm" method="post" th:action="@{/user/create/confirm}" th:object="${userForm}" enctype="multipart/form-data" class="w-full">
           <input type="hidden" th:value="${userForm.name}" name="name">
           <input type="hidden" th:value="${userForm.email}" name="email">
           <input type="hidden" th:value="${userForm.password}" name="password">
           <!-- プロフィール画像ファイルをセッションに保存する必要があるため、ここではファイルアップロード情報を処理 -->
-          <button 
-            type="submit" 
-            class="hover-scale w-full gradient-bg text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-100"
+          <button
+            type="submit"
+            id="submitButton"
+            class="hover-scale w-full gradient-bg text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-100"
           >
             <i class="fas fa-user-plus mr-2"></i>アカウントを作成
           </button>
@@ -156,14 +197,14 @@
 
       <!-- Back to Home -->
       <div class="mt-6 text-center">
-        <a href="/demo_wave/lp.html" class="inline-flex items-center text-sm text-gray-500 hover:text-purple-600 transition-colors">
-          <i class="fas fa-home mr-2"></i>ホームに戻る
+        <a href="/demo_wave/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+          <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
         </a>
       </div>
     </div>
 
     <!-- Footer -->
-    <div class="text-center mt-8 text-white/80">
+    <div class="text-center mt-8 text-gray-500">
       <p class="text-sm">&copy; 2025 Demo Wave. All rights reserved.</p>
     </div>
   </div>
@@ -172,17 +213,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('確認画面を読み込み中...');
-    
+
     // セッションストレージからプロフィール画像情報を取得
     const profileImageData = sessionStorage.getItem('profileImageData');
     const profileImageName = sessionStorage.getItem('profileImageName');
-    
+
     console.log('セッションストレージから取得:', {
         hasImageData: !!profileImageData,
         imageName: profileImageName,
         dataLength: profileImageData ? profileImageData.length : 0
     });
-    
+
     if (profileImageData && profileImageName) {
         // プロフィール画像がある場合
         console.log('プロフィール画像を表示中:', profileImageName);
@@ -196,6 +237,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('profileImagePreview').classList.add('hidden');
         document.getElementById('noProfileImage').classList.remove('hidden');
     }
+
+    // フォーム送信時にローディング表示
+    const signupForm = document.getElementById('signupForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const submitButton = document.getElementById('submitButton');
+
+    signupForm.addEventListener('submit', function(e) {
+        console.log('アカウント作成を開始...');
+
+        // ローディング表示
+        loadingOverlay.classList.add('show');
+
+        // ボタンを無効化（二重送信防止）
+        submitButton.disabled = true;
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    });
 });
 </script>
 

@@ -122,11 +122,13 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
         Category category = categoryRepository.findById(demoForm.categoryId())
             .orElseThrow(() -> new RuntimeException("Category not found"));
         demo.setCategory(category);
-        
-        // Set prefecture from form
-        Prefecture prefecture = prefectureRepository.findById(demoForm.prefectureId())
-            .orElseThrow(() -> new RuntimeException("Prefecture not found"));
-        demo.setPrefecture(prefecture);
+
+        // Set prefecture from form (optional - may be null if not detected from address)
+        if (demoForm.prefectureId() != null) {
+            Prefecture prefecture = prefectureRepository.findById(demoForm.prefectureId())
+                .orElseThrow(() -> new RuntimeException("Prefecture not found"));
+            demo.setPrefecture(prefecture);
+        }
 //        demo.setOrganizerName("我如古陸");
 
         return demo;
@@ -193,14 +195,25 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
 
     @CustomRetry
     public Boolean isParticipant(Integer demoId) {
-        Boolean isParticipant = participantRepository.existsByDemoAndUserAndDeletedAtIsNull(fetchDemo(demoId), fetchUser(this.getUserLogic.getUserFromCache().getId()));
-        return isParticipant;
+        try {
+            Boolean isParticipant = participantRepository.existsByDemoAndUserAndDeletedAtIsNull(fetchDemo(demoId), fetchUser(this.getUserLogic.getUserFromCache().getId()));
+            return isParticipant;
+        } catch (Exception e) {
+            // ログインしていない場合は false を返す
+            return false;
+        }
     }
 
     @CustomRetry
     public Integer participantCount(Integer demoId) {
         Integer participantCount = participantRepository.countByDemo(fetchDemo(demoId));
         return participantCount;
+    }
+
+    @CustomRetry
+    public List<Participant> participants(Integer demoId) {
+        List<Participant> participants = participantRepository.findByDemoAndDeletedAtIsNull(fetchDemo(demoId));
+        return participants;
     }
 
     @CustomRetry
@@ -229,6 +242,12 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     public Prefecture fetchPrefecture(Integer prefectureId) {
         return prefectureRepository.findById(prefectureId)
             .orElseThrow(() -> new RuntimeException("Prefecture not found"));
+    }
+
+    @CustomRetry
+    public List<product.demo_wave.entity.Payment> supporters(Integer demoId) {
+        List<product.demo_wave.entity.Payment> supporters = paymentRepository.findByDemoAndDeletedAtIsNull(fetchDemo(demoId));
+        return supporters;
     }
 
 }

@@ -18,7 +18,7 @@ public class ParticipationContext {
 
 //	private static final Logger logger = Logger.getLogger(ParticipationListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final String email;
 	private final ParticipationRequest request;
 
@@ -44,7 +44,7 @@ public class ParticipationContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> postParticipation() {
-		Participant savedParticipation = participationDBLogic.saveParticipation(firebaseUid, request);
+		Participant savedParticipation = participationDBLogic.saveParticipation(supabaseUid, request);
 		return new ResponseEntity<>(new ParticipationResponse(savedParticipation), HttpStatus.CREATED);
 	}
 

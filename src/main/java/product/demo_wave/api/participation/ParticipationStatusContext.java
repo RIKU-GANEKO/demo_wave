@@ -16,7 +16,7 @@ public class ParticipationStatusContext {
 
 //	private static final Logger logger = Logger.getLogger(ParticipationListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final Integer demoId;
 
 	@Setter
@@ -41,7 +41,7 @@ public class ParticipationStatusContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> getParticipationStatus() {
-		Boolean isParticipation = participationDBLogic.getParticipationStatus(firebaseUid, demoId);
+		Boolean isParticipation = participationDBLogic.getParticipationStatus(supabaseUid, demoId);
 		return new ResponseEntity<>(new ParticipationStatusResponse(isParticipation), HttpStatus.OK);
 	}
 

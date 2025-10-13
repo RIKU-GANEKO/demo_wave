@@ -29,15 +29,15 @@ public class LocationDBLogic {
 	 *
 	 */
 	@CustomRetry
-	LocationLogs saveLocationLogs(String firebaseUid, LocationRequest request, Boolean isWithinRadius) {
-		LocationLogs newLocation = locationLogsRepository.saveAndFlush(toEntity(firebaseUid, request, isWithinRadius));
+	LocationLogs saveLocationLogs(String supabaseUid, LocationRequest request, Boolean isWithinRadius) {
+		LocationLogs newLocation = locationLogsRepository.saveAndFlush(toEntity(supabaseUid, request, isWithinRadius));
 		return newLocation;
 	}
 
-	private LocationLogs toEntity(String firebaseUid, LocationRequest request, Boolean isWithinRadius) {
+	private LocationLogs toEntity(String supabaseUid, LocationRequest request, Boolean isWithinRadius) {
 		LocationLogs location = new LocationLogs();
 
-		location.setUser(fetchUser(firebaseUid));
+		location.setUser(fetchUser(supabaseUid));
 		location.setDemo(fetchDemo(request.getDemoId()));
 		location.setTimestamp(LocalDateTime.now());
 		location.setLatitude(request.getLatitude());
@@ -53,8 +53,8 @@ public class LocationDBLogic {
 		return demo.orElse(new Demo());
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

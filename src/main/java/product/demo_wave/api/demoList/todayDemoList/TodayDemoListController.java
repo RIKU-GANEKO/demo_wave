@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import io.jsonwebtoken.JwtException;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.common.api.APIResponse;
 import product.demo_wave.common.api.ErrorResponse;
+import product.demo_wave.security.SupabaseJwtService;
+import product.demo_wave.security.SupabaseToken;
 
 /**
  * <pre>
@@ -27,13 +27,14 @@ import product.demo_wave.common.api.ErrorResponse;
 public class TodayDemoListController {
 
 	private TodayDemoListService todayDemoListService;
+	private SupabaseJwtService supabaseJwtService;
 
 	/**
 	 * @return 検索後のデモ一覧情報を含むAPIのレスポンス
 	 */
 	@GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<APIResponse> getDemoList(
-			@RequestHeader(name = "Authorization") String authorizationHeader // ← Firebase トークンを受け取る
+			@RequestHeader(name = "Authorization") String authorizationHeader // ← Supabase トークンを受け取る
 	) {
 
 		System.out.println("今日開催予定のデモを取得するリクエストが来た。");
@@ -41,17 +42,17 @@ public class TodayDemoListController {
 		// "Bearer <token>" を分離
 		String idToken = authorizationHeader.replace("Bearer ", "").trim();
 
-		// Firebase トークンを検証して uid / email を取得
-		FirebaseToken decodedToken;
+		// Supabase トークンを検証して uid / email を取得
+		SupabaseToken decodedToken;
 		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-		} catch (FirebaseAuthException e) {
+			decodedToken = supabaseJwtService.verifyToken(idToken);
+		} catch (JwtException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ErrorResponse("Invalid Firebase token"));
+					.body(new ErrorResponse("Invalid Supabase token"));
 		}
 
 		TodayDemoListContext todayDemoListContext = TodayDemoListContext.builder()
-				.firebaseUid(decodedToken.getUid())
+				.supabaseUid(decodedToken.getUid())
 				.build();
 		return todayDemoListService.getTodayDemoList(todayDemoListContext);
 	}

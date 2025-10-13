@@ -17,7 +17,8 @@ public class FavoriteContext {
 
 //	private static final Logger logger = Logger.getLogger(FavoriteListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
+	private final Integer userId;
 	private final FavoriteRequest request;
 
 	@Setter
@@ -42,8 +43,26 @@ public class FavoriteContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> postFavorite() {
-		FavoriteDemo savedFavorite = favoriteDBLogic.saveFavorite(firebaseUid, request);
+		FavoriteDemo savedFavorite;
+		if (userId != null) {
+			// セッションベース認証の場合
+			savedFavorite = favoriteDBLogic.saveFavoriteByUserId(userId, request);
+		} else {
+			// Supabaseトークン認証の場合
+			savedFavorite = favoriteDBLogic.saveFavorite(supabaseUid, request);
+		}
 		return new ResponseEntity<>(new FavoriteResponse(savedFavorite), HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<APIResponse> deleteFavorite() {
+		if (userId != null) {
+			// セッションベース認証の場合
+			favoriteDBLogic.deleteFavoriteByUserId(userId, request);
+		} else {
+			// Supabaseトークン認証の場合
+			favoriteDBLogic.deleteFavorite(supabaseUid, request);
+		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 }

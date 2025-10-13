@@ -20,7 +20,7 @@ public class DemoListContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 
 	@Setter
 	private DemoListDBLogic demoListDBLogic;

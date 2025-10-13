@@ -28,17 +28,17 @@ public class WebhookDBLogic {
 	 *
 	 */
 	@CustomRetry
-	public Payment saveDonation(String firebaseUid, BigDecimal amount, Integer demoId) {
-		Payment newPayment = paymentRepository.saveAndFlush(toEntity(firebaseUid, amount, demoId));
+	public Payment saveDonation(String supabaseUid, BigDecimal amount, Integer demoId) {
+		Payment newPayment = paymentRepository.saveAndFlush(toEntity(supabaseUid, amount, demoId));
 		return newPayment;
 	}
 
-	private Payment toEntity(String firebaseUid, BigDecimal amount, Integer demoId) {
+	private Payment toEntity(String supabaseUid, BigDecimal amount, Integer demoId) {
 
 		Payment payment = new Payment();
 
 		payment.setDemo(fetchDemo(demoId));
-		payment.setUser(fetchUser(firebaseUid));
+		payment.setUser(fetchUser(supabaseUid));
 		payment.setDonateAmount(amount);
 
 		return payment;
@@ -50,8 +50,8 @@ public class WebhookDBLogic {
 		return demo.orElse(new Demo());
 	}
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 

@@ -24,12 +24,13 @@ import product.demo_wave.demo.DemoWithParticipantDTO;
 public interface DemoRepository extends JpaRepository<Demo, Integer> {
 
   @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
-          "d.id, d.title, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)) " +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
           "FROM Demo d " +
           "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
           "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
           "WHERE d.deletedAt IS NULL " +
-          "GROUP BY d.id, d.title, d.demoPlace, d.demoStartDate, d.demoEndDate " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
           "ORDER BY d.demoStartDate DESC",
           countQuery = "SELECT COUNT(d) " +
                   "FROM Demo d " +
@@ -38,10 +39,97 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
           @Param("time") LocalDateTime time,
           Pageable pageable);
 
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
+          "ORDER BY COUNT(DISTINCT p.id) DESC, d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> findTopDemosByParticipantCount(Pageable pageable);
+
   @Query("SELECT i FROM Demo i WHERE i.id IN (SELECT p.demo.id FROM Participant p WHERE p.user.id = :userId)")
   List<Demo> findParticipatedDemoByUserId(@Param("userId") Integer userId);
 
   Optional<Demo> findById(Integer demoId);
+
+  // Search with filters - sorted by participant count (popular)
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "AND (:categoryId IS NULL OR d.category.id = :categoryId) " +
+          "AND (:prefectureId IS NULL OR d.prefecture.id = :prefectureId) " +
+          "AND (:keyword IS NULL OR :keyword = '' OR LOWER(d.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
+          "ORDER BY COUNT(DISTINCT p.id) DESC, d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> searchDemosByPopular(
+          @Param("categoryId") Integer categoryId,
+          @Param("prefectureId") Integer prefectureId,
+          @Param("keyword") String keyword,
+          Pageable pageable);
+
+  // Search with filters - sorted by newest
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "AND (:categoryId IS NULL OR d.category.id = :categoryId) " +
+          "AND (:prefectureId IS NULL OR d.prefecture.id = :prefectureId) " +
+          "AND (:keyword IS NULL OR :keyword = '' OR LOWER(d.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
+          "ORDER BY d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> searchDemosByNewest(
+          @Param("categoryId") Integer categoryId,
+          @Param("prefectureId") Integer prefectureId,
+          @Param("keyword") String keyword,
+          Pageable pageable);
+
+  // Search with filters - sorted by ending soon
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "AND (:categoryId IS NULL OR d.category.id = :categoryId) " +
+          "AND (:prefectureId IS NULL OR d.prefecture.id = :prefectureId) " +
+          "AND (:keyword IS NULL OR :keyword = '' OR LOWER(d.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
+          "ORDER BY d.demoEndDate ASC")
+  List<DemoWithParticipantDTO> searchDemosByEndingSoon(
+          @Param("categoryId") Integer categoryId,
+          @Param("prefectureId") Integer prefectureId,
+          @Param("keyword") String keyword,
+          Pageable pageable);
+
+  // Search with filters - sorted by donation amount
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0), " +
+          "d.category.id, d.category.name, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "LEFT JOIN Payment pay ON d.id = pay.demo.id " +
+          "WHERE d.deletedAt IS NULL " +
+          "AND (:categoryId IS NULL OR d.category.id = :categoryId) " +
+          "AND (:prefectureId IS NULL OR d.prefecture.id = :prefectureId) " +
+          "AND (:keyword IS NULL OR :keyword = '' OR LOWER(d.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(d.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.name, d.prefecture.name, d.user.name " +
+          "ORDER BY COALESCE(SUM(pay.donateAmount), 0) DESC")
+  List<DemoWithParticipantDTO> searchDemosByDonation(
+          @Param("categoryId") Integer categoryId,
+          @Param("prefectureId") Integer prefectureId,
+          @Param("keyword") String keyword,
+          Pageable pageable);
 
   @Query("""
     SELECT new product.demo_wave.api.demoList.DemoListRecord(
@@ -182,5 +270,8 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
 
   @Query("SELECT d.id FROM Demo d WHERE d.demoStartDate BETWEEN :start AND :end")
   List<Integer> findDemoIdsByStartDateBetween(LocalDateTime start, LocalDateTime end);
+
+  // ユーザーが投稿したデモを取得（削除されていないもののみ）
+  List<Demo> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(Integer userId);
 
 }

@@ -16,7 +16,8 @@ public class FavoriteStatusContext {
 
 //	private static final Logger logger = Logger.getLogger(FavoriteListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
+	private final Integer userId;
 	private final Integer demoId;
 
 	@Setter
@@ -41,7 +42,14 @@ public class FavoriteStatusContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> getFavoriteStatus() {
-		Boolean isFavorite = favoriteDBLogic.getFavoriteStatus(firebaseUid, demoId);
+		Boolean isFavorite;
+		if (userId != null) {
+			// セッションベース認証の場合
+			isFavorite = favoriteDBLogic.getFavoriteStatusByUserId(userId, demoId);
+		} else {
+			// Firebaseトークン認証の場合
+			isFavorite = favoriteDBLogic.getFavoriteStatus(supabaseUid, demoId);
+		}
 		return new ResponseEntity<>(new FavoriteStatusResponse(isFavorite), HttpStatus.OK);
 	}
 

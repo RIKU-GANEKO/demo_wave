@@ -78,14 +78,17 @@
 
       <!-- Login Form -->
       <form th:method="POST" th:action="@{/login}" class="space-y-6">
+        <!-- Hidden field for return URL -->
+        <input type="hidden" name="returnUrl" id="returnUrl" th:value="${param.returnUrl}" />
+
         <!-- Email Field -->
         <div class="space-y-2">
           <label for="email" class="block text-sm font-medium text-gray-700">
             <i class="fas fa-envelope text-blue-500 mr-2"></i>メールアドレス
           </label>
-          <input 
-            type="email" 
-            name="email" 
+          <input
+            type="email"
+            name="email"
             id="email"
             class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none bg-white/80"
             placeholder="name@example.com"
@@ -162,7 +165,7 @@
 
       <!-- Back to Home -->
       <div class="mt-4 text-center">
-        <a href="/demo_wave/lp.html" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+        <a href="/demo_wave/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
           <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
         </a>
       </div>
@@ -351,58 +354,6 @@
   */
 </script>
 
-<!-- Firebase SDK (バックアップ用 - 後で削除予定) -->
-<!--
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAiFNfCul_CGWIOeknZs1Yr_0L9kniEuJE",
-    authDomain: "demo-wave-mobile.firebaseapp.com",
-    projectId: "demo-wave-mobile",
-    storageBucket: "demo-wave-mobile.appspot.com",
-    messagingSenderId: "835299946166",
-    appId: "1:835299946166:web:abc123def456"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  window.signInWithGoogleFirebase = async function() {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      const token = await user.getIdToken();
-      
-      const response = await fetch('/demo_wave/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          token: token,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL
-        })
-      });
-
-      if (response.ok) {
-        window.location.href = '/demo_wave/demo';
-      } else {
-        console.error('Google login failed');
-        alert('Googleログインに失敗しました。');
-      }
-    } catch (error) {
-      console.error('Error during Google sign-in:', error);
-      alert('Googleログインでエラーが発生しました。');
-    }
-  };
-</script>
--->
 
 <script>
   // Input field animations

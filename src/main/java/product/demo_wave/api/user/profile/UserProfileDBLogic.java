@@ -22,9 +22,9 @@ public class UserProfileDBLogic {
 	 *
 	 */
 	@CustomRetry
-	User fetchUser(String firebaseUid) {
-		return userRepository.findByFirebaseUid(firebaseUid)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + firebaseUid));
+	User fetchUser(String supabaseUid) {
+		return userRepository.findBySupabaseUid(supabaseUid)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + supabaseUid));
 	}
 
 }

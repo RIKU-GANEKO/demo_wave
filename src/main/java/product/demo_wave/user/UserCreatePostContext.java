@@ -12,6 +12,8 @@ import lombok.Setter;
 @RequiredArgsConstructor
 class UserCreatePostContext {
     private final UserForm userForm;
+
+    @Getter
     private final BindingResult bindingResult;
 
     @Getter

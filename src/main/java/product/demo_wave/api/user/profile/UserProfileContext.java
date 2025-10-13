@@ -17,7 +17,7 @@ public class UserProfileContext {
 
 //	private static final Logger logger = Logger.getLogger(UserListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 
 	@Setter
 	private UserProfileDBLogic userProfileDBLogic;
@@ -41,7 +41,7 @@ public class UserProfileContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> getUser() {
-		User userProfile = userProfileDBLogic.fetchUser(firebaseUid);
+		User userProfile = userProfileDBLogic.fetchUser(supabaseUid);
 		return new ResponseEntity<>(new UserProfileResponse(userProfile), HttpStatus.OK);
 	}
 

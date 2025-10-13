@@ -45,4 +45,15 @@ public class FavoriteService {
 		}
 	}
 
+	ResponseEntity<APIResponse> deleteFavorite(FavoriteContext favoriteContext) {
+		favoriteContext.setFavoriteDBLogic(favoriteDBLogic);
+		try {
+			return favoriteContext.deleteFavorite();
+		}
+		catch (Exception e) { // 内部的なエラーが起きた場合
+			return favoriteContext.errorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getDescription(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }

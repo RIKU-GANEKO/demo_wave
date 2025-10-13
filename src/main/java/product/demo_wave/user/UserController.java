@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import product.demo_wave.AppProperties;
@@ -92,8 +93,8 @@ class UserController {
      * 登録処理の実行。登録後はサインアップ成功画面に遷移する
      */
     @PostMapping("/create/confirm")
-    ModelAndView createConfirmByPost(@Validated UserForm userForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes, HttpServletResponse response, HttpSession session) throws DataAccessException, NoSuchElementException {
-        UserCreateConfirmPostContext userCreateConfirmPostContext = new UserCreateConfirmPostContext(userForm, modelAndView, redirectAttributes, response, session);
+    ModelAndView createConfirmByPost(@Validated UserForm userForm, ModelAndView modelAndView, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws DataAccessException, NoSuchElementException {
+        UserCreateConfirmPostContext userCreateConfirmPostContext = new UserCreateConfirmPostContext(userForm, modelAndView, redirectAttributes, request, response, session);
         return userService.createConfirmByPost(userCreateConfirmPostContext);
     }
 

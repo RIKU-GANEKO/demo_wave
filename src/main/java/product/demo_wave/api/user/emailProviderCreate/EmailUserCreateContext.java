@@ -17,7 +17,7 @@ public class EmailUserCreateContext {
 
 	//	private static final Logger logger = Logger.getLogger(UserListContext.class.getSimpleName());
 
-	private final String firebaseUid;
+	private final String supabaseUid;
 	private final String email;
 	private final EmailUserRequest request;
 
@@ -43,7 +43,7 @@ public class EmailUserCreateContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public ResponseEntity<APIResponse> postUser() {
-		User savedUser = emailUserCreateDBLogic.saveUser(firebaseUid, email, request);
+		User savedUser = emailUserCreateDBLogic.saveUser(supabaseUid, email, request);
 		return new ResponseEntity<>(new EmailUserCreateResponse(savedUser), HttpStatus.CREATED);
 	}
 

@@ -38,8 +38,8 @@ public class User {
   @Column(name = "id")
   private Integer id;
 
-  @Column(name = "firebase_uid")
-  private String firebaseUid;
+  @Column(name = "supabase_uid")
+  private String supabaseUid;
 
   @Column(name = "name")
   private String name;
@@ -94,7 +94,7 @@ public class User {
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("Account [");
-    sb.append("firebaseUid:").append(this.firebaseUid).append(", ");
+    sb.append("supabaseUid:").append(this.supabaseUid).append(", ");
     sb.append("Name:").append(this.name).append(", ");
     sb.append("email:").append(this.email).append(", ");
     sb.append("profileImagePath:").append(this.profileImagePath).append(", ");

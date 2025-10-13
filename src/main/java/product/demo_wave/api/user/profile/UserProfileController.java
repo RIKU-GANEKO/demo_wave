@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import io.jsonwebtoken.JwtException;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.common.api.APIResponse;
 import product.demo_wave.common.api.ErrorResponse;
+import product.demo_wave.security.SupabaseJwtService;
+import product.demo_wave.security.SupabaseToken;
 
 /**
  * <pre>
@@ -26,27 +26,28 @@ import product.demo_wave.common.api.ErrorResponse;
 public class UserProfileController {
 
 	private UserProfileService userProfileService;
+	private SupabaseJwtService supabaseJwtService;
 
 	@GetMapping
 	public ResponseEntity<APIResponse> createUser(
-			@RequestHeader(name = "Authorization") String authorizationHeader // ← Firebase トークンを受け取る
+			@RequestHeader(name = "Authorization") String authorizationHeader // ← Supabase トークンを受け取る
 	) {
 
 		// "Bearer <token>" を分離
 		String idToken = authorizationHeader.replace("Bearer ", "").trim();
 
-		// Firebase トークンを検証して uid / email を取得
-		FirebaseToken decodedToken;
+		// Supabase トークンを検証して uid / email を取得
+		SupabaseToken decodedToken;
 		try {
-			decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-		} catch (FirebaseAuthException e) {
+			decodedToken = supabaseJwtService.verifyToken(idToken);
+		} catch (JwtException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ErrorResponse("Invalid Firebase token"));
+					.body(new ErrorResponse("Invalid Supabase token"));
 		}
 
-		// Firebaseから取得したユーザー情報をリクエストに付加する
+		// Supabaseから取得したユーザー情報をリクエストに付加する
 		UserProfileContext context = UserProfileContext.builder()
-				.firebaseUid(decodedToken.getUid())
+				.supabaseUid(decodedToken.getUid())
 				.build();
 
 		return userProfileService.getUser(context);

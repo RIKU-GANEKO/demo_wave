@@ -28,8 +28,8 @@ public class ParticipationDBLogic {
 	 *
 	 */
 	@CustomRetry
-	public Participant saveParticipation(String firebaseUid, ParticipationRequest request) {
-		User user = fetchUser(firebaseUid);
+	public Participant saveParticipation(String supabaseUid, ParticipationRequest request) {
+		User user = fetchUser(supabaseUid);
 		Demo demo = fetchDemo(request.getDemoId());
 
 		Optional<Participant> existingParticipantOpt = participantRepository.findByDemoAndUser(demo, user);
@@ -53,8 +53,8 @@ public class ParticipationDBLogic {
 	}
 
 
-	User fetchUser(String firebaseUid) {
-		Optional<User> user = userRepository.findByFirebaseUid(firebaseUid);
+	User fetchUser(String supabaseUid) {
+		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
 		return user.orElse(new User());
 	}
 
@@ -67,8 +67,8 @@ public class ParticipationDBLogic {
 	 *
 	 */
 	@CustomRetry
-	public Boolean getParticipationStatus(String firebaseUid, Integer demoId) {
-		Boolean isParticipant = participantRepository.existsByDemoAndUserAndDeletedAtIsNull(fetchDemo(demoId), fetchUser(firebaseUid));
+	public Boolean getParticipationStatus(String supabaseUid, Integer demoId) {
+		Boolean isParticipant = participantRepository.existsByDemoAndUserAndDeletedAtIsNull(fetchDemo(demoId), fetchUser(supabaseUid));
 		return isParticipant;
 	}
 }

@@ -20,7 +20,7 @@ public class FavoriteDemoListContext {
 //	private static final Logger logger = Logger.getLogger(DemoListContext.class.getSimpleName());
 
 	@Getter
-	private final String firebaseUid;
+	private final String supabaseUid;
 
 	@Setter
 	private FavoriteDemoListDBLogic favoriteDemoListDBLogic;
@@ -46,7 +46,7 @@ public class FavoriteDemoListContext {
 	ResponseEntity<APIResponse> getFavoriteDemoList() {
 		List<FavoriteDemoListRecord> responses = null;
 
-		responses = favoriteDemoListDBLogic.fetchFavoriteDemoList(firebaseUid);
+		responses = favoriteDemoListDBLogic.fetchFavoriteDemoList(supabaseUid);
 
 		return new ResponseEntity<>(new FavoriteDemoListResponse(responses), HttpStatus.OK);
 	}

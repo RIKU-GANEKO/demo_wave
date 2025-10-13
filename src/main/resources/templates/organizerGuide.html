@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>デモ活動の開催に挑戦 - Demo Wave</title>
+  <meta name="description" content="Demo Waveでデモ活動を開催しませんか？完全無料で始められます。">
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f8f9fa;
+    }
+
+    /* Header styles */
+    .header-container {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-link {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #2563eb;
+    }
+
+    /* Hero Section */
+    .hero-gradient {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    }
+
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+    }
+
+    .section-title {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 15px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: #2563eb;
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .benefit-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #2563eb;
+      margin: 0 auto 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-container">
+  <div class="max-w-7xl mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <a href="/demo_wave/" class="flex items-center space-x-3">
+          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+          <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex items-center space-x-4">
+        <a href="/demo_wave/" class="nav-link">ホーム</a>
+        <a href="/demo_wave/about" class="nav-link">Demo Waveとは</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-gradient text-white py-20">
+  <div class="container mx-auto px-4 text-center">
+    <h1 class="text-5xl font-bold mb-6">デモ活動の開催に挑戦しませんか？</h1>
+    <p class="text-xl max-w-3xl mx-auto leading-relaxed mb-8">
+      あなたの想いを形にして、社会に届けましょう。<br>
+      Demo Waveなら、完全無料で誰でも簡単にデモ活動を開催できます。
+    </p>
+    <a href="/demo_wave/demo/create" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+      今すぐデモを作成する <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+  </div>
+</section>
+
+<!-- Free Benefits Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4 section-title">完全無料で使えます</h2>
+    <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto text-lg">
+      Demo Waveは、すべての機能を無料でご利用いただけます。<br>
+      隠れた費用や追加料金は一切ありません。
+    </p>
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div class="text-center p-6">
+        <div class="benefit-icon">
+          <i class="fas fa-ban"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">登録料 0円</h3>
+        <p class="text-gray-600">
+          アカウント登録や初期費用は一切かかりません。今すぐ無料で始められます。
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="benefit-icon">
+          <i class="fas fa-infinity"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">月額料金 0円</h3>
+        <p class="text-gray-600">
+          月額費用や維持費は不要。何度でも無料でデモ活動を開催できます。
+        </p>
+      </div>
+      <div class="text-center p-6">
+        <div class="benefit-icon">
+          <i class="fas fa-percent"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">手数料 0円</h3>
+        <p class="text-gray-600">
+          寄付金や参加費に対する手数料は一切かかりません。集まったお金は全額活動に使えます。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Demo Wave Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4 section-title">なぜDemo Waveを選ぶのか</h2>
+    <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-12">
+      <div class="bg-white p-8 rounded-lg shadow-md feature-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-users text-blue-600 text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">参加者を簡単に集められる</h3>
+            <p class="text-gray-600 leading-relaxed">
+              Demo Waveに登録されているデモは、すべてのユーザーに公開されます。
+              関心のある人が自然に集まるプラットフォームだから、告知の手間が大幅に削減できます。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-lg shadow-md feature-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-chart-line text-green-600 text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">活動の影響力を可視化</h3>
+            <p class="text-gray-600 leading-relaxed">
+              参加人数、寄付金額、コメント数など、デモ活動の影響力をリアルタイムで確認できます。
+              データで示すことで、活動の説得力が増します。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-lg shadow-md feature-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-comments text-purple-600 text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">参加者とのコミュニケーション</h3>
+            <p class="text-gray-600 leading-relaxed">
+              コメント機能を通じて、参加者や支援者と直接やり取りできます。
+              質問に答えたり、最新情報を共有したりして、コミュニティを育てましょう。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-lg shadow-md feature-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-shield-alt text-yellow-600 text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">安心・安全な運営</h3>
+            <p class="text-gray-600 leading-relaxed">
+              個人情報の保護、不適切なコンテンツの監視など、安心してデモ活動を開催できる環境を整えています。
+              サポートチームが常にバックアップします。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How to Start Section -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4 section-title">開催までの流れ</h2>
+    <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+      たった3ステップで、あなたのデモ活動を開催できます
+    </p>
+    <div class="max-w-4xl mx-auto space-y-8">
+      <div class="flex items-start gap-6">
+        <div class="step-number">1</div>
+        <div class="flex-1">
+          <h3 class="text-2xl font-bold mb-3">アカウント登録</h3>
+          <p class="text-gray-600 leading-relaxed text-lg">
+            メールアドレスで簡単に登録できます。所要時間はわずか1分。
+            登録後すぐにデモ活動の作成が可能になります。
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-6">
+        <div class="step-number">2</div>
+        <div class="flex-1">
+          <h3 class="text-2xl font-bold mb-3">デモ活動の詳細を入力</h3>
+          <p class="text-gray-600 leading-relaxed text-lg">
+            デモのタイトル、目的、開催日時、場所などを入力します。
+            詳しく書けば書くほど、参加者が集まりやすくなります。
+            分からないことがあれば、例文やガイドを参考にできます。
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-6">
+        <div class="step-number">3</div>
+        <div class="flex-1">
+          <h3 class="text-2xl font-bold mb-3">公開して参加者を募集</h3>
+          <p class="text-gray-600 leading-relaxed text-lg">
+            内容を確認して公開ボタンを押すだけ。即座に全ユーザーに公開され、
+            参加者の募集が始まります。SNSでシェアして、さらに多くの人に届けましょう。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Success Stories Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4 section-title">こんなデモが開催されています</h2>
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-leaf text-green-600 text-xl"></i>
+        </div>
+        <h4 class="text-lg font-bold mb-2">環境保護</h4>
+        <p class="text-gray-600 text-sm">
+          気候変動対策、プラスチック削減、再生可能エネルギー推進など
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-balance-scale text-purple-600 text-xl"></i>
+        </div>
+        <h4 class="text-lg font-bold mb-2">人権擁護</h4>
+        <p class="text-gray-600 text-sm">
+          ジェンダー平等、労働者の権利、マイノリティ支援など
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-city text-blue-600 text-xl"></i>
+        </div>
+        <h4 class="text-lg font-bold mb-2">地域課題</h4>
+        <p class="text-gray-600 text-sm">
+          公共施設の改善、交通問題、まちづくりなど
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="hero-gradient text-white py-16">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-4xl font-bold mb-6">今すぐ始めましょう</h2>
+    <p class="text-xl mb-8 max-w-2xl mx-auto">
+      あなたの想いを、行動に変える。<br>
+      Demo Waveで、社会を変える第一歩を踏み出しませんか？
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/demo_wave/demo/create" class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+        デモを作成する <i class="fas fa-arrow-right ml-2"></i>
+      </a>
+      <a href="/demo_wave/about" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-600 transition">
+        Demo Waveについて詳しく
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-8">
+  <div class="container mx-auto px-4 text-center">
+    <p>&copy; 2025 Demo Wave. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

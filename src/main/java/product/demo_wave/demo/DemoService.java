@@ -33,6 +33,8 @@ class DemoService {
 		demoShowGetContext.fetchIsParticipant();
 		demoShowGetContext.fetchParticipantCount();
 		demoShowGetContext.fetchDonateAmount();
+		demoShowGetContext.fetchParticipants();
+		demoShowGetContext.fetchSupporters();
 		demoShowGetContext.setModelAndView();
 		return demoShowGetContext.getMv();
 		// TODO catchしてlogに吐き出すようにすべき
