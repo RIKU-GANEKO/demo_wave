@@ -47,7 +47,7 @@ public class FavoriteStatusContext {
 			// セッションベース認証の場合
 			isFavorite = favoriteDBLogic.getFavoriteStatusByUserId(userId, demoId);
 		} else {
-			// Firebaseトークン認証の場合
+			// Supabaseトークン認証の場合
 			isFavorite = favoriteDBLogic.getFavoriteStatus(supabaseUid, demoId);
 		}
 		return new ResponseEntity<>(new FavoriteStatusResponse(isFavorite), HttpStatus.OK);

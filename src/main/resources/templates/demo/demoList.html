@@ -676,8 +676,7 @@
         const response = await fetch('/demo_wave/api/demo/favorite', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${await getFirebaseToken()}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             demoId: parseInt(demoId)
@@ -701,44 +700,6 @@
     }
   }
 
-  // Get Firebase token helper function
-  async function getFirebaseToken() {
-    // This would need to be implemented based on your Firebase auth setup
-    // For now, return a placeholder - you'll need to integrate with your existing auth system
-    return 'your-firebase-token';
-  }
-
-  // Load favorite status for all demos
-  async function loadFavoriteStatuses() {
-    const demoCards = document.querySelectorAll('[data-demo-id]');
-
-    for (const card of demoCards) {
-      const demoId = card.dataset.demoId;
-      const favoriteBtn = card.querySelector('.favorite-btn');
-      const icon = favoriteBtn.querySelector('i');
-
-      try {
-        const response = await fetch(`/demo_wave/api/demo/favorite-status?demoId=${demoId}`, {
-          headers: {
-            'Authorization': `Bearer ${await getFirebaseToken()}`
-          }
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && result.data.isFavorite) {
-            icon.classList.remove('far');
-            icon.classList.add('fas');
-            favoriteBtn.classList.remove('bg-gray-100', 'text-gray-600');
-            favoriteBtn.classList.add('bg-gradient-to-br', 'from-pink-100', 'to-red-100', 'text-pink-600');
-          }
-        }
-      } catch (error) {
-        console.error('Error loading favorite status for demo', demoId, error);
-      }
-    }
-  }
-
   // Initialize favorite buttons
   document.querySelectorAll('.favorite-btn').forEach(button => {
     button.addEventListener('click', function(e) {
@@ -746,9 +707,6 @@
       toggleFavorite(this);
     });
   });
-
-  // Load favorite statuses on page load
-  // loadFavoriteStatuses(); // Uncomment when Firebase token function is implemented
 
   // ユーザー情報を取得してヘッダーに表示
   async function loadUserProfile() {

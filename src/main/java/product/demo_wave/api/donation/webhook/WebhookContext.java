@@ -94,7 +94,7 @@ public class WebhookContext {
 					int demoId = Integer.parseInt(demoIdStr);
 					BigDecimal amount = BigDecimal.valueOf(amountMinor);
 
-					System.out.println("firebaseUid: " + supabaseUid);
+					System.out.println("supabaseUid: " + supabaseUid);
 					System.out.println("amount: " + amount);
 					System.out.println("demoId: " + demoId);
 

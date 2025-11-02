@@ -60,14 +60,14 @@ public class UserApiController {
                 return ResponseEntity.status(404).body(Map.of("error", "ユーザーが見つかりません"));
             }
 
-            // Firebase URLをフィルタリング（Supabase URLのみ許可）
+            // 旧Firebase Storage URLをフィルタリング（Supabase URLのみ許可）
             String profileImagePath = user.getProfileImagePath();
-            if (profileImagePath != null && 
-                (profileImagePath.contains("firebasestorage.googleapis.com") || 
-                 profileImagePath.contains("firebase") || 
+            if (profileImagePath != null &&
+                (profileImagePath.contains("firebasestorage.googleapis.com") ||
+                 profileImagePath.contains("firebase") ||
                  profileImagePath.contains("storage.googleapis.com"))) {
-                logger.warn("Filtering out Firebase Storage URL: {}", profileImagePath);
-                profileImagePath = null; // Firebase URLは無効化
+                logger.warn("Filtering out legacy Firebase Storage URL: {}", profileImagePath);
+                profileImagePath = null;
             }
             
             // レスポンス用のユーザー情報を作成

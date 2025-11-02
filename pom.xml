@@ -119,15 +119,13 @@
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
-			<version>1.6.2</version> <!-- 最新版は公式リポジトリで確認してください -->
+			<version>1.6.2</version>
 		</dependency>
-		<!-- Firebase dependency removed - migrated to Supabase -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.15.2</version>
 		</dependency>
-		<!-- JWT library for Supabase authentication -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>

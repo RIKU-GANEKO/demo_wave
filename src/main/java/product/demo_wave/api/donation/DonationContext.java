@@ -34,7 +34,6 @@ public class DonationContext {
 					.setMode(SessionCreateParams.Mode.PAYMENT)
 					.setSuccessUrl("demo-wave://payment-success?session_id={CHECKOUT_SESSION_ID}") // セッションIDも含める
 					.setCancelUrl("demo-wave://payment-cancel?session_id={CHECKOUT_SESSION_ID}")   // セッションIDも含める
-					// .setCustomerEmail()  // 必要に応じてFirebaseから取得
 					.addLineItem(SessionCreateParams.LineItem.builder()
 							.setQuantity(1L)
 							.setPriceData(SessionCreateParams.LineItem.PriceData.builder()
