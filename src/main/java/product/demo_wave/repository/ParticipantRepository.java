@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import product.demo_wave.entity.Demo;
@@ -27,5 +29,12 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
   // デモの参加者リストを取得（削除されていないもののみ）
   List<Participant> findByDemoAndDeletedAtIsNull(Demo demo);
+
+  // 投稿者以外の参加者数を取得（編集可否判定用）
+  @Query("SELECT COUNT(p) FROM Participant p " +
+         "WHERE p.demo = :demo " +
+         "AND p.user.id != :userId " +
+         "AND p.deletedAt IS NULL")
+  Long countOtherParticipants(@Param("demo") Demo demo, @Param("userId") Integer userId);
 
 }

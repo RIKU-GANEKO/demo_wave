@@ -8,6 +8,10 @@
   <link th:replace="common/head :: favicon"></link>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Header Styles -->
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap');
 
@@ -113,24 +117,7 @@
 <body class="bg-gray-50">
 
 <!-- Header -->
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4">
-    <div class="flex justify-between items-center">
-      <a href="/demo_wave/" class="flex items-center space-x-3">
-        <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
-        <span class="text-2xl font-bold text-blue-600">Demo Wave</span>
-      </a>
-      <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/" class="text-gray-600 hover:text-blue-600 transition px-4 py-2">
-          <i class="fas fa-home mr-2"></i>ホーム
-        </a>
-        <a href="/demo_wave/login" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
-          ログイン
-        </a>
-      </nav>
-    </div>
-  </div>
-</header>
+<th:block th:replace="~{common/mainHeader :: header}"></th:block>
 
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 py-8">
@@ -157,13 +144,22 @@
       <h1 class="text-4xl font-bold text-gray-900 flex-1" th:text="${demo.title}">
         気候変動対策を求める緊急デモ
       </h1>
-      <!-- Favorite Button -->
-      <button id="favoriteBtn"
-              class="ml-4 flex-shrink-0 w-14 h-14 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-md"
-              th:data-demo-id="${demo.id}"
-              onclick="toggleFavorite()">
-        <i id="favoriteIcon" class="far fa-heart text-2xl text-blue-600"></i>
-      </button>
+      <div class="ml-4 flex items-center gap-3">
+        <!-- Edit Button (投稿者のみ表示) -->
+        <a th:if="${loggedInUser != null && loggedInUser.id == demo.user.id}"
+           th:href="@{/demo/edit(demoId=${demo.id})}"
+           class="flex-shrink-0 px-4 py-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-200 shadow-md flex items-center gap-2 font-medium">
+          <i class="fas fa-edit"></i>
+          <span class="hidden sm:inline">編集</span>
+        </a>
+        <!-- Favorite Button -->
+        <button id="favoriteBtn"
+                class="flex-shrink-0 w-14 h-14 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center hover:border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-md"
+                th:data-demo-id="${demo.id}"
+                onclick="toggleFavorite()">
+          <i id="favoriteIcon" class="far fa-heart text-2xl text-blue-600"></i>
+        </button>
+      </div>
     </div>
     <p class="text-gray-600">
       <i class="fas fa-calendar mr-2"></i>
@@ -622,6 +618,9 @@
     .catch(error => console.error('Error loading favorite status:', error));
   });
 </script>
+
+<!-- Header Script -->
+<th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
 
 </body>
 </html>

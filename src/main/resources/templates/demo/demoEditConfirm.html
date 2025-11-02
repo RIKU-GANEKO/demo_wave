@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>デモ作成確認 - Demo Wave</title>
+  <title>デモ編集確認 - Demo Wave</title>
   <meta name="description" content="Demo Waveでデモ作成内容を確認してください">
   <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -279,7 +279,7 @@
 <section class="hero-section">
   <div class="hero-content max-w-4xl mx-auto px-4 text-center">
     <h1 class="text-4xl font-bold text-white mb-3">入力内容の確認</h1>
-    <p class="text-lg text-white opacity-90 mb-8">以下の内容でデモを作成します</p>
+    <p class="text-lg text-white opacity-90 mb-8">以下の内容でデモを更新します</p>
 
     <!-- Progress Steps -->
     <div class="progress-steps">
@@ -305,7 +305,10 @@
 
 <!-- Main Content -->
 <main class="max-w-4xl mx-auto px-4 pb-16">
-  <form method="post" th:action="@{/demo/create/confirm}" th:object="${demoForm}">
+  <form method="post" th:action="@{/demo/edit/confirm}" th:object="${demoForm}">
+    <!-- Hidden field for demoId (passed as request parameter) -->
+    <input type="hidden" name="demoId" th:value="${demoId}" />
+
     <div class="confirm-container">
 
       <!-- Basic Information Section -->
@@ -327,7 +330,7 @@
 
         <div class="confirm-item">
           <div class="confirm-label">カテゴリ</div>
-          <div class="confirm-value" th:text="${selectedCategoryName}"></div>
+          <div class="confirm-value" th:text="${category?.name}"></div>
           <input type="hidden" th:value="${demoForm.categoryId}" name="categoryId" id="categoryId">
         </div>
 
@@ -397,7 +400,7 @@
       <!-- Action Buttons -->
       <div class="action-section">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="/demo_wave/demo/create">
+          <a th:href="@{/demo/edit(demoId=${demoId})}">
             <button type="button" class="btn-back w-full sm:w-auto">
               <i class="fas fa-arrow-left"></i>
               <span>戻って修正する</span>
@@ -405,7 +408,7 @@
           </a>
           <button type="submit" class="btn-submit w-full sm:w-auto">
             <i class="fas fa-check-circle"></i>
-            <span>作成して公開</span>
+            <span>更新する</span>
           </button>
         </div>
       </div>

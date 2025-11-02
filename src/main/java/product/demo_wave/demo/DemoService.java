@@ -11,14 +11,11 @@ import lombok.AllArgsConstructor;
 class DemoService {
 	private final DemoFacadeDBLogic demoFacadeDBLogic;
 
-//	private final String YOUR_DOMAIN = "http://localhost:8082/demo_wave";
-
 	ModelAndView rootByGet(DemoGetContext demoGetContext) {
 		demoGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
 		demoGetContext.init();
 
 		demoGetContext.getOrganizerUserName();
-//		DemoGetContext.getParticipantCount();
 		demoGetContext.fetchDemo();
 		demoGetContext.setModelAndView();
 		return demoGetContext.getMv();
@@ -37,9 +34,6 @@ class DemoService {
 		demoShowGetContext.fetchSupporters();
 		demoShowGetContext.setModelAndView();
 		return demoShowGetContext.getMv();
-		// TODO catchしてlogに吐き出すようにすべき
-		// throwsであるのは、エラーキャッチしたら、すぐ処理できるものを書く、うまくいかないならエラーページに飛ばすというのが多いが
-		// 処理しようがないことが多いが、dataaccessexcみたいなものは、処理できる段階で処理するのが良い
 	}
 
 	ModelAndView createByGet(DemoCreateGetContext demoCreateGetContext) {
@@ -91,15 +85,42 @@ class DemoService {
 	ModelAndView createByPost(ParticipantAddPostContext participantAddPostContext) {
 		participantAddPostContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
 
-//		if (participantAddPostContext.hasErrors()) {
-//			participantAddPostContext.setErrorModelAndView();
-//			return participantAddPostContext.getModelAndView();
-//		}
-
 		participantAddPostContext.toggleParticipant();
 
 		participantAddPostContext.setModelAndView();
 		return participantAddPostContext.getModelAndView();
+	}
+
+	ModelAndView editByGet(DemoEditGetContext demoEditGetContext) {
+		demoEditGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+		demoEditGetContext.setModelAndView();
+		return demoEditGetContext.getModelAndView();
+	}
+
+	ModelAndView editByPost(DemoEditPostContext demoEditPostContext) {
+		demoEditPostContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+
+		if (demoEditPostContext.hasErrors()) {
+			demoEditPostContext.setErrorModelAndView();
+			return demoEditPostContext.getModelAndView();
+		}
+
+		demoEditPostContext.setModelAndView();
+		return demoEditPostContext.getModelAndView();
+	}
+
+	ModelAndView editConfirmByGet(DemoEditConfirmGetContext demoEditConfirmGetContext) {
+		demoEditConfirmGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+		demoEditConfirmGetContext.setModelAndView();
+		return demoEditConfirmGetContext.getModelAndView();
+	}
+
+	ModelAndView editConfirmByPost(DemoEditConfirmPostContext demoEditConfirmPostContext) {
+		demoEditConfirmPostContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+
+		demoEditConfirmPostContext.updateDemo();
+		demoEditConfirmPostContext.setModelAndView();
+		return demoEditConfirmPostContext.getModelAndView();
 	}
 
 }

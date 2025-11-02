@@ -88,4 +88,35 @@ class DemoController {
 		return demoService.createByPost(participantAddPostContext);
 	}
 
+	@GetMapping("/edit")
+	ModelAndView editByGet(@RequestParam("demoId") Integer demoId, ModelAndView modelAndView) {
+		DemoEditGetContext demoEditGetContext = new DemoEditGetContext(modelAndView, demoId);
+		return demoService.editByGet(demoEditGetContext);
+	}
+
+	@PostMapping("/edit")
+	ModelAndView editByPost(@Valid DemoForm demoForm, BindingResult bindingResult,
+			@RequestParam("demoId") Integer demoId, ModelAndView modelAndView) {
+		DemoEditPostContext demoEditPostContext = new DemoEditPostContext(
+				modelAndView, demoForm, demoId, bindingResult);
+		return demoService.editByPost(demoEditPostContext);
+	}
+
+	@GetMapping("/edit/confirm")
+	ModelAndView editConfirmByGet(DemoForm demoForm, @RequestParam("demoId") Integer demoId,
+			ModelAndView modelAndView) {
+		DemoEditConfirmGetContext demoEditConfirmGetContext = new DemoEditConfirmGetContext(
+				modelAndView, demoForm, demoId);
+		return demoService.editConfirmByGet(demoEditConfirmGetContext);
+	}
+
+	@PostMapping("/edit/confirm")
+	ModelAndView editConfirmByPost(DemoForm demoForm, @RequestParam("demoId") Integer demoId,
+			ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
+		// Use demoId from request parameter (record can't bind hidden fields properly)
+		DemoEditConfirmPostContext demoEditConfirmPostContext = new DemoEditConfirmPostContext(
+				modelAndView, demoForm, demoId);
+		return demoService.editConfirmByPost(demoEditConfirmPostContext);
+	}
+
 }

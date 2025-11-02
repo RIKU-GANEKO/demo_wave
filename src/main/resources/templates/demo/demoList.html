@@ -8,6 +8,10 @@
   <link th:replace="common/head :: favicon"></link>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Header Styles -->
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
@@ -243,53 +247,7 @@
 <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
 
 <!-- Header -->
-<header class="hero-gradient shadow-2xl relative">
-  <!-- Floating orbs -->
-  <div class="floating-orb w-32 h-32 bg-blue-400 top-10 left-10 animation-delay-1000"></div>
-  <div class="floating-orb w-24 h-24 bg-indigo-400 top-20 right-20 animation-delay-2000"></div>
-  <div class="floating-orb w-20 h-20 bg-cyan-400 bottom-10 left-1/3 animation-delay-3000"></div>
-  
-  <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
-    <div class="flex justify-between items-center">
-      <!-- Logo -->
-      <div class="flex items-center space-x-4">
-        <div class="w-14 h-14 rounded-2xl overflow-hidden relative group">
-          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-white tracking-tight">Demo Wave</h1>
-          <p class="text-sm text-blue-100 font-medium">あなたの声が社会を変える</p>
-        </div>
-      </div>
-      
-      <!-- Navigation -->
-      <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">ホーム</span>
-        </a>
-        <a href="/demo_wave/mypage" class="bg-white bg-opacity-10 backdrop-blur-md text-white hover:bg-opacity-20 transition-all duration-300 px-4 py-3 rounded-xl flex items-center group border border-white border-opacity-20">
-          <i class="fas fa-user-circle mr-2 group-hover:scale-110 transition-transform"></i>
-          <span class="hidden sm:block font-medium">マイページ</span>
-        </a>
-        
-        <!-- User Profile -->
-        <div id="userProfile" class="flex items-center space-x-3">
-          <div id="userProfileImage" class="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-20 backdrop-blur-md flex items-center justify-center relative group border border-white border-opacity-30">
-            <img id="profileImg" src="" alt="プロフィール画像" class="w-full h-full object-cover absolute inset-0 hidden group-hover:scale-110 transition-transform">
-            <i id="defaultAvatar" class="fas fa-user text-white text-sm"></i>
-          </div>
-          <span id="userName" class="text-white text-sm font-medium hidden md:block"></span>
-        </div>
-        
-        <a href="/demo_wave/logout" class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300">
-          <i class="fas fa-sign-out-alt mr-2"></i>
-          <span class="hidden sm:inline">ログアウト</span>
-        </a>
-      </nav>
-    </div>
-  </div>
-</header>
+<th:block th:replace="~{common/mainHeader :: header}"></th:block>
 
 <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-4 py-8">
@@ -841,6 +799,9 @@
   // ページ読み込み時にユーザー情報を取得
   loadUserProfile();
 </script>
+
+<!-- Header Script -->
+<th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
 
 </body>
 </html>

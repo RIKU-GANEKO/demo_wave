@@ -8,6 +8,10 @@
   <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Header Styles -->
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
@@ -279,23 +283,7 @@
 <body>
 
 <!-- Header -->
-<header class="header-container">
-  <div class="max-w-7xl mx-auto px-4 py-4">
-    <div class="flex justify-between items-center">
-      <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
-        <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="flex items-center space-x-4">
-        <a href="/demo_wave/" class="nav-link">ホーム</a>
-        <a href="/demo_wave/mypage" class="nav-link">マイページ</a>
-      </nav>
-    </div>
-  </div>
-</header>
+<th:block th:replace="~{common/mainHeader :: header}"></th:block>
 
 <!-- Hero Section -->
 <section class="hero-section">
@@ -448,6 +436,9 @@
     }
   }
 </script>
+
+<!-- Header Script -->
+<th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
 
 </body>
 </html>

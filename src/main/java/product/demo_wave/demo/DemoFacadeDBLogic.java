@@ -39,15 +39,7 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     private final PaymentRepository paymentRepository;
     private final CategoryRepository categoryRepository;
     private final PrefectureRepository prefectureRepository;
-    private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
-
-//    @CustomRetry
-//    PageData<Demo> fetchAllDemo(Pageable pageable) {
-//        LocalDateTime now = LocalDateTime.now();
-//        Page<Demo> demos = demoRepository.findByAnnouncementTimeBeforeOrderByAnnouncementTimeDesc(now, pageable);
-//        int range = getPageDisplayRange(demos);
-//        return new PageData<>(demos, range);
-//    }
+    private final GetUserLogic getUserLogic;
 
     @CustomRetry
     PageData<DemoWithParticipantDTO> fetchAllDemo(Pageable pageable) {
@@ -57,11 +49,6 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
         int range = getPageDisplayRange(demos);
         return new PageData<>(demos, range);
     }
-
-//    Integer fetchParticipantCount() {
-//        List<Integer> participantCount = participantRepository.participantCount();
-//        return participantCount;
-//    }
 
     @CustomRetry
     Demo fetchDemo(Integer demoId) {
@@ -91,8 +78,6 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
 
         // Participant に登録
         participantRepository.saveAndFlush(toParticipantEntity(demoId));
-
-//        demoRepository.saveAndFlush(toEntity(DemoForm, null));
     }
 
     private Demo toEntity(DemoForm demoForm, Integer demoId) {
@@ -102,11 +87,6 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
             demo = demoRepository.findById(demoId)
                     .orElseThrow(() -> new NoSuchElementException("Demo not found."));
         }
-
-//        // SecurityContextからログインユーザーの詳細情報を取得
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UsersDetails usersDetails = (UsersDetails) authentication.getPrincipal(); // UsersDetailsを取得
-//        User loggedInUser = usersDetails.getUser(); // Userオブジェクトを取得
 
         demo.setTitle(demoForm.title());
         demo.setContent(demoForm.content());
@@ -129,7 +109,6 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
                 .orElseThrow(() -> new RuntimeException("Prefecture not found"));
             demo.setPrefecture(prefecture);
         }
-//        demo.setOrganizerName("我如古陸");
 
         return demo;
     }
@@ -175,13 +154,6 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
             participant.setDeletedAt(java.time.LocalDateTime.now());
             participantRepository.saveAndFlush(participant);
         }
-
-//        Boolean isParticipant = participantRepository.existsBydemoIdAndUserIdAndDeletedAtIsNull(demoId, this.getUserLogic.getUserFromCache().getId());
-//        if (!isParticipant) {
-//            participantRepository.saveAndFlush(toEntity(demoId, userId));
-//        } else {
-//
-//        }
     }
 
     private Participant toEntity(Integer demoId, Integer userId) {
@@ -248,6 +220,26 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     public List<product.demo_wave.entity.Payment> supporters(Integer demoId) {
         List<product.demo_wave.entity.Payment> supporters = paymentRepository.findByDemoAndDeletedAtIsNull(fetchDemo(demoId));
         return supporters;
+    }
+
+    /**
+     * デモの場所・時間が編集可能かどうかを判定
+     * 投稿者以外の参加者がいない場合のみ編集可能
+     */
+    @CustomRetry
+    public boolean canEditLocationAndTime(Integer demoId) {
+        Demo demo = fetchDemo(demoId);
+        Long otherParticipantCount = participantRepository.countOtherParticipants(demo, demo.getUser().getId());
+        return otherParticipantCount == 0;
+    }
+
+    /**
+     * デモ情報を更新
+     */
+    @CustomRetry
+    void updateDemo(DemoForm demoForm, Integer demoId) {
+        Demo demo = toEntity(demoForm, demoId);
+        demoRepository.saveAndFlush(demo);
     }
 
 }

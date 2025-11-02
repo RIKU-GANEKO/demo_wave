@@ -30,9 +30,10 @@ public class LpController {
     private final PrefectureRepository prefectureRepository;
     private final UserRepository userRepository;
 
-    @GetMapping("/")
-    public ModelAndView home(ModelAndView mv) {
-        // 認証情報を取得
+    /**
+     * 認証情報を取得してModelAndViewに追加する共通メソッド
+     */
+    private void addLoggedInUser(ModelAndView mv) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() &&
             !"anonymousUser".equals(authentication.getPrincipal())) {
@@ -47,6 +48,12 @@ public class LpController {
                 }
             }
         }
+    }
+
+    @GetMapping("/")
+    public ModelAndView home(ModelAndView mv) {
+        // 認証情報を取得
+        addLoggedInUser(mv);
         // 参加人数が多い上位9件のデモを取得（人気のデモ）
         Pageable topPageable = PageRequest.of(0, 9);
         List<DemoWithParticipantDTO> popularDemos = demoRepository.findTopDemosByParticipantCount(topPageable);
@@ -63,12 +70,14 @@ public class LpController {
 
     @GetMapping("/about")
     public ModelAndView about(ModelAndView mv) {
+        addLoggedInUser(mv);
         mv.setViewName("about");
         return mv;
     }
 
     @GetMapping("/organizer-guide")
     public ModelAndView organizerGuide(ModelAndView mv) {
+        addLoggedInUser(mv);
         mv.setViewName("organizerGuide");
         return mv;
     }
@@ -82,6 +91,9 @@ public class LpController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false, defaultValue = "newest") String sort,
             ModelAndView mv) {
+
+        // 認証情報を取得
+        addLoggedInUser(mv);
 
         // カテゴリー名からIDを取得
         if (categoryName != null && categoryId == null) {

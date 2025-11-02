@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import product.demo_wave.entity.Demo;
+
 record DemoForm(
     Integer id,
 
@@ -47,4 +49,24 @@ record DemoForm(
     Integer categoryId,
 
     Integer prefectureId
-) {}
+) {
+    /**
+     * DemoエンティティからDemoFormを生成
+     */
+    public static DemoForm fromEntity(Demo demo) {
+        return new DemoForm(
+            demo.getId(),
+            demo.getTitle(),
+            demo.getContent(),
+            demo.getDemoStartDate().toLocalDate(),
+            demo.getDemoStartDate().toLocalTime(),
+            demo.getDemoEndDate().toLocalTime(),
+            demo.getDemoPlace(),
+            null, // demoAddress は保存していないため null
+            demo.getDemoAddressLatitude(),
+            demo.getDemoAddressLongitude(),
+            demo.getCategory() != null ? demo.getCategory().getId() : null,
+            demo.getPrefecture() != null ? demo.getPrefecture().getId() : null
+        );
+    }
+}

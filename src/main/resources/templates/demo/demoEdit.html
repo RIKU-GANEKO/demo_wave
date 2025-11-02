@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>デモを作成 - Demo Wave</title>
-  <meta name="description" content="Demo Waveで新しいデモ活動を作成してください">
+  <title>デモを編集 - Demo Wave</title>
+  <meta name="description" content="Demo Waveでデモ活動を編集してください">
   <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -403,14 +403,14 @@
 <!-- Hero Section -->
 <section class="hero-section">
   <div class="hero-content max-w-4xl mx-auto px-4 text-center">
-    <h1 class="text-4xl font-bold text-white mb-3">デモを作成</h1>
-    <p class="text-lg text-white opacity-90 mb-8">あなたの声を社会に届けるデモ活動を企画しましょう</p>
+    <h1 class="text-4xl font-bold text-white mb-3">デモを編集</h1>
+    <p class="text-lg text-white opacity-90 mb-8">デモ活動の内容を更新します</p>
 
     <!-- Progress Steps -->
     <div class="progress-steps">
       <div class="progress-step">
         <div class="step-circle active">1</div>
-        <span class="step-label hidden sm:inline">基本情報入力</span>
+        <span class="step-label hidden sm:inline">情報編集</span>
       </div>
       <div class="step-divider"></div>
       <div class="progress-step">
@@ -428,7 +428,10 @@
 
 <!-- Main Content -->
 <main class="max-w-4xl mx-auto px-4 pb-16">
-  <form method="post" th:action="@{/demo/create}" th:object="${demoForm}">
+  <form method="post" th:action="@{/demo/edit}" th:object="${demoForm}">
+    <!-- Hidden field for demoId (passed as request parameter) -->
+    <input type="hidden" name="demoId" th:value="${demoId}" />
+
     <div class="form-container">
 
       <!-- Basic Information Section -->
@@ -478,10 +481,12 @@
             id="categoryId"
             name="categoryId"
             class="form-input"
-            th:value="${demoForm?.categoryId}"
           >
             <option value="">カテゴリを選択してください</option>
-            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}"
+                    th:selected="${category.id == demoForm?.categoryId}"></option>
           </select>
           <p th:if="${#fields.hasErrors('categoryId')}" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
@@ -650,10 +655,10 @@
         </div>
 
         <!-- Hidden Fields -->
-        <input type="hidden" id="demoAddress" name="demoAddress" />
-        <input type="hidden" id="prefectureId" name="prefectureId" />
-        <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" />
-        <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
+        <input type="hidden" id="demoAddress" name="demoAddress" th:value="${demoForm?.demoAddress}" />
+        <input type="hidden" id="prefectureId" name="prefectureId" th:value="${demoForm?.prefectureId}" />
+        <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" th:value="${demoForm?.demoAddressLatitude}" />
+        <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" th:value="${demoForm?.demoAddressLongitude}" />
       </div>
 
       <!-- Submit Section -->

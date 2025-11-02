@@ -12,6 +12,9 @@
   <!-- Demo Card Styles -->
   <th:block th:replace="~{common/demoCard :: demoCardStyles}"></th:block>
 
+  <!-- Header Styles -->
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
@@ -22,49 +25,6 @@
 
     body {
       background-color: #f8f8f8;
-    }
-
-    /* Header styles - Same as home page */
-    .header-container {
-      background-color: #ffffff;
-      border-bottom: 1px solid #e8e8e8;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .nav-link {
-      color: #333;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .nav-link:hover {
-      color: #2563eb;
-    }
-
-    .btn-primary {
-      background-color: #2563eb;
-      color: white;
-      font-weight: 700;
-      transition: all 0.2s;
-    }
-
-    .btn-primary:hover {
-      background-color: #1e40af;
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background-color: white;
-      color: #2563eb;
-      border: 2px solid #2563eb;
-      font-weight: 700;
-      transition: all 0.2s;
-    }
-
-    .btn-secondary:hover {
-      background-color: #eff6ff;
     }
 
     /* Filter Section - Horizontal layout below header */
@@ -163,60 +123,8 @@
   </style>
 </head>
 <body>
-  <!-- Header - Same as home page -->
-  <header class="header-container">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex justify-between items-center">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <a href="/demo_wave/" class="flex items-center space-x-3">
-            <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
-            <h1 class="text-2xl font-bold" style="color: #2563eb;">Demo Wave</h1>
-          </a>
-        </div>
-
-        <!-- Search Box (Desktop) -->
-        <div class="hidden md:block flex-1 max-w-md mx-8">
-          <form action="/demo_wave/search" method="get" class="relative">
-            <input
-              type="text"
-              name="keyword"
-              placeholder="キーワードで検索..."
-              th:value="${keyword}"
-              class="w-full px-4 py-2 pr-10 border-2 border-gray-300 rounded-full focus:outline-none focus:border-blue-600 transition-colors"
-              style="font-size: 14px;">
-            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-700">
-              <i class="fas fa-search"></i>
-            </button>
-            <input type="hidden" name="categoryId" th:value="${selectedCategoryId}">
-            <input type="hidden" name="prefectureId" th:value="${selectedPrefectureId}">
-            <input type="hidden" name="sort" th:value="${sort}">
-          </form>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="hidden md:flex items-center space-x-6">
-          <a href="/demo_wave/search" class="nav-link">デモを探す</a>
-          <a href="/demo_wave/about" class="nav-link">Demo Waveとは</a>
-          <a href="/demo_wave/login" class="btn-secondary px-6 py-2 rounded-full">ログイン</a>
-          <a href="/demo_wave/user/create" class="btn-primary px-6 py-2 rounded-full">新規登録</a>
-        </nav>
-
-        <!-- Mobile menu button -->
-        <button id="mobile-menu-btn" class="md:hidden text-gray-700">
-          <i class="fas fa-bars text-xl"></i>
-        </button>
-      </div>
-
-      <!-- Mobile menu -->
-      <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-3">
-        <a href="/demo_wave/search" class="block nav-link py-2">デモを探す</a>
-        <a href="/demo_wave/about" class="block nav-link py-2">Demo Waveとは</a>
-        <a href="/demo_wave/login" class="block btn-secondary px-6 py-2 rounded-full text-center">ログイン</a>
-        <a href="/demo_wave/user/create" class="block btn-primary px-6 py-2 rounded-full text-center">新規登録</a>
-      </div>
-    </div>
-  </header>
+  <!-- Header -->
+  <th:block th:replace="~{common/mainHeader :: header}"></th:block>
 
   <!-- Filter Section - Horizontal below header -->
   <section class="search-filter-section">
@@ -309,14 +217,11 @@
     </div>
   </div>
 
+  <!-- Header Script -->
+  <th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
+
   <script th:inline="javascript">
     /*<![CDATA[*/
-    // Mobile menu toggle
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('hidden');
-    });
-
     // Get current parameters
     let currentCategoryId = /*[[${selectedCategoryId}]]*/ null;
     let currentPrefectureId = /*[[${selectedPrefectureId}]]*/ null;

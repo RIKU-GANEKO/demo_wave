@@ -6,6 +6,11 @@
     <title>Demo Waveとは | Demo Wave</title>
     <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Header Styles -->
+    <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+
     <style>
         .hero-gradient {
             background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
@@ -51,21 +56,7 @@
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <a href="/demo_wave/" class="flex items-center space-x-3">
-                    <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
-                    <span class="text-2xl font-bold text-[#2563eb]">Demo Wave</span>
-                </a>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="/demo_wave/" class="text-gray-700 hover:text-[#2563eb] transition">デモを探す</a>
-                    <a href="/demo_wave/about" class="text-[#2563eb] font-semibold">Demo Waveとは</a>
-                    <a href="/demo_wave/login" class="bg-[#2563eb] text-white px-6 py-2 rounded-full hover:bg-[#1e40af] transition">ログイン</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <th:block th:replace="~{common/mainHeader :: header}"></th:block>
 
     <!-- Hero Section -->
     <section class="hero-gradient text-white py-20">
@@ -533,5 +524,8 @@
             <p>&copy; 2025 Demo Wave. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Header Script -->
+    <th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
 </body>
 </html>
