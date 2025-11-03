@@ -12,7 +12,7 @@ public class UserProfileResponse implements APIResponse {
 
 	public UserProfileResponse(User userEntity) {
 		this.user = new UserProfileResponseDTO(
-				userEntity.getSupabaseUid(),
+				userEntity.getId().toString(),
 				userEntity.getEmail(),
 				userEntity.getName(),
 				userEntity.getProfileImagePath()

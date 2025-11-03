@@ -36,28 +36,28 @@ public class GiftExportBatchContext {
 	 */
 	public void giftCsvExport() throws Exception {
 		List<GiftExportTarget> demoTargets = giftExportBatchDBLogic.getGiftDistributionData(targetMonth);
-		Map<Integer, UserGiftResult> resultMap = aggregateUserGifts(demoTargets);
+		Map<java.util.UUID, UserGiftResult> resultMap = aggregateUserGifts(demoTargets);
 		writeCsv(resultMap, targetMonth);
 	}
 
 	/**
 	 * ユーザー別に支援金を合算する
 	 */
-	private Map<Integer, UserGiftResult> aggregateUserGifts(List<GiftExportTarget> demoTargets) {
-		Map<Integer, UserGiftResult> resultMap = new HashMap<>();
+	private Map<java.util.UUID, UserGiftResult> aggregateUserGifts(List<GiftExportTarget> demoTargets) {
+		Map<java.util.UUID, UserGiftResult> resultMap = new HashMap<>();
 
 		for (GiftExportTarget demo : demoTargets) {
 			BigDecimal distributable = demo.getTotalAmount()
 					.multiply(BigDecimal.valueOf(90))
 					.divide(BigDecimal.valueOf(100), RoundingMode.DOWN); // ← 小数点切り捨て
-			List<Integer> participantIds = demo.getParticipantIds() != null ? demo.getParticipantIds() : Collections.emptyList();
-			Map<Integer, String> userEmails = demo.getUserEmails() != null ? demo.getUserEmails() : Collections.emptyMap();
+			List<java.util.UUID> participantIds = demo.getParticipantIds() != null ? demo.getParticipantIds() : Collections.emptyList();
+			Map<java.util.UUID, String> userEmails = demo.getUserEmails() != null ? demo.getUserEmails() : Collections.emptyMap();
 
 			BigDecimal perUser = participantIds.isEmpty()
 					? BigDecimal.ZERO
 					: distributable.divide(BigDecimal.valueOf(participantIds.size()), RoundingMode.DOWN);
 
-			for (Integer userId : participantIds) {
+			for (java.util.UUID userId : participantIds) {
 				String email = userEmails.getOrDefault(userId, "");
 				UserGiftResult result = resultMap.computeIfAbsent(
 						userId,
@@ -72,13 +72,13 @@ public class GiftExportBatchContext {
 	/**
 	 * 結果をCSVファイルとして出力
 	 */
-	private void writeCsv(Map<Integer, UserGiftResult> resultMap, YearMonth month) throws Exception {
+	private void writeCsv(Map<java.util.UUID, UserGiftResult> resultMap, YearMonth month) throws Exception {
 		String fileName = "/tmp/demo_wave/" + month.format(CSV_MONTH_FORMATTER) + "-gift.csv";
 
 		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(Paths.get(fileName)))) {
 			writer.println("user_id,email,gift_amount");
 			for (UserGiftResult res : resultMap.values()) {
-				writer.printf("%d,%s,%s%n", res.userId, res.email, res.amount.toPlainString());
+				writer.printf("%s,%s,%s%n", res.userId, res.email, res.amount.toPlainString());
 			}
 		}
 		System.out.println("✅ CSV出力完了: " + fileName);

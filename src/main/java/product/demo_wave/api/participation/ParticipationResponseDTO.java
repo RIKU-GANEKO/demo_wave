@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ParticipationResponseDTO {
 	private Integer demoId;
-	private Integer userId;
+	private String userId;
 }

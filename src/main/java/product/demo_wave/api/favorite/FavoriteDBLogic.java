@@ -61,7 +61,7 @@ public class FavoriteDBLogic {
 	 * userIdによるお気に入り登録（セッションベース認証用）
 	 */
 	@CustomRetry
-	public FavoriteDemo saveFavoriteByUserId(Integer userId, FavoriteRequest request) {
+	public FavoriteDemo saveFavoriteByUserId(java.util.UUID userId, FavoriteRequest request) {
 		User user = fetchUserById(userId);
 		Demo demo = fetchDemo(request.getDemoId());
 
@@ -93,7 +93,7 @@ public class FavoriteDBLogic {
 	 * userIdによるお気に入り削除（セッションベース認証用）
 	 */
 	@CustomRetry
-	public void deleteFavoriteByUserId(Integer userId, FavoriteRequest request) {
+	public void deleteFavoriteByUserId(java.util.UUID userId, FavoriteRequest request) {
 		User user = fetchUserById(userId);
 		Demo demo = fetchDemo(request.getDemoId());
 
@@ -122,11 +122,11 @@ public class FavoriteDBLogic {
 	}
 
 	User fetchUser(String supabaseUid) {
-		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
+		Optional<User> user = userRepository.findById(java.util.UUID.fromString(supabaseUid));
 		return user.orElse(new User());
 	}
 
-	User fetchUserById(Integer userId) {
+	User fetchUserById(java.util.UUID userId) {
 		Optional<User> user = userRepository.findById(userId);
 		return user.orElseThrow(() -> new RuntimeException("User not found"));
 	}
@@ -149,7 +149,7 @@ public class FavoriteDBLogic {
 	 * userIdによるお気に入り状態取得（セッションベース認証用）
 	 */
 	@CustomRetry
-	public Boolean getFavoriteStatusByUserId(Integer userId, Integer demoId) {
+	public Boolean getFavoriteStatusByUserId(java.util.UUID userId, Integer demoId) {
 		Boolean isFavorite = favoriteDemoRepository.existsByDemoAndUserAndDeletedAtIsNull(fetchDemo(demoId), fetchUserById(userId));
 		return isFavorite;
 	}

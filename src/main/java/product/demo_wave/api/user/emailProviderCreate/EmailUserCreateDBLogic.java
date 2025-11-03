@@ -7,9 +7,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.annotation.CustomRetry;
-import product.demo_wave.entity.Account;
 import product.demo_wave.entity.User;
-import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.UserRepository;
 
 @Component
@@ -19,7 +17,6 @@ public class EmailUserCreateDBLogic {
 	//	private static final Logger logger = Logger.getLogger(UserListDBLogic.class.getSimpleName());
 
 	private final UserRepository userRepository;
-	private final AccountRepository accountRepository;
 
 	/**
 	 *
@@ -32,18 +29,16 @@ public class EmailUserCreateDBLogic {
 
 	private User toEntity(String supabaseUid, String email, EmailUserRequest request) {
 
-		// 適当な account_id（例えば 1）を仮に入れておく。
-		Account account = accountRepository.findById(1)
-				.orElseThrow(() -> new NoSuchElementException("Account not found"));
+		// Account不要（Stripe + Amazonギフト券使用）
 
 		User user = new User();
 
-		user.setSupabaseUid(supabaseUid);
-		user.setAccount(account);
+		user.setId(java.util.UUID.fromString(supabaseUid));
 		user.setName(request.getName());
 		user.setEmail(email);
 		user.setProfileImagePath(request.getProfileImagePath());
-		user.setPassword("123456");
+		// Supabase manages passwords in auth.users table
+		// user.setPassword("123456");
 		user.setStatus(true);
 		user.setLastLogin(LocalDateTime.now());
 

@@ -20,7 +20,7 @@ class MypageGetUserContext {
     private final ModelAndView mv;
 
     @Setter
-    private Integer userId;
+    private java.util.UUID userId;
 
     @Setter
     private String pageType; // "demos", "participated", "favorites", "supported", "settings"

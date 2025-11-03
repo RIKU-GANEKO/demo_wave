@@ -23,7 +23,7 @@ public class PaymentService {
 
 	public String createCheckoutSession(CheckoutSessionContext context, Integer demoId) {
 
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 
 		try {
 			Stripe.apiKey = "sk_test_51QepbEDawq4VaxvjBS5fkldp8CDPzm3Nbj2bgmcq51fiKsd4PMg0aFi9rwMw0UANAAKqWWTADwgy4EU1hJ1QJZZM00mZV2ayM2";

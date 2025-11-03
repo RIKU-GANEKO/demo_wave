@@ -42,7 +42,7 @@ public class LpController {
             if (principal instanceof SupabaseUserDetails) {
                 SupabaseUserDetails supabaseUser = (SupabaseUserDetails) principal;
                 // Supabase UIDからユーザー情報を取得
-                User user = userRepository.findBySupabaseUid(supabaseUser.getSupabaseUserId()).orElse(null);
+                User user = userRepository.findById(java.util.UUID.fromString(supabaseUser.getSupabaseUserId())).orElse(null);
                 if (user != null) {
                     mv.addObject("loggedInUser", user);
                 }

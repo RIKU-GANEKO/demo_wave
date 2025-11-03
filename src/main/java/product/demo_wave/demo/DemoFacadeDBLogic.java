@@ -62,7 +62,7 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
         return comments;
     }
 
-    User fetchUser(Integer userId) {
+    User fetchUser(java.util.UUID userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.orElse(new User());
     }
@@ -140,7 +140,7 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     @CustomRetry
     void toggleParticipant(Integer demoId) {
 
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 
         // 該当データを検索
         Optional<Participant> existingParticipant = participantRepository.findByDemoAndUser(fetchDemo(demoId), fetchUser(userId));
@@ -156,7 +156,7 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
         }
     }
 
-    private Participant toEntity(Integer demoId, Integer userId) {
+    private Participant toEntity(Integer demoId, java.util.UUID userId) {
         Participant participant = new Participant();
 
         participant.setDemo(fetchDemo(demoId));

@@ -13,7 +13,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,13 +20,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
+import product.demo_wave.security.supabase.SupabaseAuthenticationProvider;
 
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
-    UserDetailsService userDetailsService;
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Autowired
@@ -38,6 +37,10 @@ public class SecurityConfig {
 
     @Autowired
     private CustomLogoutHandler customLogoutHandler;
+
+    @Autowired
+    private SupabaseAuthenticationProvider supabaseAuthenticationProvider;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         try {
@@ -168,10 +171,9 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(Collections.singletonList(provider));
+        // Supabase認証プロバイダーを使用
+        // DaoAuthenticationProviderは使用しない（パスワードはSupabaseで管理）
+        return new ProviderManager(Collections.singletonList(supabaseAuthenticationProvider));
     }
 
 //    /**

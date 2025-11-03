@@ -27,22 +27,22 @@ class MypageController {
 	@GetMapping
 	ModelAndView rootByGet(ModelAndView mv) {
 		MypageGetContext mypageGetContext = new MypageGetContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId(); // キャッシュからログインユーザーID取得
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId(); // キャッシュからログインユーザーID取得
 		mypageGetContext.setUserId(userId); // コンテキストに userId をセット
 		return mypageService.rootByGet(mypageGetContext);
 	}
 
 	@GetMapping("{userId}")
-	ModelAndView userByGet(@PathVariable Integer userId, ModelAndView mv) {
+	ModelAndView userByGet(@PathVariable String userId, ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		mypageGetUserContext.setUserId(userId);
+		mypageGetUserContext.setUserId(java.util.UUID.fromString(userId));
 		return mypageService.userByGet(mypageGetUserContext);
 	}
 
 	@GetMapping("/demos")
 	ModelAndView demosByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("demos");
 		return mypageService.userByGet(mypageGetUserContext);
@@ -51,7 +51,7 @@ class MypageController {
 	@GetMapping("/participated")
 	ModelAndView participatedByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("participated");
 		return mypageService.userByGet(mypageGetUserContext);
@@ -60,7 +60,7 @@ class MypageController {
 	@GetMapping("/favorites")
 	ModelAndView favoritesByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("favorites");
 		return mypageService.userByGet(mypageGetUserContext);
@@ -69,7 +69,7 @@ class MypageController {
 	@GetMapping("/supported")
 	ModelAndView supportedByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("supported");
 		return mypageService.userByGet(mypageGetUserContext);
@@ -78,7 +78,7 @@ class MypageController {
 	@GetMapping("/settings")
 	ModelAndView settingsByGet(ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		Integer userId = this.getUserLogic.getUserFromCache().getId();
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("settings");
 		return mypageService.userByGet(mypageGetUserContext);

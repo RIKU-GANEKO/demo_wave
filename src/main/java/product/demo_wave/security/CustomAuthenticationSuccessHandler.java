@@ -32,20 +32,27 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		Object principal = authentication.getPrincipal();
 
-		// Supabase認証の場合はスキップ
+		// Supabase認証の場合
 		if (principal instanceof SupabaseUserDetails) {
-			System.out.println("Supabase authentication - skipping user update");
-			response.sendRedirect(request.getContextPath() + "/");
-			return;
-		}
+			SupabaseUserDetails supabaseUserDetails = (SupabaseUserDetails) principal;
+			System.out.println("Supabase authentication successful for: " + supabaseUserDetails.getEmail());
 
-		// 既存のユーザー認証の場合
-		if (principal instanceof UsersDetails) {
-			UsersDetails usersDetails = (UsersDetails) principal;
-			User user = userRepository.findById(usersDetails.getAccountId()).orElseThrow();
-			System.out.println(" ################### user ################# : " + user);
-			user.setLastLogin(LocalDateTime.now());
-			userRepository.save(user);
+			// トークンをセッションに保存
+			if (supabaseUserDetails.getAccessToken() != null) {
+				request.getSession().setAttribute("supabase-access-token", supabaseUserDetails.getAccessToken());
+				request.getSession().setAttribute("supabase-refresh-token", supabaseUserDetails.getRefreshToken());
+			}
+
+			// last_loginを更新
+			try {
+				java.util.UUID userId = java.util.UUID.fromString(supabaseUserDetails.getUserId());
+				User user = userRepository.findById(userId).orElseThrow();
+				user.setLastLogin(LocalDateTime.now());
+				userRepository.save(user);
+				System.out.println("Updated last_login for user: " + user.getEmail());
+			} catch (Exception e) {
+				System.err.println("Failed to update last_login: " + e.getMessage());
+			}
 		}
 
 		// リダイレクト先を決定

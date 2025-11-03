@@ -13,7 +13,7 @@ public class FavoriteResponse implements APIResponse {
 	public FavoriteResponse(FavoriteDemo favoriteEntity) {
 		this.favorite = new FavoriteResponseDTO(
 				favoriteEntity.getDemo().getId(),
-				favoriteEntity.getUser().getId()
+				favoriteEntity.getUser().getId().toString()
 		);
 	}
 }

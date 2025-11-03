@@ -17,7 +17,7 @@ import product.demo_wave.common.api.APIResponse;
 import product.demo_wave.common.api.ErrorResponse;
 import product.demo_wave.security.SupabaseJwtService;
 import product.demo_wave.security.SupabaseToken;
-import product.demo_wave.security.UsersDetails;
+import product.demo_wave.security.SupabaseUserDetails;
 
 /**
  * <pre>
@@ -38,14 +38,14 @@ public class FavoriteController {
 			@RequestBody FavoriteRequest request
 	) {
 
-		// セッションベースの認証をチェック
+		// セッションベースの認証をチェック（Supabase認証）
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()
-				&& authentication.getPrincipal() instanceof UsersDetails) {
-			// 通常のログインユーザー
-			UsersDetails userDetails = (UsersDetails) authentication.getPrincipal();
+				&& authentication.getPrincipal() instanceof SupabaseUserDetails) {
+			// Supabaseセッションベースのログインユーザー
+			SupabaseUserDetails userDetails = (SupabaseUserDetails) authentication.getPrincipal();
 			FavoriteContext context = FavoriteContext.builder()
-					.userId(userDetails.getAccountId())
+					.supabaseUid(userDetails.getSupabaseUserId())
 					.request(request)
 					.build();
 			return favoriteService.postFavorite(context);
@@ -84,14 +84,14 @@ public class FavoriteController {
 			@RequestBody FavoriteRequest request
 	) {
 
-		// セッションベースの認証をチェック
+		// セッションベースの認証をチェック（Supabase認証）
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()
-				&& authentication.getPrincipal() instanceof UsersDetails) {
-			// 通常のログインユーザー
-			UsersDetails userDetails = (UsersDetails) authentication.getPrincipal();
+				&& authentication.getPrincipal() instanceof SupabaseUserDetails) {
+			// Supabaseセッションベースのログインユーザー
+			SupabaseUserDetails userDetails = (SupabaseUserDetails) authentication.getPrincipal();
 			FavoriteContext context = FavoriteContext.builder()
-					.userId(userDetails.getAccountId())
+					.supabaseUid(userDetails.getSupabaseUserId())
 					.request(request)
 					.build();
 			return favoriteService.deleteFavorite(context);

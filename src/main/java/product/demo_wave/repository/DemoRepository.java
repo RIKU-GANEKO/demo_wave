@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +52,7 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   List<DemoWithParticipantDTO> findTopDemosByParticipantCount(Pageable pageable);
 
   @Query("SELECT i FROM Demo i WHERE i.id IN (SELECT p.demo.id FROM Participant p WHERE p.user.id = :userId)")
-  List<Demo> findParticipatedDemoByUserId(@Param("userId") Integer userId);
+  List<Demo> findParticipatedDemoByUserId(@Param("userId") UUID userId);
 
   Optional<Demo> findById(Integer demoId);
 
@@ -187,7 +188,7 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   GROUP BY d.id, d.title, d.content, d.demoStartDate, d.demoEndDate, d.demoPlace,
     d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
 """)
-  List<TodayDemoListRecord> getTodayDemoList(@Param("userId") Integer userId);
+  List<TodayDemoListRecord> getTodayDemoList(@Param("userId") UUID userId);
 
   @Query("""
     SELECT new product.demo_wave.api.demoList.FavoriteDemoListRecord(
@@ -272,6 +273,6 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   List<Integer> findDemoIdsByStartDateBetween(LocalDateTime start, LocalDateTime end);
 
   // ユーザーが投稿したデモを取得（削除されていないもののみ）
-  List<Demo> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(Integer userId);
+  List<Demo> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID userId);
 
 }

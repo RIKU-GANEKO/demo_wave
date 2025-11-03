@@ -13,7 +13,7 @@ public class ParticipationResponse implements APIResponse {
 	public ParticipationResponse(Participant participationEntity) {
 		this.participation = new ParticipationResponseDTO(
 				participationEntity.getDemo().getId(),
-				participationEntity.getUser().getId()
+				participationEntity.getUser().getId().toString()
 		);
 	}
 }

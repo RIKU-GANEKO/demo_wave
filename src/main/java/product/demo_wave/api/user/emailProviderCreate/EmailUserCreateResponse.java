@@ -12,7 +12,7 @@ public class EmailUserCreateResponse implements APIResponse {
 
 	public EmailUserCreateResponse(User userEntity) {
 		this.user = new EmailUserResponseDTO(
-				userEntity.getSupabaseUid(),
+				userEntity.getId().toString(),
 				userEntity.getEmail(),
 				userEntity.getName(),
 				userEntity.getProfileImagePath()

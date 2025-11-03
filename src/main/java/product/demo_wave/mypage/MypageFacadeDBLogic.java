@@ -29,7 +29,7 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 
     @CustomRetry
     User fetchUser() {
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         Optional<User> user = userRepository.findById(userId);
         return user.orElse(new User());
     }
@@ -37,7 +37,7 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     // ログイン中のユーザーが参加した(する予定の)デモ活動を取得
     @CustomRetry
     List<Demo> fetchParticipatedDemo() {
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findParticipatedDemoByUserId(userId);
     }
 
@@ -61,7 +61,7 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     // ログイン中のユーザーが投稿したデモ活動を取得
     @CustomRetry
     List<Demo> fetchPostedDemos() {
-        Integer userId = this.getUserLogic.getUserFromCache().getId();
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
     }
 

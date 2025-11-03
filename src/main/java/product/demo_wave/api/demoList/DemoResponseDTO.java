@@ -18,5 +18,5 @@ public class DemoResponseDTO {
 	private LocalDateTime demoStartDate;
 	private LocalDateTime demoEndDate;
 	private Integer categoryId;
-	private Integer userId;
+	private String userId;
 }

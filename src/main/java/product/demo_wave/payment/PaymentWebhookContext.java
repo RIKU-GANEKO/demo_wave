@@ -81,7 +81,7 @@ class PaymentWebhookContext {
                 this.donatedAmount = BigDecimal.valueOf(session.getAmountTotal()); // 総支払額（最小通貨単位）
                 String currency = session.getCurrency();
                 Integer demoId = Integer.valueOf(session.getMetadata().get("demoId"));
-                Integer donateUserId = Integer.valueOf(session.getMetadata().get("donateUserId"));
+                java.util.UUID donateUserId = java.util.UUID.fromString(session.getMetadata().get("donateUserId"));
 
                 System.out.println("支払いが完了しました: Session ID = " + sessionId);
                 System.out.println("総支払額: " + this.donatedAmount + " " + currency);

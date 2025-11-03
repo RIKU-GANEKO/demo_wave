@@ -31,14 +31,14 @@ public class TodayDemoListDBLogic {
 	List<TodayDemoListRecord> fetchTodayDemoList(String supabaseUid) {
 
 		User user = fetchUser(supabaseUid);
-		Integer userId = user.getId();
+		java.util.UUID userId = user.getId();
 
 		List<TodayDemoListRecord> responses = demoRepository.getTodayDemoList(userId);
 		return responses;
 	}
 
 	User fetchUser(String supabaseUid) {
-		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
+		Optional<User> user = userRepository.findById(java.util.UUID.fromString(supabaseUid));
 		return user.orElse(new User());
 	}
 

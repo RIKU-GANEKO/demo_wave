@@ -21,7 +21,7 @@ public class DemoCreateResponse implements APIResponse {
 				demoEntity.getDemoStartDate(),
 				demoEntity.getDemoEndDate(),
 				demoEntity.getCategory().getId(), // 必要なら null 対応も
-				demoEntity.getUser().getId()
+				demoEntity.getUser().getId().toString()
 		);
 	}
 }

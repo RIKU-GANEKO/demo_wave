@@ -1,6 +1,7 @@
 package product.demo_wave.api.user;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,9 +48,10 @@ public class UserCreateContext {
 	 * @return 成功時のAPIレスポンス
 	 */
 	public Boolean checkValidation() {
-		List<String> supabaseUids = userCreateDBLogic.getSupabaseUids();
-		System.out.println("含まれているか: " + supabaseUids.contains(supabaseUid));
-		return supabaseUids.contains(supabaseUid);
+		List<UUID> userIds = userCreateDBLogic.getUserIds();
+		UUID supabaseUuidObj = UUID.fromString(supabaseUid);
+		System.out.println("含まれているか: " + userIds.contains(supabaseUuidObj));
+		return userIds.contains(supabaseUuidObj);
 	}
 
 	/**

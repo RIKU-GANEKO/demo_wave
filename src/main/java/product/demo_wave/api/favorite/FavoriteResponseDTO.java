@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FavoriteResponseDTO {
 	private Integer demoId;
-	private Integer userId;
+	private String userId;
 }

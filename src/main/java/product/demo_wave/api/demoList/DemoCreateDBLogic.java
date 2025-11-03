@@ -60,7 +60,7 @@ public class DemoCreateDBLogic {
 	}
 
 	User fetchUser(String supabaseUid) {
-		Optional<User> user = userRepository.findBySupabaseUid(supabaseUid);
+		Optional<User> user = userRepository.findById(java.util.UUID.fromString(supabaseUid));
 		return user.orElse(new User());
 	}
 

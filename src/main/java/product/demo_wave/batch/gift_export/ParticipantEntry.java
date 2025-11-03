@@ -1,5 +1,7 @@
 package product.demo_wave.batch.gift_export;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ParticipantEntry {
 	private Integer demoId;
-	private Integer userId;
+	private UUID userId;
 }

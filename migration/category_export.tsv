@@ -1,0 +1,7 @@
+id	name	image_url	created_at	updated_at	deleted_at
+1	environment	/images/category/environment.png	2025-05-29 12:41:05	2025-05-29 16:36:39	NULL
+2	anti_war	/images/category/anti_war.png	2025-05-29 12:41:05	2025-05-29 16:36:39	NULL
+3	animal_rights	/images/category/animal_rights.png	2025-05-29 12:41:05	2025-05-29 16:36:39	NULL
+4	politics	/images/category/politics.png	2025-05-29 12:41:05	2025-05-29 16:36:39	NULL
+5	human_rights	/images/category/human_rights.png	2025-05-29 12:41:05	2025-05-29 16:36:39	NULL
+6	social_welfare	/images/category/social_welfare.png	2025-05-29 12:41:05	2025-05-29 16:49:35	NULL

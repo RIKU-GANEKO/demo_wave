@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,8 +19,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -34,12 +33,8 @@ import jakarta.persistence.Table;
 @Data
 public class User {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Integer id;
-
-  @Column(name = "supabase_uid")
-  private String supabaseUid;
+  @Column(name = "id", columnDefinition = "UUID")
+  private UUID id;
 
   @Column(name = "name")
   private String name;
@@ -50,18 +45,14 @@ public class User {
   @Column(name = "profile_image_path")
   private String profileImagePath;
 
-  @Column(name = "password")
-  private String password;
-
   @Column(name = "status")
   private Boolean status;
 
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @ManyToOne
-  @JoinColumn(name = "account_id")
-  private Account account;
+  // Account関連は不要（削除済み）
+  // Stripe + Amazonギフト券を使用するため、銀行口座情報は不要
 
   @CreationTimestamp
   @Column(name = "created_at")
@@ -93,15 +84,13 @@ public class User {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("Account [");
-    sb.append("supabaseUid:").append(this.supabaseUid).append(", ");
-    sb.append("Name:").append(this.name).append(", ");
+    sb.append("User [");
+    sb.append("id:").append(this.id).append(", ");
+    sb.append("name:").append(this.name).append(", ");
     sb.append("email:").append(this.email).append(", ");
     sb.append("profileImagePath:").append(this.profileImagePath).append(", ");
-    sb.append("status:").append(this.status).append(", ");
-    sb.append("accountId:").append(this.account.getId()).append(", ");
-    sb.append("accountName:").append(this.account.getName());
-    sb.append("].");
+    sb.append("status:").append(this.status);
+    sb.append("]");
     return sb.toString();
   }
 }

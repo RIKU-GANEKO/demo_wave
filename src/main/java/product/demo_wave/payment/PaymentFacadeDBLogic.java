@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import jakarta.persistence.EntityNotFoundException;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
-import product.demo_wave.entity.Account;
 import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.Payment;
 import product.demo_wave.entity.User;
@@ -32,7 +31,7 @@ class PaymentFacadeDBLogic extends BasicFacadeDBLogic {
     }
 
     @CustomRetry
-    public User getDonateUser(Integer donateUserId) {
+    public User getDonateUser(java.util.UUID donateUserId) {
         Optional<User> user = userRepository.findById(donateUserId);
         return user.orElse(new User());
     }

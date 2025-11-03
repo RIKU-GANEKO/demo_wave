@@ -77,7 +77,7 @@ class UserCreateConfirmPostContext {
         User savedUser = userFacadeDBLogic.saveUser(userFormWithImage);
 
         // 保存成功後、Spring SecurityのSecurityContextに認証情報を設定
-        if (savedUser != null && savedUser.getSupabaseUid() != null) {
+        if (savedUser != null && savedUser.getId() != null) {
             try {
                 // Supabaseでログインしてアクセストークンを取得
                 String accessToken = supabaseService.signInUser(userForm.email(), userForm.password());
@@ -94,7 +94,7 @@ class UserCreateConfirmPostContext {
                 // Supabaseユーザー用の簡易UserDetailsを作成
                 SupabaseUserDetails supabaseUser = new SupabaseUserDetails(
                     savedUser.getEmail(),
-                    savedUser.getSupabaseUid()
+                    savedUser.getId().toString()
                 );
 
                 // Spring SecurityのAuthenticationを作成

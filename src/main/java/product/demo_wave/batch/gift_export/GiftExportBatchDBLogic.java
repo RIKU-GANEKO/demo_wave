@@ -57,7 +57,7 @@ class GiftExportBatchDBLogic {
 		System.out.println("paymentSum: " + paymentSums);
 
 		// ③ 各デモの参加者（is_within_radius = 1）
-		Map<Integer, List<Integer>> demoParticipants = locationLogsRepository.findParticipantsByDemoIds(demoIds)
+		Map<Integer, List<java.util.UUID>> demoParticipants = locationLogsRepository.findParticipantsByDemoIds(demoIds)
 				.stream().collect(Collectors.groupingBy(
 						ParticipantEntry::getDemoId,
 						Collectors.mapping(ParticipantEntry::getUserId, Collectors.toList())
@@ -65,9 +65,9 @@ class GiftExportBatchDBLogic {
 		System.out.println("demoParticipants: " + demoParticipants);
 
 		// ④ 参加者のメールアドレス（重複排除）
-		Set<Integer> allUserIds = demoParticipants.values().stream()
+		Set<java.util.UUID> allUserIds = demoParticipants.values().stream()
 				.flatMap(List::stream).collect(Collectors.toSet());
-		Map<Integer, String> userEmails = userRepository.findEmailsByUserIds(allUserIds)
+		Map<java.util.UUID, String> userEmails = userRepository.findEmailsByUserIds(allUserIds)
 				.stream().collect(Collectors.toMap(UserEmail::getUserId, UserEmail::getEmail));
 		System.out.println("userEmails: " + userEmails);
 
@@ -75,8 +75,8 @@ class GiftExportBatchDBLogic {
 		List<GiftExportTarget> result = new ArrayList<>();
 		for (Integer demoId : demoIds) {
 			BigDecimal totalAmount = paymentSums.getOrDefault(demoId, BigDecimal.ZERO);
-			List<Integer> participants = demoParticipants.getOrDefault(demoId, Collections.emptyList());
-			Map<Integer, String> emails = participants.stream()
+			List<java.util.UUID> participants = demoParticipants.getOrDefault(demoId, Collections.emptyList());
+			Map<java.util.UUID, String> emails = participants.stream()
 					.collect(Collectors.toMap(id -> id, id -> userEmails.getOrDefault(id, "")));
 
 			result.add(new GiftExportTarget(demoId, totalAmount, participants, emails));

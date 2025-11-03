@@ -13,7 +13,7 @@ class MypageGetContext {
     private final ModelAndView mv;
 
     @Setter
-    private Integer userId;
+    private java.util.UUID userId;
 
     void setModelAndView() {
         this.mv.setViewName("redirect:/mypage/" + userId);

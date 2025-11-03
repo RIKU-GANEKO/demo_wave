@@ -2,6 +2,7 @@ package product.demo_wave.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,6 +36,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
          "WHERE p.demo = :demo " +
          "AND p.user.id != :userId " +
          "AND p.deletedAt IS NULL")
-  Long countOtherParticipants(@Param("demo") Demo demo, @Param("userId") Integer userId);
+  Long countOtherParticipants(@Param("demo") Demo demo, @Param("userId") UUID userId);
 
 }

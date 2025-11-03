@@ -11,10 +11,8 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import jakarta.transaction.Transactional;
 
-import product.demo_wave.entity.Account;
 import product.demo_wave.entity.Roles;
 import product.demo_wave.entity.User;
-import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.RolesRepository;
 import product.demo_wave.repository.UserRepository;
 import product.demo_wave.service.SupabaseService;
@@ -28,7 +26,6 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //  private static final Logger logger = Logger.getLogger(UserFacadeDBLogic.class.getSimpleName());
 
   private final UserRepository userRepository;
-  private final AccountRepository accountRepository;
   private final RolesRepository roleRepository;
   private final SupabaseService supabaseService;
   private final PasswordEncoder passwordEncoder;
@@ -39,13 +36,11 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
   // コンストラクタ
   public UserFacadeDBLogic(
       UserRepository userRepository,
-      AccountRepository accountRepository,
       RolesRepository roleRepository,
       SupabaseService supabaseService,
       PasswordEncoder passwordEncoder
   ) {
     this.userRepository = userRepository;
-    this.accountRepository = accountRepository;
     this.roleRepository = roleRepository;
     this.supabaseService = supabaseService;
     this.passwordEncoder = passwordEncoder;
@@ -122,7 +117,7 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
           );
 
           // SupabaseのユーザーIDをMySQLのユーザーに保存
-          user.setSupabaseUid(supabaseUserId);
+          user.setId(java.util.UUID.fromString(supabaseUserId));
 
           // プロフィール画像がアップロードされている場合はSupabase Storageに保存
           if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
@@ -171,17 +166,16 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
 //    user.setId(userForm.id());
     user.setName(userForm.name());
     user.setEmail(userForm.email());
-    
-    // supabase_uidに一時的なダミー値を設定（のちにSupabase認証で更新）
-    user.setSupabaseUid("temp_" + System.currentTimeMillis() + "_" + userForm.email().hashCode());
 
-//    Account account = accountRepository.findById(userForm.accountId())
-//        .orElseThrow(() -> new NoSuchElementException("Account not found."));
-    // 現状アカウントはテスト用アカウントをダミーで入れておく
-    user.setAccount(accountRepository.findById(2).get());
+    // idに一時的なダミー値は不要(UUIDが自動生成される)
+    // user.setId(java.util.UUID.randomUUID());
 
-    String encodedPassword = passwordEncoder.encode(userForm.password());
-    user.setPassword(encodedPassword);
+    // Account不要（Stripe + Amazonギフト券使用）
+    // user.setAccount(accountRepository.findById(2).get());
+
+    // Supabase manages passwords in auth.users table
+    // String encodedPassword = passwordEncoder.encode(userForm.password());
+    // user.setPassword(encodedPassword);
 
     return user;
   }

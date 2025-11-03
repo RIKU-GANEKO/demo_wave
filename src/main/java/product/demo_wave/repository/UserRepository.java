@@ -3,6 +3,7 @@ package product.demo_wave.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +18,11 @@ import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
   Optional<User> findByEmail(String email);
 
-  Optional<User> findById(Integer userId);
-
-  Optional<User> findBySupabaseUid(String supabaseUid);
+  // findById is already provided by JpaRepository<User, UUID>
 
 //  Page<User> findByAccount(Pageable pageable, Account account);
 
@@ -34,8 +33,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     FROM User u
     WHERE u.id IN :userIds
   """)
-  List<UserEmail> findEmailsByUserIds(@Param("userIds") Set<Integer> userIds);
+  List<UserEmail> findEmailsByUserIds(@Param("userIds") Set<UUID> userIds);
 
-  @Query("SELECT u.supabaseUid FROM User u")
-  List<String> findAllSupabaseUids();
+  // findAllSupabaseUids removed - id is now the Supabase UUID directly
+  @Query("SELECT u.id FROM User u")
+  List<UUID> findAllUserIds();
 }

@@ -18,11 +18,26 @@ public class SupabaseUserDetails implements UserDetails {
     private final String email;
     private final String userId;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final String accessToken;
+    private final String refreshToken;
 
+    // 旧コンストラクタ（後方互換性のため）
     public SupabaseUserDetails(String email, String userId) {
-        this.email = email;
+        this(userId, email, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")), null, null);
+    }
+
+    // 新コンストラクタ（トークンを含む）
+    public SupabaseUserDetails(
+            String userId,
+            String email,
+            Collection<? extends GrantedAuthority> authorities,
+            String accessToken,
+            String refreshToken) {
         this.userId = userId;
-        this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        this.email = email;
+        this.authorities = authorities;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     @Override
@@ -32,7 +47,9 @@ public class SupabaseUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null; // Supabase認証の場合、パスワードは不要
+        // Supabase manages passwords in auth.users table
+        // Return empty string since password validation is not performed during Supabase authentication
+        return "";
     }
 
     @Override

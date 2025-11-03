@@ -23,7 +23,7 @@ public class UserProfileDBLogic {
 	 */
 	@CustomRetry
 	User fetchUser(String supabaseUid) {
-		return userRepository.findBySupabaseUid(supabaseUid)
+		return userRepository.findById(java.util.UUID.fromString(supabaseUid))
 				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + supabaseUid));
 	}
 

@@ -17,7 +17,7 @@ public class FavoriteStatusContext {
 //	private static final Logger logger = Logger.getLogger(FavoriteListContext.class.getSimpleName());
 
 	private final String supabaseUid;
-	private final Integer userId;
+	private final java.util.UUID userId;
 	private final Integer demoId;
 
 	@Setter

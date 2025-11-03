@@ -3,14 +3,13 @@ package product.demo_wave.api.user;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import product.demo_wave.annotation.CustomRetry;
-import product.demo_wave.entity.Account;
 import product.demo_wave.entity.User;
-import product.demo_wave.repository.AccountRepository;
 import product.demo_wave.repository.UserRepository;
 
 @Component
@@ -20,12 +19,11 @@ public class UserCreateDBLogic {
 //	private static final Logger logger = Logger.getLogger(UserListDBLogic.class.getSimpleName());
 
 	private final UserRepository userRepository;
-	private final AccountRepository accountRepository;
 
 	@CustomRetry
-	List<String> getSupabaseUids() {
-		List<String> supabaseUids = userRepository.findAllSupabaseUids();
-		return supabaseUids;
+	List<UUID> getUserIds() {
+		List<UUID> userIds = userRepository.findAllUserIds();
+		return userIds;
 	}
 
 	/**
@@ -39,18 +37,17 @@ public class UserCreateDBLogic {
 
 	private User toEntity(String supabaseUid, String email, UserCreateRequest request) {
 
-		// 適当な account_id（例えば 1）を仮に入れておく。
-		Account account = accountRepository.findById(1)
-				.orElseThrow(() -> new NoSuchElementException("Account not found"));
+		// Account不要（Stripe + Amazonギフト券使用）
 
 		User user = new User();
 
-		user.setSupabaseUid(supabaseUid);
-		user.setAccount(account);
+		// Supabase UUID を User の ID として設定
+		user.setId(UUID.fromString(supabaseUid));
 		user.setName(request.getName());
 		user.setEmail(email);
 		user.setProfileImagePath(request.getProfileImagePath());
-		user.setPassword("123456"); // 本来パスワードをDBに登録する必要はない。後でカラムから削除する
+		// Supabase manages passwords in auth.users table
+		// user.setPassword("123456");
 		user.setStatus(true);
 		user.setLastLogin(LocalDateTime.now());
 
