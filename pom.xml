@@ -151,6 +151,12 @@
 			<version>0.12.3</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- 画像圧縮ライブラリ -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.20</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

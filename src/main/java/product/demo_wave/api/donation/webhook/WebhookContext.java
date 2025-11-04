@@ -33,6 +33,7 @@ public class WebhookContext {
 
 	private final String payload;
 	private final String sigHeader;
+	private final String webhookSecret;
 
 	@Setter
 	private WebhookDBLogic webhookDBLogic;
@@ -55,10 +56,8 @@ public class WebhookContext {
 
 //	FIXME デシリアライズが上手くいっておらず、Jsonを手動パースしてしまっている..
 	public ResponseEntity<APIResponse> handleEvent() {
-		String endpointSecret = "whsec_18f1e69443ef415e014d356d9789d625a5fb0714d90cbaced686b5e305f5775c";
-
 		try {
-			Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+			Event event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
 			System.out.println("Received webhook event: " + event.getType());
 
 			if ("payment_intent.succeeded".equals(event.getType())) {

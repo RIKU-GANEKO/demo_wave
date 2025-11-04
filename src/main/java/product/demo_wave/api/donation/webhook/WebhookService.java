@@ -1,5 +1,6 @@
 package product.demo_wave.api.donation.webhook;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,18 @@ import product.demo_wave.common.google.GmailService;
  * ユーザ情報取得用 Service
  */
 @Service
-@AllArgsConstructor
 public class WebhookService {
 
 	private final WebhookDBLogic webhookDBLogic;
 	private final GmailService gmailService;
+
+	@Value("${stripe.webhook.secret}")
+	private String webhookSecret;
+
+	public WebhookService(WebhookDBLogic webhookDBLogic, GmailService gmailService) {
+		this.webhookDBLogic = webhookDBLogic;
+		this.gmailService = gmailService;
+	}
 
 	ResponseEntity<APIResponse> handleEvent(WebhookContext webhookContext) {
 		webhookContext.setWebhookDBLogic(webhookDBLogic);

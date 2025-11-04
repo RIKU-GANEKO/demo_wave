@@ -19,6 +19,7 @@ import lombok.Builder;
 public class DonationContext {
 
 	private final String supabaseUid;
+	private final String userEmail;
 	private final DonationRequestDTO request;
 
 	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession() {
@@ -32,8 +33,9 @@ public class DonationContext {
 			// Payment Intent を明示的に作成してからCheckout Sessionに紐づける
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
-					.setSuccessUrl("demo-wave://payment-success?session_id={CHECKOUT_SESSION_ID}") // セッションIDも含める
-					.setCancelUrl("demo-wave://payment-cancel?session_id={CHECKOUT_SESSION_ID}")   // セッションIDも含める
+					.setCustomerEmail(userEmail) // ログインユーザーのメールを自動設定
+					.setSuccessUrl("http://localhost:8082/demo_wave/demo/show?demoId=" + request.getDemoId() + "&payment_success=true")
+					.setCancelUrl("http://localhost:8082/demo_wave/demo/show?demoId=" + request.getDemoId() + "&payment_cancel=true")
 					.addLineItem(SessionCreateParams.LineItem.builder()
 							.setQuantity(1L)
 							.setPriceData(SessionCreateParams.LineItem.PriceData.builder()

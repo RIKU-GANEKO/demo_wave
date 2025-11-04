@@ -416,13 +416,10 @@
               </button>
             </form>
 
-            <form th:action="@{/payment/create-checkout-session}" method="post" class="w-full">
-              <input type="hidden" name="demoId" th:value="${demo.id}"/>
-              <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
-                <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i>
-                支援金を送る
-              </button>
-            </form>
+            <button onclick="openDonationModal()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
+              <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i>
+              支援金を送る
+            </button>
           </div>
 
           <!-- Not Logged In Users -->
@@ -451,6 +448,92 @@
     </div>
   </div>
 </main>
+
+<!-- Payment Success Modal -->
+<div id="paymentSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center">
+    <div class="mb-6">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-check text-green-600 text-3xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">支援金送信完了！</h3>
+      <p class="text-gray-600">ご支援ありがとうございます。<br>支援金の送信が完了しました。</p>
+    </div>
+    <button
+      onclick="closePaymentSuccessModal()"
+      class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition-all duration-200"
+    >
+      <i class="fas fa-arrow-left mr-2"></i>
+      デモに戻る
+    </button>
+  </div>
+</div>
+
+<!-- Donation Modal -->
+<div id="donationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-gray-900">支援金を送る</h3>
+      <button onclick="closeDonationModal()" class="text-gray-400 hover:text-gray-600 transition">
+        <i class="fas fa-times text-2xl"></i>
+      </button>
+    </div>
+
+    <div class="mb-6">
+      <p class="text-gray-600 mb-4">このデモへの支援金額を選択してください</p>
+
+      <!-- Preset Buttons -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <button onclick="setDonationAmount(50)" class="preset-amount-btn py-3 px-4 border-2 border-gray-300 rounded-xl font-semibold hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition">
+          50円
+        </button>
+        <button onclick="setDonationAmount(100)" class="preset-amount-btn py-3 px-4 border-2 border-gray-300 rounded-xl font-semibold hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition">
+          100円
+        </button>
+        <button onclick="setDonationAmount(500)" class="preset-amount-btn py-3 px-4 border-2 border-gray-300 rounded-xl font-semibold hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition">
+          500円
+        </button>
+        <button onclick="setDonationAmount(1000)" class="preset-amount-btn py-3 px-4 border-2 border-gray-300 rounded-xl font-semibold hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition">
+          1,000円
+        </button>
+      </div>
+
+      <!-- Custom Amount Input -->
+      <div>
+        <label for="customAmount" class="block text-sm font-semibold text-gray-700 mb-2">
+          またはカスタム金額を入力
+        </label>
+        <div class="relative">
+          <input
+            type="number"
+            id="customAmount"
+            min="50"
+            step="1"
+            placeholder="50"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+          />
+          <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">円</span>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">※ 最低金額は50円です</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="donationError" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+      <p class="text-red-600 text-sm font-semibold"></p>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      onclick="submitDonation()"
+      id="submitDonationBtn"
+      class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+    >
+      <i class="fas fa-heart mr-2"></i>
+      支援する
+    </button>
+  </div>
+</div>
 
 <!-- Footer -->
 <footer class="bg-gray-900 text-white py-12 mt-16">
@@ -616,6 +699,123 @@
       }
     })
     .catch(error => console.error('Error loading favorite status:', error));
+  });
+
+  // ============================================
+  // Donation Modal Functions
+  // ============================================
+
+  function openDonationModal() {
+    const modal = document.getElementById('donationModal');
+    modal.style.display = 'flex';
+    document.getElementById('customAmount').value = '';
+    document.getElementById('donationError').classList.add('hidden');
+  }
+
+  function closeDonationModal() {
+    const modal = document.getElementById('donationModal');
+    modal.style.display = 'none';
+  }
+
+  function setDonationAmount(amount) {
+    document.getElementById('customAmount').value = amount;
+  }
+
+  async function submitDonation() {
+    const amountInput = document.getElementById('customAmount');
+    const amount = parseInt(amountInput.value);
+    const errorDiv = document.getElementById('donationError');
+    const errorText = errorDiv.querySelector('p');
+    const submitBtn = document.getElementById('submitDonationBtn');
+
+    // バリデーション
+    if (!amount || isNaN(amount)) {
+      errorText.textContent = '金額を入力してください';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    if (amount < 50) {
+      errorText.textContent = '支援金額は50円以上である必要があります';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    // エラーメッセージを非表示
+    errorDiv.classList.add('hidden');
+
+    // ボタンを無効化
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>処理中...';
+
+    try {
+      const demoId = [[${demo.id}]];
+
+      // API呼び出し（セッションベース認証）
+      const response = await fetch('/demo_wave/api/payment/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin', // セッションCookieを送信
+        body: JSON.stringify({
+          amount: amount,
+          demoId: demoId
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errorDescription || '支援金の送信に失敗しました');
+      }
+
+      const data = await response.json();
+
+      // Stripeのチェックアウトページにリダイレクト
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error('チェックアウトURLが取得できませんでした');
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      errorText.textContent = error.message || '通信エラーが発生しました';
+      errorDiv.classList.remove('hidden');
+
+      // ボタンを再度有効化
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-heart mr-2"></i>支援する';
+    }
+  }
+
+  // モーダル外クリックで閉じる
+  document.getElementById('donationModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeDonationModal();
+    }
+  });
+
+  // ============================================
+  // Payment Success Modal
+  // ============================================
+
+  function closePaymentSuccessModal() {
+    const modal = document.getElementById('paymentSuccessModal');
+    modal.style.display = 'none';
+    // URLからpayment_successパラメータを削除
+    const url = new URL(window.location);
+    url.searchParams.delete('payment_success');
+    window.history.replaceState({}, '', url);
+  }
+
+  // ページ読み込み時にpayment_successパラメータをチェック
+  window.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment_success') === 'true') {
+      const modal = document.getElementById('paymentSuccessModal');
+      modal.style.display = 'flex';
+    }
   });
 </script>
 

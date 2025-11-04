@@ -87,6 +87,12 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
     System.out.println("ProfileImage: " + (userForm.profileImage() != null ? userForm.profileImage().getOriginalFilename() : "null"));
     System.out.println("==========================");
 
+    // 重複チェック: public.usersに既に存在するかを確認
+    if (existsSameEmail(userForm.email())) {
+      System.err.println("Email already exists in public.users: " + userForm.email());
+      throw new IllegalArgumentException("このメールアドレスは既に登録されています: " + userForm.email());
+    }
+
     User user = toEntity(userForm);
 
     // ユーザの初期設定を行う
@@ -95,53 +101,50 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
     // ユーザのロールをUSERに設定
     user.setRoles(Collections.singletonList(fetchRoleUSER()));
 
+    // ロールバック用の変数
+    String supabaseUserId = null;
+    String profileImageUrl = null;
+
 //    logger.info("Create user.");
 //    logger.info("New user demo : " + user.toString());
     try {
 //      logger.info("Start creating user...");
 
-      // まずMySQLにユーザーを保存（supabase_uidは一時的な値）
-      userRepository.saveAndFlush(user);
-
       // Supabaseが有効な場合のみ連携
       if (supabaseEnabled) {
-        try {
-          System.out.println("Supabase統合が有効です。ユーザーをSupabaseに作成します。");
-          System.out.println("Supabase create user - Email: " + userForm.email() + ", Name: " + userForm.name());
+        System.out.println("Supabase統合が有効です。ユーザーをSupabaseに作成します。");
+        System.out.println("Supabase create user - Email: " + userForm.email() + ", Name: " + userForm.name());
 
-          // Supabaseにもユーザーを作成
-          String supabaseUserId = supabaseService.createUser(
-              userForm.email(),
-              userForm.password(),
-              userForm.name()
+        // 1. Supabase auth.usersにユーザーを作成
+        supabaseUserId = supabaseService.createUser(
+            userForm.email(),
+            userForm.password(),
+            userForm.name()
+        );
+        user.setId(java.util.UUID.fromString(supabaseUserId));
+        System.out.println("auth.usersにユーザー作成完了: " + supabaseUserId);
+
+        // 2. プロフィール画像がある場合はSupabase Storageにアップロード
+        if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
+          System.out.println("プロフィール画像のアップロードを開始: " + userForm.profileImage().getOriginalFilename());
+          profileImageUrl = supabaseService.uploadProfileImage(
+              userForm.profileImage(),
+              supabaseUserId
           );
-
-          // SupabaseのユーザーIDをMySQLのユーザーに保存
-          user.setId(java.util.UUID.fromString(supabaseUserId));
-
-          // プロフィール画像がアップロードされている場合はSupabase Storageに保存
-          if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
-            System.out.println("プロフィール画像のアップロードを開始: " + userForm.profileImage().getOriginalFilename());
-            String profileImageUrl = supabaseService.uploadProfileImage(
-                userForm.profileImage(),
-                supabaseUserId
-            );
-            user.setProfileImagePath(profileImageUrl);
-            System.out.println("プロフィール画像のアップロード完了: " + profileImageUrl);
-          }
-
-          // 最終的な情報をMySQLに保存
-          userRepository.saveAndFlush(user);
-
-          System.out.println("User created successfully in both MySQL and Supabase");
-        } catch (Exception supabaseException) {
-          // Supabaseへの登録が失敗した場合、MySQLに保存されたユーザーを削除
-          System.err.println("Supabase registration failed, rolling back MySQL user: " + supabaseException.getMessage());
-          userRepository.delete(user);
-          throw new RuntimeException("Failed to create user in Supabase: " + supabaseException.getMessage(), supabaseException);
+          user.setProfileImagePath(profileImageUrl);
+          System.out.println("Storageに画像アップロード完了: " + profileImageUrl);
         }
+
+        // 3. public.usersに保存
+        userRepository.saveAndFlush(user);
+        System.out.println("public.usersに保存完了");
+
+        System.out.println("User created successfully in both auth.users and public.users");
       } else {
         System.out.println("Supabase統合は無効です。MySQLのみにユーザーを保存します。");
+
+        // Supabase無効の場合はUUIDを生成
+        user.setId(java.util.UUID.randomUUID());
 
         // プロフィール画像の処理（開発中はローカル保存または後で実装）
         if (userForm.profileImage() != null && !userForm.profileImage().isEmpty()) {
@@ -149,13 +152,42 @@ class UserFacadeDBLogic extends BasicFacadeDBLogic {
           System.out.println("※ Supabase無効のため、画像アップロードはスキップされます");
         }
 
+        // MySQLにユーザーを保存
+        userRepository.saveAndFlush(user);
+
         System.out.println("User created successfully in MySQL (Supabase disabled)");
       }
 
 //      logger.info("User created successfully");
     } catch (Exception e) {
 //      logger.error("Error occurred while creating user " + user.getName() + " : " + e.getMessage());
-      throw e;
+
+      // ロールバック処理: エラーが発生した場合は作成したリソースを削除
+      if (supabaseEnabled) {
+        System.err.println("エラーが発生しました。ロールバックを開始します...");
+
+        // auth.usersから削除
+        if (supabaseUserId != null) {
+          try {
+            supabaseService.deleteUser(supabaseUserId);
+            System.out.println("ロールバック完了: auth.usersからユーザーを削除しました");
+          } catch (Exception rollbackError) {
+            System.err.println("ロールバック失敗: auth.usersからの削除に失敗: " + rollbackError.getMessage());
+          }
+        }
+
+        // Storageから削除
+        if (profileImageUrl != null) {
+          try {
+            supabaseService.deleteProfileImage(profileImageUrl);
+            System.out.println("ロールバック完了: Storageから画像を削除しました");
+          } catch (Exception rollbackError) {
+            System.err.println("ロールバック失敗: Storageからの削除に失敗: " + rollbackError.getMessage());
+          }
+        }
+      }
+
+      throw new RuntimeException("Failed to create user: " + e.getMessage(), e);
     }
 
     return user;

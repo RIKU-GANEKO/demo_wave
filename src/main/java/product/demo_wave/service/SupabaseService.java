@@ -1,12 +1,18 @@
 package product.demo_wave.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * Supabase Admin API operations
@@ -76,7 +84,7 @@ public class SupabaseService {
                 logger.info("Successfully created Supabase user: {} with ID: {}", email, userId);
                 return userId;
             } else {
-                logger.error("Failed to create Supabase user. Status: {}, Body: {}", 
+                logger.error("Failed to create Supabase user. Status: {}, Body: {}",
                         response.statusCode(), response.body());
                 throw new RuntimeException("Failed to create Supabase user: " + response.body());
             }
@@ -165,7 +173,7 @@ public class SupabaseService {
     }
 
     /**
-     * プロフィール画像をSupabase Storageにアップロード
+     * プロフィール画像をSupabase Storageにアップロード（圧縮処理付き）
      */
     public String uploadProfileImage(MultipartFile file, String userId) {
         try {
@@ -173,12 +181,16 @@ public class SupabaseService {
                 return null;
             }
 
-            // ファイル名を生成（ユーザーID + UUID + 拡張子）
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename != null && originalFilename.contains(".") 
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : ".jpg";
-            String fileName = "profile/" + userId + "_" + UUID.randomUUID().toString() + extension;
+            logger.info("Original file size: {} bytes", file.getSize());
+
+            // 画像を圧縮
+            byte[] compressedImage = compressImage(file);
+            logger.info("Compressed file size: {} bytes ({}% of original)",
+                    compressedImage.length,
+                    (compressedImage.length * 100 / file.getSize()));
+
+            // ファイル名を生成（ユーザーID + UUID + 拡張子は常に.jpg）
+            String fileName = "profile/" + userId + "_" + UUID.randomUUID().toString() + ".jpg";
 
             // Supabase Storage API endpoint
             String endpoint = supabaseUrl + "/storage/v1/object/avatars/" + fileName;
@@ -187,9 +199,9 @@ public class SupabaseService {
                     .uri(URI.create(endpoint))
                     .header("Authorization", "Bearer " + serviceRoleKey)
                     .header("apikey", serviceRoleKey)
-                    .header("Content-Type", file.getContentType())
-                    .POST(HttpRequest.BodyPublishers.ofByteArray(file.getBytes()))
-                    .timeout(Duration.ofSeconds(30))
+                    .header("Content-Type", "image/jpeg")
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(compressedImage))
+                    .timeout(Duration.ofSeconds(60))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request,
@@ -204,7 +216,7 @@ public class SupabaseService {
                 logger.info("Successfully uploaded profile image: {}", publicUrl);
                 return publicUrl;
             } else {
-                logger.error("Failed to upload profile image. Status: {}, Body: {}", 
+                logger.error("Failed to upload profile image. Status: {}, Body: {}",
                         response.statusCode(), response.body());
                 throw new RuntimeException("Failed to upload profile image: " + response.body());
             }
@@ -215,6 +227,34 @@ public class SupabaseService {
         } catch (Exception e) {
             logger.error("Error uploading profile image to Supabase Storage", e);
             throw new RuntimeException("Failed to upload profile image", e);
+        }
+    }
+
+    /**
+     * 画像を圧縮（800x800ピクセル、JPEG品質85%）
+     */
+    private byte[] compressImage(MultipartFile file) throws IOException {
+        try (InputStream inputStream = file.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            // 画像を読み込み
+            BufferedImage originalImage = ImageIO.read(inputStream);
+            if (originalImage == null) {
+                throw new IOException("Invalid image format");
+            }
+
+            // 800x800ピクセルにリサイズ、JPEG品質85%で圧縮
+            Thumbnails.of(originalImage)
+                    .size(800, 800)
+                    .outputFormat("jpg")
+                    .outputQuality(0.85)
+                    .toOutputStream(outputStream);
+
+            return outputStream.toByteArray();
+
+        } catch (IOException e) {
+            logger.error("Failed to compress image", e);
+            throw e;
         }
     }
 

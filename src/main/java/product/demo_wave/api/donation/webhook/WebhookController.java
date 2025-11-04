@@ -1,5 +1,6 @@
 package product.demo_wave.api.donation.webhook;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,15 +13,21 @@ import product.demo_wave.common.api.APIResponse;
 
 /**
  * <pre>
- * ユーザーを新規追加する API
+ * Stripe Webhook受信用 API
  * </pre>
  */
 @RestController
-@AllArgsConstructor
 @RequestMapping("api/payment")
 public class WebhookController {
 
-	private WebhookService webhookService;
+	private final WebhookService webhookService;
+
+	@Value("${stripe.webhook.secret}")
+	private String webhookSecret;
+
+	public WebhookController(WebhookService webhookService) {
+		this.webhookService = webhookService;
+	}
 
 	@PostMapping("/webhook/stripe")
 	public ResponseEntity<APIResponse> handleStripeWebhook(
@@ -30,6 +37,7 @@ public class WebhookController {
 		WebhookContext context = WebhookContext.builder()
 				.payload(payload)
 				.sigHeader(sigHeader)
+				.webhookSecret(webhookSecret)
 				.build();
 
 		return webhookService.handleEvent(context);

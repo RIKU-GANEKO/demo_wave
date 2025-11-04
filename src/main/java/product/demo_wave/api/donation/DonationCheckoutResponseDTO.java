@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class DonationCheckoutResponseDTO {
-	private String url;
+	private String checkoutUrl;
 }
