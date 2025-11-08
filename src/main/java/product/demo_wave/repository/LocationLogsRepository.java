@@ -24,4 +24,20 @@ public interface LocationLogsRepository extends JpaRepository<LocationLogs, Inte
   """)
   List<ParticipantEntry> findParticipantsByDemoIds(@Param("demoIds") List<Integer> demoIds);
 
+  /**
+   * 特定のユーザーとデモで、当日のチェックイン履歴（500m圏内）が存在するか確認
+   */
+  @Query("""
+    SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END
+    FROM LocationLogs l
+    WHERE l.user.id = :userId
+      AND l.demo.id = :demoId
+      AND l.isWithinRadius = true
+      AND DATE(l.timestamp) = CURRENT_DATE
+  """)
+  boolean existsByUserAndDemoAndTodayAndWithinRadius(
+      @Param("userId") java.util.UUID userId,
+      @Param("demoId") Integer demoId
+  );
+
 }

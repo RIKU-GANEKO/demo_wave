@@ -38,4 +38,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
          "AND p.deletedAt IS NULL")
   Long countOtherParticipants(@Param("demo") Demo demo, @Param("userId") UUID userId);
 
+  // ユーザーの全参加予定デモを取得（削除されていないもののみ）
+  List<Participant> findByUserAndDeletedAtIsNull(User user);
+
 }

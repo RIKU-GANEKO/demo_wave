@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Today Demo Popup</title>
+</head>
+<body>
+
+<!-- 当日参加予定デモポップアップ -->
+<th:block th:fragment="popup">
+  <style>
+    /* 通知バッジ（画面右下） */
+    .today-demo-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      z-index: 9999;
+      transition: all 0.3s;
+    }
+
+    .today-demo-badge.show {
+      display: flex;
+      animation: slideInBadge 0.3s ease-out;
+    }
+
+    .today-demo-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+    }
+
+    .badge-count {
+      background: white;
+      color: #2563eb;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    @keyframes slideInBadge {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* モーダルオーバーレイ */
+    .today-demo-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .today-demo-modal-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* モーダルコンテナ */
+    .today-demo-popup {
+      width: 500px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 100px);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideInModal 0.3s ease-out;
+    }
+
+    @keyframes slideInModal {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ヘッダー */
+    .today-demo-header {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .today-demo-title {
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* コンテンツ */
+    .today-demo-content {
+      padding: 20px;
+    }
+
+    .today-demo-slide-card {
+      border-bottom: 1px solid #e8e8e8;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .today-demo-slide-card:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .demo-title-text {
+      font-weight: 700;
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .demo-info {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .demo-info i {
+      width: 14px;
+      color: #2563eb;
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    /* ボタン */
+    .check-in-btn {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.2s;
+    }
+
+    .check-in-btn:hover:not(:disabled) {
+      background: #1e40af;
+      transform: translateY(-1px);
+    }
+
+    .check-in-btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .check-in-btn.loading {
+      background: #94a3b8;
+      cursor: wait;
+    }
+
+    /* スライドインジケーター */
+    .slide-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 0;
+    }
+
+    .slide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .slide-dot.active {
+      background: #2563eb;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    /* ナビゲーションボタン */
+    .slide-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px 16px;
+    }
+
+    .slide-nav-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: #475569;
+    }
+
+    .slide-nav-btn:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+
+    .slide-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* メッセージ */
+    .message-box {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .message-box.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message-box.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message-box.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 640px) {
+      .today-demo-badge {
+        bottom: 16px;
+        right: 16px;
+      }
+
+      .today-demo-popup {
+        width: calc(100vw - 32px);
+      }
+    }
+  </style>
+
+  <!-- 通知バッジ（画面右下） -->
+  <div id="todayDemoBadge" class="today-demo-badge" onclick="openTodayDemoModal()">
+    <i class="fas fa-calendar-check"></i>
+    <span>本日のデモ</span>
+    <span id="badgeCount" class="badge-count">0</span>
+  </div>
+
+  <!-- モーダルオーバーレイ -->
+  <div id="todayDemoModalOverlay" class="today-demo-modal-overlay" onclick="closeTodayDemoModal(event)">
+    <!-- モーダルコンテンツ（クリックしても閉じない） -->
+    <div id="todayDemoPopup" class="today-demo-popup" onclick="event.stopPropagation()">
+      <div class="today-demo-header">
+        <div class="today-demo-title">
+          <i class="fas fa-calendar-check"></i>
+          <span>本日参加予定のデモ</span>
+        </div>
+        <button class="close-btn" onclick="closeTodayDemoModal()">&times;</button>
+      </div>
+
+    <div class="today-demo-content">
+      <div id="todayDemoCardsContainer">
+        <!-- デモカードがここに動的に追加されます -->
+      </div>
+
+      <!-- スライドインジケーター -->
+      <div id="slideIndicators" class="slide-indicators" style="display: none;">
+        <!-- ドットがここに動的に追加されます -->
+      </div>
+
+      <!-- ナビゲーションボタン -->
+      <div id="slideNav" class="slide-nav" style="display: none;">
+        <button class="slide-nav-btn" id="prevSlide" onclick="navigateSlide(-1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slide-nav-btn" id="nextSlide" onclick="navigateSlide(1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // グローバル変数
+    let todayDemos = [];
+    let currentSlideIndex = 0;
+
+    // ページロード時に実行
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchTodayDemos();
+    });
+
+    // 当日参加予定デモを取得
+    async function fetchTodayDemos() {
+      try {
+        console.log('🔍 [Today Demo] Fetching today demos...');
+
+        const response = await fetch('/demo_wave/api/today-demos', {
+          method: 'GET',
+          credentials: 'same-origin' // Cookie（セッション）を送信
+        });
+
+        console.log('📡 [Today Demo] API Response Status:', response.status);
+
+        // 401 Unauthorized（未ログイン）の場合
+        if (response.status === 401) {
+          console.log('⚠️ [Today Demo] Not logged in');
+          return;
+        }
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [Today Demo] API Error:', response.status, errorText);
+          throw new Error(`Failed to fetch today demos: ${response.status}`);
+        }
+
+        const data = await response.json();
+        todayDemos = data.demos || [];
+
+        console.log('📊 [Today Demo] Received demos:', todayDemos.length);
+        console.log('📋 [Today Demo] Demo details:', todayDemos);
+
+        if (todayDemos.length > 0) {
+          console.log('✨ [Today Demo] Showing badge with', todayDemos.length, 'demo(s)');
+          renderDemos();
+          showBadge();
+        } else {
+          console.log('ℹ️ [Today Demo] No demos scheduled for today');
+        }
+      } catch (error) {
+        console.error('❌ [Today Demo] Error:', error);
+      }
+    }
+
+    // デモカードをレンダリング
+    function renderDemos() {
+      console.log('🎨 [Today Demo] Rendering demos...', todayDemos);
+      const container = document.getElementById('todayDemoCardsContainer');
+      const indicatorsContainer = document.getElementById('slideIndicators');
+      const slideNav = document.getElementById('slideNav');
+
+      container.innerHTML = '';
+      indicatorsContainer.innerHTML = '';
+
+      todayDemos.forEach((demo, index) => {
+        console.log(`📌 [Today Demo] Creating card for demo ${index}:`, demo);
+        // デモカード作成
+        const card = createDemoCard(demo, index);
+        container.appendChild(card);
+
+        // インジケータードット作成
+        if (todayDemos.length > 1) {
+          const dot = document.createElement('div');
+          dot.className = `slide-dot ${index === 0 ? 'active' : ''}`;
+          dot.onclick = () => goToSlide(index);
+          indicatorsContainer.appendChild(dot);
+        }
+      });
+
+      console.log('📦 [Today Demo] Cards created:', container.querySelectorAll('.today-demo-slide-card').length);
+
+      // 最初のカードのみ表示
+      showSlide(0);
+
+      // 複数デモがある場合のみナビゲーション表示
+      if (todayDemos.length > 1) {
+        indicatorsContainer.style.display = 'flex';
+        slideNav.style.display = 'flex';
+      }
+    }
+
+    // デモカード要素を作成
+    function createDemoCard(demo, index) {
+      const card = document.createElement('div');
+      card.className = 'today-demo-slide-card';
+      card.style.display = 'none';
+      card.dataset.slideIndex = index;
+
+      const startTime = new Date(demo.startTime);
+      const endTime = new Date(demo.endTime);
+      const timeStr = `${formatTime(startTime)} 〜 ${formatTime(endTime)}`;
+
+      // ボタンの状態を決定
+      let buttonText, buttonDisabled, buttonClass;
+      if (demo.hasCheckedIn) {
+        // 既にチェックイン済み
+        buttonText = 'チェックイン完了';
+        buttonDisabled = true;
+        buttonClass = '';
+      } else if (demo.canCheckIn) {
+        // チェックイン可能
+        buttonText = '開催場所につきました。デモの参加を開始しますか？';
+        buttonDisabled = false;
+        buttonClass = '';
+      } else {
+        // チェックイン不可（時間外）
+        buttonText = '開催時間前後のみチェックイン可能です';
+        buttonDisabled = true;
+        buttonClass = '';
+      }
+
+      card.innerHTML = `
+        <div class="demo-title-text">${escapeHtml(demo.demoTitle)}</div>
+        <div class="demo-info">
+          <i class="far fa-clock"></i>
+          <span>${timeStr}</span>
+        </div>
+        <div class="demo-info">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>${escapeHtml(demo.venueName)}</span>
+        </div>
+        <span class="category-badge">${escapeHtml(demo.categoryName)}</span>
+
+        <button
+          class="check-in-btn ${buttonClass}"
+          id="checkInBtn_${demo.demoId}"
+          ${buttonDisabled ? 'disabled' : ''}
+          onclick="checkInDemo(${demo.demoId}, ${demo.latitude}, ${demo.longitude})">
+          ${buttonText}
+        </button>
+
+        <div id="message_${demo.demoId}" style="display: none;"></div>
+      `;
+
+      return card;
+    }
+
+    // スライド表示
+    function showSlide(index) {
+      console.log(`🎬 [Today Demo] Showing slide ${index}`);
+      const container = document.getElementById('todayDemoCardsContainer');
+      const cards = container.querySelectorAll('.today-demo-slide-card');
+      const dots = document.querySelectorAll('.slide-dot');
+
+      console.log(`📊 [Today Demo] Found ${cards.length} cards in container`);
+
+      cards.forEach((card, i) => {
+        card.style.display = i === index ? 'block' : 'none';
+        console.log(`  Card ${i}: display = ${card.style.display}`);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+
+      currentSlideIndex = index;
+
+      // ナビゲーションボタンの有効/無効
+      const prevBtn = document.getElementById('prevSlide');
+      const nextBtn = document.getElementById('nextSlide');
+      if (prevBtn) prevBtn.disabled = index === 0;
+      if (nextBtn) nextBtn.disabled = index === todayDemos.length - 1;
+    }
+
+    // スライド移動
+    function navigateSlide(direction) {
+      const newIndex = currentSlideIndex + direction;
+      if (newIndex >= 0 && newIndex < todayDemos.length) {
+        showSlide(newIndex);
+      }
+    }
+
+    // 特定のスライドへ移動
+    function goToSlide(index) {
+      showSlide(index);
+    }
+
+    // チェックイン処理
+    async function checkInDemo(demoId, demoLat, demoLng) {
+      const btn = document.getElementById(`checkInBtn_${demoId}`);
+      const messageBox = document.getElementById(`message_${demoId}`);
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+      btn.textContent = '位置情報を取得中...';
+
+      try {
+        // 位置情報を取得
+        const position = await getCurrentPosition();
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        btn.textContent = '判定中...';
+
+        // サーバーに送信（セッション認証を使用）
+        const response = await fetch('/demo_wave/api/location', {
+          method: 'POST',
+          credentials: 'same-origin', // Cookie（セッション）を送信
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            demoId: demoId,
+            latitude: userLat,
+            longitude: userLng
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to check location');
+        }
+
+        const data = await response.json();
+
+        // 結果を表示（レスポンス構造: { location: { isWithinRadius: true/false } }）
+        const isWithin = data.location && data.location.isWithinRadius;
+        showMessage(messageBox, isWithin, btn);
+
+      } catch (error) {
+        console.error('Error:', error);
+        showMessage(messageBox, null, btn, error.message);
+      }
+    }
+
+    // 位置情報取得
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('このブラウザは位置情報に対応していません'));
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+    }
+
+    // メッセージ表示
+    function showMessage(messageBox, isWithin, btn, errorMsg = null) {
+      messageBox.style.display = 'block';
+
+      if (errorMsg) {
+        messageBox.className = 'message-box error';
+        messageBox.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${errorMsg}`;
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.textContent = '再試行する';
+      } else if (isWithin) {
+        messageBox.className = 'message-box success';
+        messageBox.innerHTML = '<i class="fas fa-check-circle"></i> 参加が確認できました！デモをお楽しみください。';
+        btn.classList.remove('loading');
+        btn.textContent = 'チェックイン完了';
+        btn.disabled = true; // ボタンを無効化
+      } else {
+        messageBox.className = 'message-box info';
+        messageBox.innerHTML = '<i class="fas fa-info-circle"></i> 位置情報が離れています。デモ開催場所に着いて再度ボタンを押してください。';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.textContent = '再試行する';
+      }
+    }
+
+    // バッジ表示
+    function showBadge() {
+      const badge = document.getElementById('todayDemoBadge');
+      const badgeCount = document.getElementById('badgeCount');
+      badgeCount.textContent = todayDemos.length;
+      badge.classList.add('show');
+    }
+
+    // モーダルを開く
+    function openTodayDemoModal() {
+      document.getElementById('todayDemoModalOverlay').classList.add('show');
+    }
+
+    // モーダルを閉じる
+    function closeTodayDemoModal(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('todayDemoModalOverlay').classList.remove('show');
+    }
+
+    // ユーティリティ関数
+    function formatTime(date) {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+  </script>
+</th:block>
+
+</body>
+</html>
