@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import product.demo_wave.common.api.APIResponse;
 import product.demo_wave.common.api.ErrorCode;
-import product.demo_wave.common.google.GmailService;
+import product.demo_wave.common.aws.SESService;
 
 /**
  * ユーザ情報取得用 Service
@@ -17,19 +16,19 @@ import product.demo_wave.common.google.GmailService;
 public class WebhookService {
 
 	private final WebhookDBLogic webhookDBLogic;
-	private final GmailService gmailService;
+	private final SESService sesService;
 
 	@Value("${stripe.webhook.secret}")
 	private String webhookSecret;
 
-	public WebhookService(WebhookDBLogic webhookDBLogic, GmailService gmailService) {
+	public WebhookService(WebhookDBLogic webhookDBLogic, SESService sesService) {
 		this.webhookDBLogic = webhookDBLogic;
-		this.gmailService = gmailService;
+		this.sesService = sesService;
 	}
 
 	ResponseEntity<APIResponse> handleEvent(WebhookContext webhookContext) {
 		webhookContext.setWebhookDBLogic(webhookDBLogic);
-		webhookContext.setGmailService(gmailService);
+		webhookContext.setSesService(sesService);
 		try {
 			return webhookContext.handleEvent();
 		}

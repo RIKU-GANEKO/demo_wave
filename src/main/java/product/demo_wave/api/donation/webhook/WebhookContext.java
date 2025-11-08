@@ -1,18 +1,13 @@
 package product.demo_wave.api.donation.webhook;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.GeneralSecurityException;
 import java.util.Map;
-
-import javax.mail.MessagingException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.services.gmail.Gmail;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
@@ -25,7 +20,7 @@ import product.demo_wave.common.api.APIResponse;
 import product.demo_wave.common.api.ErrorCode;
 import product.demo_wave.common.api.ErrorCodeResponse;
 import product.demo_wave.common.api.SuccessResponse;
-import product.demo_wave.common.google.GmailService;
+import product.demo_wave.common.aws.SESService;
 
 @Builder
 @Getter
@@ -39,7 +34,7 @@ public class WebhookContext {
 	private WebhookDBLogic webhookDBLogic;
 
 	@Setter
-	private GmailService gmailService;
+	private SESService sesService;
 
 	/**
 	 * エラーレスポンスを生成して返す。
@@ -131,24 +126,16 @@ public class WebhookContext {
 
 	void sendMail(BigDecimal amount) {
 		try {
-			// Gmailサービスのインスタンスを取得
-			Gmail service = gmailService.getGmailService();
-
-			// メール送信処理
-			gmailService.sendEmail(service,
-					"uemayorimiyanahakokusai@gmail.com",
+			// SES を使用してメール送信
+			sesService.sendEmail(
 					"uemayorimiyanahakokusai@gmail.com", // 本番デプロイ前に支援者Emailアドレスへ修正
 					"DemoWave 支援金送信完了",
 					amount + "円を送金しました！");
 
 			System.out.println("メール送信完了");
-		} catch (IOException | GeneralSecurityException e) {
-			// Gmail API関連の例外処理
-			System.err.println("メール送信エラー (Gmail API): " + e.getMessage());
-			e.printStackTrace();
-		} catch (MessagingException e) {
+		} catch (Exception e) {
 			// メール送信関連の例外処理
-			System.err.println("メール送信エラー (Messaging): " + e.getMessage());
+			System.err.println("メール送信エラー (SES): " + e.getMessage());
 			e.printStackTrace();
 		}
 	}

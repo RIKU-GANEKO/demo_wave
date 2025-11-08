@@ -111,12 +111,44 @@
   - [ ] 「参加する」ボタン押下時の登録促進
   - [ ] 「支援金を送る」ボタン押下時の登録促進
 
+## 本番リリース前に必須の作業
+
+### AWS SES 設定
+- [ ] **AWS SES Production access をリクエスト**
+  - 現在: Sandbox モード（検証済みメールアドレスのみ送信可能）
+  - 必要: Production access（任意のメールアドレスに送信可能）
+  - 審査期間: 24-72時間
+  - リクエスト手順:
+    1. AWS Console → SES → アカウントダッシュボード
+    2. 「本番アクセスをリクエスト」をクリック
+    3. Use case description に以下を記載:
+       - トランザクションメールの用途
+       - 支援金送信完了メール、デモリマインドメール、ギフトカード配信メール
+       - 予想送信数: 月100-500通（初期）→ 月1,000-5,000通（成長期）
+
+### 本番用メールアドレスの準備
+- [ ] 本番用メールアドレスを決定
+  - 推奨: `noreply.demowave@gmail.com` など、プロフェッショナルな Gmail アカウント
+  - または: 独自ドメイン取得後 `noreply@demowave.com`
+- [ ] 本番用メールアドレスを AWS SES で検証
+- [ ] Railway 環境変数に設定
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+  - `AWS_REGION=ap-northeast-1`
+  - `AWS_SES_FROM_EMAIL=（本番用メールアドレス）`
+
+### セキュリティチェック
+- [ ] `.gitignore` に `application-dev.properties` が含まれているか確認
+- [ ] Git リポジトリにアクセスキーが含まれていないか確認
+- [ ] Railway の環境変数が正しく設定されているか確認
+
 ## 優先度
 
 ### High Priority（初期リリース必須）
 - アイコン修正・適用
 - デモ一覧画面の基本UI改善
 - LP改善
+- **AWS SES Production access 申請**（審査に時間がかかるため早めに実施）
 
 ### Medium Priority（初期リリース後）
 - 多言語対応基盤
