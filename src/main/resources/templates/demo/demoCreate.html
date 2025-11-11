@@ -906,9 +906,18 @@
     alert('Google Maps APIの認証に失敗しました。APIキーを確認してください。');
   };
 </script>
-<script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY_REMOVED&callback=initMap"
-  onerror="console.error('Failed to load Google Maps API')">
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  var googleMapsApiKey = /*[[${@environment.getProperty('google.maps.api.key')}]]*/ '';
+  if (googleMapsApiKey) {
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + googleMapsApiKey + '&callback=initMap';
+    script.async = true;
+    script.defer = true;
+    script.onerror = function() { console.error('Failed to load Google Maps API'); };
+    document.body.appendChild(script);
+  }
+  /*]]>*/
 </script>
 
 </body>

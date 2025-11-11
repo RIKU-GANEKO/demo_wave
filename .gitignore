@@ -38,6 +38,9 @@ build/
 ### OAuth Tokens ###
 tokens/
 
+### Firebase ###
+src/main/resources/firebase/
+
 ### Application Configuration ###
 # Ignore all application properties files containing sensitive information
 src/main/resources/application-*.properties
