@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Application Configuration ###
+# Ignore all application properties files containing sensitive information
+src/main/resources/application-*.properties
+# Keep only template files
+!src/main/resources/application-*.properties.template
