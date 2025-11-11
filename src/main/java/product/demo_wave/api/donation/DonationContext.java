@@ -21,9 +21,10 @@ public class DonationContext {
 	private final String supabaseUid;
 	private final String userEmail;
 	private final DonationRequestDTO request;
+	private final String stripeSecretKey;
 
 	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession() {
-		Stripe.apiKey = "STRIPE_KEY_REMOVED_FROM_HISTORY";
+		Stripe.apiKey = stripeSecretKey;
 
 		System.out.println("Creating Stripe session for amount: " + request.getAmount());
 		System.out.println("Demo ID: " + request.getDemoId());

@@ -1,5 +1,6 @@
 package product.demo_wave.api.donation;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import product.demo_wave.common.api.ErrorResponse;
 import product.demo_wave.entity.User;
 import product.demo_wave.logic.GetUserLogic;
@@ -19,12 +20,15 @@ import product.demo_wave.logic.GetUserLogic;
  * </pre>
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("api/payment")
 public class DonationController {
 
 	private final DonationService donationService;
 	private final GetUserLogic getUserLogic;
+
+	@Value("${stripe.key.secret}")
+	private String stripeSecretKey;
 
 	@PostMapping("/create-checkout-session")
 	public ResponseEntity<?> createCheckoutSession(@RequestBody DonationRequestDTO request) {
@@ -50,6 +54,7 @@ public class DonationController {
 					.supabaseUid(supabaseUid)
 					.userEmail(userEmail)
 					.request(request)
+					.stripeSecretKey(stripeSecretKey)
 					.build();
 
 			return donationService.createCheckoutSession(context);
