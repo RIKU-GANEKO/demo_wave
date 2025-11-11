@@ -45,4 +45,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 	@Query("SELECT DISTINCT p.demo FROM Payment p WHERE p.user = :user AND p.deletedAt IS NULL ORDER BY p.demo.demoStartDate DESC")
 	List<Demo> findDistinctDemosByUserAndDeletedAtIsNull(@Param("user") User user);
 
+	// ユーザーが特定のデモに支援した金額の合計を取得
+	@Query("SELECT SUM(p.donateAmount) FROM Payment p WHERE p.user = :user AND p.demo = :demo AND p.deletedAt IS NULL")
+	BigDecimal getTotalDonatedAmountByUserAndDemo(@Param("user") User user, @Param("demo") Demo demo);
+
 }

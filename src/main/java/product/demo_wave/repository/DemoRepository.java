@@ -275,4 +275,19 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   // ユーザーが投稿したデモを取得（削除されていないもののみ）
   List<Demo> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID userId);
 
+  /**
+   * ユーザーが参加したデモのうち、支援金を受け取ったデモを取得
+   * （GiftTransferが存在する月に開催されたデモ）
+   */
+  @Query("""
+    SELECT DISTINCT d FROM Demo d
+    INNER JOIN Participant p ON p.demo = d AND p.user.id = :userId AND p.deletedAt IS NULL
+    INNER JOIN GiftTransfer g ON g.user.id = :userId AND g.deletedAt IS NULL
+      AND EXTRACT(YEAR FROM d.demoStartDate) = EXTRACT(YEAR FROM g.transferMonth)
+      AND EXTRACT(MONTH FROM d.demoStartDate) = EXTRACT(MONTH FROM g.transferMonth)
+    WHERE d.deletedAt IS NULL
+    ORDER BY d.demoStartDate DESC
+  """)
+  List<Demo> findReceivedGiftDemosByUserId(@Param("userId") UUID userId);
+
 }

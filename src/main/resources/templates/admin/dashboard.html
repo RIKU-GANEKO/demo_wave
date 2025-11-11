@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>管理者ダッシュボード - Demo Wave</title>
+  <meta name="description" content="Demo Wave 管理者ダッシュボード">
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f8f8f8;
+      margin: 0;
+    }
+
+    /* Header */
+    .admin-header {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: white;
+      padding: 16px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .admin-badge-small {
+      background-color: rgba(220, 38, 38, 0.9);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .admin-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout-btn {
+      padding: 8px 20px;
+      background-color: rgba(220, 38, 38, 0.9);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: rgba(220, 38, 38, 1);
+    }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      padding: 48px 0;
+      margin-bottom: 32px;
+    }
+
+    /* Content */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      padding: 32px;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: #333;
+      display: block;
+    }
+
+    .menu-card:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+      border-color: #dc2626;
+    }
+
+    .menu-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .menu-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .menu-description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      padding: 24px;
+    }
+
+    .info-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Admin Header -->
+<div class="admin-header">
+  <div class="admin-header-content">
+    <div class="admin-logo">
+      <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" style="width: 32px; height: 32px;">
+      <span>Demo Wave Admin</span>
+      <span class="admin-badge-small">管理者</span>
+    </div>
+    <div class="admin-nav">
+      <a href="/demo_wave/admin" class="nav-link">
+        <i class="fas fa-tachometer-alt"></i> ダッシュボード
+      </a>
+      <a href="/demo_wave/" class="nav-link" target="_blank">
+        <i class="fas fa-external-link-alt"></i> サイトを表示
+      </a>
+      <form method="post" action="/demo_wave/logout" style="display: inline;">
+        <button type="submit" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> ログアウト
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-2">管理者ダッシュボード</h2>
+    <p class="text-lg opacity-90">Demo Wave システム管理</p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 pb-16">
+
+  <!-- Menu Grid -->
+  <div class="content-grid">
+    <!-- CSV出力 -->
+    <a href="/demo_wave/admin/gift-export" class="menu-card">
+      <div class="menu-icon">
+        <i class="fas fa-file-csv"></i>
+      </div>
+      <h3 class="menu-title">ギフトカード配布CSV出力</h3>
+      <p class="menu-description">
+        月次の支援金配分データをCSV形式で出力し、参加者への送金処理を行います。
+      </p>
+    </a>
+  </div>
+
+  <!-- Info Card -->
+  <div class="info-card">
+    <div class="info-title">
+      <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+      管理者向け情報
+    </div>
+    <ul style="list-style: disc; margin-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">
+      <li>このダッシュボードは管理者権限を持つユーザーのみがアクセスできます。</li>
+      <li>各機能の実行履歴は操作ログとして記録されます。</li>
+      <li>CSV出力などの重要な操作は、必ず内容を確認してから実行してください。</li>
+      <li>セキュリティ上、長時間操作がない場合は自動的にログアウトされます。</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 Demo Wave. All rights reserved. | Admin Panel</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

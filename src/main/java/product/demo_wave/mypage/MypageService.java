@@ -21,7 +21,10 @@ class MypageService {
 		mypageGetUserContext.fetchParticipatedDemo();
 		mypageGetUserContext.fetchFavoriteDemos();
 		mypageGetUserContext.fetchSupportedDemos();
+		mypageGetUserContext.fetchSupportedDemosWithAmount();
 		mypageGetUserContext.fetchPostedDemos();
+		mypageGetUserContext.fetchReceivedGiftDemos();
+		mypageGetUserContext.fetchMonthlyGiftSummaries();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}

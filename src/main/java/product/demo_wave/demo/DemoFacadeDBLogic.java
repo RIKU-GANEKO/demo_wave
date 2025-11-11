@@ -110,6 +110,9 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
             demo.setPrefecture(prefecture);
         }
 
+        // Set activity report URL
+        demo.setActivityReportUrl(demoForm.activityReportUrl());
+
         return demo;
     }
 

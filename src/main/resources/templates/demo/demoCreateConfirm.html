@@ -394,6 +394,48 @@
         <input type="hidden" th:value="${demoForm.demoAddressLongitude}" name="demoAddressLongitude" id="demoAddressLongitude">
       </div>
 
+      <!-- Activity Report Section -->
+      <div class="confirm-section" th:if="${demoForm.activityReportUrl != null and !#strings.isEmpty(demoForm.activityReportUrl)}">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fab fa-twitter"></i>
+          </div>
+          <div>
+            <h2 class="section-title">活動報告</h2>
+          </div>
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">活動報告TwitterスレッドURL</div>
+          <div class="confirm-value">
+            <a th:href="${demoForm.activityReportUrl}" target="_blank" class="text-blue-600 hover:underline flex items-center gap-2">
+              <i class="fab fa-twitter"></i>
+              <span th:text="${demoForm.activityReportUrl}"></span>
+              <i class="fas fa-external-link-alt text-sm"></i>
+            </a>
+          </div>
+          <input type="hidden" th:value="${demoForm.activityReportUrl}" name="activityReportUrl" id="activityReportUrl">
+        </div>
+      </div>
+
+      <!-- No Activity Report Section -->
+      <div class="confirm-section" th:if="${demoForm.activityReportUrl == null or #strings.isEmpty(demoForm.activityReportUrl)}">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fab fa-twitter"></i>
+          </div>
+          <div>
+            <h2 class="section-title">活動報告</h2>
+          </div>
+        </div>
+
+        <div class="confirm-item">
+          <div class="confirm-label">活動報告TwitterスレッドURL</div>
+          <div class="confirm-value text-gray-500">未設定</div>
+          <input type="hidden" name="activityReportUrl" value="">
+        </div>
+      </div>
+
       <!-- Action Buttons -->
       <div class="action-section">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">

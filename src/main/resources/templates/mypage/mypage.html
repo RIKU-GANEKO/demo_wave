@@ -372,6 +372,118 @@
     .tab-content.active {
       display: block;
     }
+
+    /* 受取支援金スタイル */
+    .monthly-gift-item {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #e8e8e8;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .monthly-gift-item:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .monthly-gift-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .monthly-gift-month {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .monthly-gift-amount {
+      font-size: 24px;
+      font-weight: 900;
+      color: #10b981;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .gift-detail-toggle {
+      padding: 10px 20px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gift-detail-toggle:hover {
+      background-color: #1e40af;
+      transform: translateY(-1px);
+    }
+
+    .toggle-icon {
+      transition: transform 0.2s;
+    }
+
+    .gift-detail-content {
+      background: #f9fafb;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+
+    .gift-detail-list {
+      padding: 16px;
+    }
+
+    .gift-detail-item {
+      background: white;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s;
+    }
+
+    .gift-detail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .gift-detail-item:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .gift-detail-demo-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .gift-detail-date {
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .gift-detail-amount {
+      font-size: 18px;
+      font-weight: 700;
+      color: #10b981;
+      text-align: right;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -439,11 +551,14 @@
           <button class="tab-button" data-tab="participated">
             <i class="fas fa-users mr-2"></i>参加したデモ
           </button>
+          <button class="tab-button" data-tab="favorites">
+            <i class="fas fa-heart mr-2"></i>お気に入り
+          </button>
           <button class="tab-button" data-tab="supported">
             <i class="fas fa-yen-sign mr-2"></i>支援したデモ
           </button>
-          <button class="tab-button" data-tab="favorites">
-            <i class="fas fa-heart mr-2"></i>お気に入り
+          <button class="tab-button" data-tab="received-gift">
+            <i class="fas fa-gift mr-2"></i>受取支援金
           </button>
         </div>
 
@@ -515,37 +630,6 @@
             </div>
           </div>
 
-          <!-- Supported Demos Tab -->
-          <div id="supported-tab" class="tab-content">
-            <div th:if="${!#lists.isEmpty(supportedDemos)}">
-              <div th:each="demo : ${supportedDemos}" class="demo-item">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <h4 class="demo-title" th:text="${demo.title}">デモタイトル</h4>
-                    <div class="demo-meta">
-                      <div class="demo-meta-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span th:text="${#temporals.format(demo.demoStartDate, 'yyyy年MM月dd日')}">2025年01月15日</span>
-                      </div>
-                      <div class="demo-meta-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span th:text="${demo.demoPlace}">渋谷駅前</span>
-                      </div>
-                    </div>
-                  </div>
-                  <a th:href="@{/demo/show(demoId=${demo.id})}" class="action-button">詳細を見る</a>
-                </div>
-              </div>
-            </div>
-
-            <div th:if="${#lists.isEmpty(supportedDemos)}" class="empty-state">
-              <i class="fas fa-yen-sign"></i>
-              <h3>支援デモがありません</h3>
-              <p>まだ支援しているデモがありません。<br>デモを支援してみませんか？</p>
-              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
-            </div>
-          </div>
-
           <!-- Favorites Tab -->
           <div id="favorites-tab" class="tab-content">
             <div th:if="${!#lists.isEmpty(favoriteDemos)}">
@@ -573,6 +657,99 @@
               <i class="fas fa-heart"></i>
               <h3>お気に入りデモがありません</h3>
               <p>まだお気に入りのデモがありません。<br>気になるデモをお気に入りに追加しましょう。</p>
+              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+            </div>
+          </div>
+
+          <!-- Supported Demos Tab -->
+          <div id="supported-tab" class="tab-content">
+            <div th:if="${!#lists.isEmpty(supportedDemosWithAmount)}">
+              <div th:each="supportedDemo : ${supportedDemosWithAmount}" class="demo-item">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="demo-title" th:text="${supportedDemo.demo.title}">デモタイトル</h4>
+                    <div class="demo-meta">
+                      <div class="demo-meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span th:text="${#temporals.format(supportedDemo.demo.demoStartDate, 'yyyy年MM月dd日')}">2025年01月15日</span>
+                      </div>
+                      <div class="demo-meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${supportedDemo.demo.demoPlace}">渋谷駅前</span>
+                      </div>
+                      <div class="demo-meta-item" style="color: #10b981; font-weight: 700;">
+                        <i class="fas fa-yen-sign"></i>
+                        <span th:text="${#numbers.formatInteger(supportedDemo.totalAmount, 0, 'COMMA')}">1,000</span>
+                        <span>円</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a th:href="@{/demo/show(demoId=${supportedDemo.demo.id})}" class="action-button">詳細を見る</a>
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(supportedDemosWithAmount)}" class="empty-state">
+              <i class="fas fa-yen-sign"></i>
+              <h3>支援デモがありません</h3>
+              <p>まだ支援しているデモがありません。<br>デモを支援してみませんか？</p>
+              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+            </div>
+          </div>
+
+          <!-- Received Gift Tab -->
+          <div id="received-gift-tab" class="tab-content">
+            <div th:if="${!#lists.isEmpty(monthlyGiftSummaries)}">
+              <div th:each="summary, iterStat : ${monthlyGiftSummaries}" class="monthly-gift-item">
+                <div class="monthly-gift-header">
+                  <div class="flex-1">
+                    <h4 class="monthly-gift-month" th:text="${summary.monthDisplay}">2025年6月</h4>
+                    <div class="monthly-gift-amount">
+                      <i class="fas fa-yen-sign mr-1"></i>
+                      <span th:text="${#numbers.formatInteger(summary.totalAmount, 0, 'COMMA')}">1,500</span>
+                      <span class="text-sm ml-1">円</span>
+                    </div>
+                  </div>
+                  <button
+                    class="gift-detail-toggle"
+                    th:attr="data-target='gift-detail-' + ${iterStat.index}"
+                    onclick="toggleGiftDetail(this)">
+                    <span class="toggle-text">詳細を見る</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                  </button>
+                </div>
+
+                <!-- 詳細エリア（デフォルトは非表示） -->
+                <div
+                  class="gift-detail-content"
+                  th:id="'gift-detail-' + ${iterStat.index}"
+                  style="display: none;">
+                  <div class="gift-detail-list">
+                    <div th:each="detail : ${summary.details}" class="gift-detail-item">
+                      <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                          <h5 class="gift-detail-demo-title" th:text="${detail.demoName}">デモ名</h5>
+                          <div class="gift-detail-date">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            <span th:text="${detail.demoDate}">2025-06-15</span>
+                          </div>
+                        </div>
+                        <div class="gift-detail-amount">
+                          <i class="fas fa-yen-sign mr-1"></i>
+                          <span th:text="${#numbers.formatInteger(detail.amount, 0, 'COMMA')}">500</span>
+                          <span class="text-sm">円</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(monthlyGiftSummaries)}" class="empty-state">
+              <i class="fas fa-gift"></i>
+              <h3>受取支援金がありません</h3>
+              <p>まだ支援金を受け取っていません。<br>デモに参加して活動を盛り上げましょう。</p>
               <a href="/demo_wave/demo" class="action-button">デモを探す</a>
             </div>
           </div>
@@ -670,6 +847,26 @@
       document.getElementById(tabName + '-tab').classList.add('active');
     });
   });
+
+  // Gift detail toggle functionality
+  function toggleGiftDetail(button) {
+    const targetId = button.getAttribute('data-target');
+    const detailContent = document.getElementById(targetId);
+    const toggleIcon = button.querySelector('.toggle-icon');
+    const toggleText = button.querySelector('.toggle-text');
+
+    if (detailContent.style.display === 'none') {
+      detailContent.style.display = 'block';
+      toggleIcon.classList.remove('fa-chevron-down');
+      toggleIcon.classList.add('fa-chevron-up');
+      toggleText.textContent = '詳細を閉じる';
+    } else {
+      detailContent.style.display = 'none';
+      toggleIcon.classList.remove('fa-chevron-up');
+      toggleIcon.classList.add('fa-chevron-down');
+      toggleText.textContent = '詳細を見る';
+    }
+  }
 </script>
 
 <!-- Header Script -->

@@ -66,6 +66,9 @@ public class Demo {
   @JoinColumn(name = "organizer_user_id")
   private User user;
 
+  @Column(name = "activity_report_url")
+  private String activityReportUrl;
+
   @CreatedDate
   @Column
   private LocalDateTime createdAt;

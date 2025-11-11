@@ -19,7 +19,7 @@ import product.demo_wave.repository.PaymentRepository;
 import product.demo_wave.repository.UserRepository;
 
 @Component
-class GiftExportBatchDBLogic {
+public class GiftExportBatchDBLogic {
 
 	private final DemoRepository demoRepository;
 	private final PaymentRepository paymentRepository;

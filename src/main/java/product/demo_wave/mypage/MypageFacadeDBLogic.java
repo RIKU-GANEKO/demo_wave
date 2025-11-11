@@ -1,5 +1,8 @@
 package product.demo_wave.mypage;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +14,13 @@ import product.demo_wave.common.logic.BasicFacadeDBLogic;
 import product.demo_wave.entity.Demo;
 //import product.demo_wave.demo.CommentForm;
 //import product.demo_wave.demo.DemoForm;
+import product.demo_wave.entity.GiftTransfer;
+import product.demo_wave.entity.GiftTransferDetail;
 import product.demo_wave.entity.User;
 import product.demo_wave.logic.GetUserLogic;
 import product.demo_wave.repository.DemoRepository;
+import product.demo_wave.repository.GiftTransferDetailRepository;
+import product.demo_wave.repository.GiftTransferRepository;
 import product.demo_wave.repository.ParticipantRepository;
 import product.demo_wave.repository.UserRepository;
 
@@ -25,6 +32,8 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     private final ParticipantRepository participantRepository;
     private final product.demo_wave.repository.FavoriteDemoRepository favoriteDemoRepository;
     private final product.demo_wave.repository.PaymentRepository paymentRepository;
+    private final GiftTransferRepository giftTransferRepository;
+    private final GiftTransferDetailRepository giftTransferDetailRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
 
     @CustomRetry
@@ -58,11 +67,71 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
         return paymentRepository.findDistinctDemosByUserAndDeletedAtIsNull(user);
     }
 
+    // ログイン中のユーザーが支援したデモ活動と支援金額を取得
+    @CustomRetry
+    List<SupportedDemoDTO> fetchSupportedDemosWithAmount() {
+        User user = fetchUser();
+        List<Demo> demos = paymentRepository.findDistinctDemosByUserAndDeletedAtIsNull(user);
+
+        List<SupportedDemoDTO> result = new ArrayList<>();
+        for (Demo demo : demos) {
+            BigDecimal totalAmount = paymentRepository.getTotalDonatedAmountByUserAndDemo(user, demo);
+            result.add(new SupportedDemoDTO(demo, totalAmount));
+        }
+
+        return result;
+    }
+
     // ログイン中のユーザーが投稿したデモ活動を取得
     @CustomRetry
     List<Demo> fetchPostedDemos() {
         java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
+    }
+
+    // ログイン中のユーザーが支援金を受け取ったデモ活動を取得
+    @CustomRetry
+    List<Demo> fetchReceivedGiftDemos() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        return demoRepository.findReceivedGiftDemosByUserId(userId);
+    }
+
+    // ログイン中のユーザーの月ごとの受取支援金データを取得
+    @CustomRetry
+    List<MonthlyGiftSummaryDTO> fetchMonthlyGiftSummaries() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+
+        // 月ごとの受取履歴を取得（新しい順）
+        List<GiftTransfer> transfers = giftTransferRepository.findByUserIdOrderByTransferMonthDesc(userId);
+
+        List<MonthlyGiftSummaryDTO> summaries = new ArrayList<>();
+
+        for (GiftTransfer transfer : transfers) {
+            LocalDate transferMonth = transfer.getTransferMonth();
+
+            // この月のデモごとの詳細を取得
+            List<GiftTransferDetail> details = giftTransferDetailRepository
+                .findByUserIdAndMonth(userId, transferMonth);
+
+            // DTOに変換
+            List<DemoGiftDetailDTO> demoDetails = details.stream()
+                .map(detail -> new DemoGiftDetailDTO(
+                    detail.getDemo().getId(),
+                    detail.getDemo().getTitle(),
+                    detail.getAmount(),
+                    detail.getDemo().getDemoStartDate().toString()
+                ))
+                .toList();
+
+            // 月のサマリーDTOを作成
+            summaries.add(new MonthlyGiftSummaryDTO(
+                transferMonth,
+                transfer.getTotalAmount(),
+                demoDetails
+            ));
+        }
+
+        return summaries;
     }
 
 //    @CustomRetry

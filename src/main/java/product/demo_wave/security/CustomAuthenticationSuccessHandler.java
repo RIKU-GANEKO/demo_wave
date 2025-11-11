@@ -56,16 +56,27 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 
 		// リダイレクト先を決定
-		String targetUrl = request.getParameter("returnUrl");
-		System.out.println("################### returnUrl parameter: " + targetUrl);
-		if (targetUrl != null && !targetUrl.isEmpty() && targetUrl.startsWith("/")) {
-			// returnUrlパラメータがある場合はそこにリダイレクト（既にコンテキストパスを含む）
-			System.out.println("################### Redirecting to: " + targetUrl);
-			response.sendRedirect(targetUrl);
+		// 管理者権限を持つ場合は管理画面にリダイレクト
+		boolean isAdmin = authentication.getAuthorities().stream()
+				.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+		if (isAdmin) {
+			// 管理者の場合は管理画面にリダイレクト
+			System.out.println("################### Admin user, redirecting to admin dashboard");
+			response.sendRedirect(request.getContextPath() + "/admin");
 		} else {
-			// なければトップページにリダイレクト
-			System.out.println("################### Redirecting to home: " + request.getContextPath() + "/");
-			response.sendRedirect(request.getContextPath() + "/");
+			// 一般ユーザーの場合
+			String targetUrl = request.getParameter("returnUrl");
+			System.out.println("################### returnUrl parameter: " + targetUrl);
+			if (targetUrl != null && !targetUrl.isEmpty() && targetUrl.startsWith("/")) {
+				// returnUrlパラメータがある場合はそこにリダイレクト（既にコンテキストパスを含む）
+				System.out.println("################### Redirecting to: " + targetUrl);
+				response.sendRedirect(targetUrl);
+			} else {
+				// なければトップページにリダイレクト
+				System.out.println("################### Redirecting to home: " + request.getContextPath() + "/");
+				response.sendRedirect(request.getContextPath() + "/");
+			}
 		}
 	}
 }

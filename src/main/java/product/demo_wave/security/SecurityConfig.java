@@ -33,6 +33,9 @@ public class SecurityConfig {
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Autowired
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    @Autowired
     private SupabaseAuthenticationFilter supabaseAuthenticationFilter;
 
     @Autowired
@@ -51,6 +54,10 @@ public class SecurityConfig {
 
             http.authorizeHttpRequests(authorize -> {
                 authorize
+                        // 管理者ルート
+                        .requestMatchers("/admin/login").permitAll() // 管理者ログインページは認証不要
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // 管理者画面はADMINロール必須
+                        // 一般ユーザー向けルート
 //                        .requestMatchers("/demo").permitAll()
                         .requestMatchers("/demoList/**").permitAll()
                         .requestMatchers("/{demoId}/commentList/**").permitAll()
@@ -92,7 +99,7 @@ public class SecurityConfig {
                         .passwordParameter("password")
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/login?error")
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll();
             });
             http.logout(form -> {
@@ -151,6 +158,9 @@ public class SecurityConfig {
             });
             http.csrf(csrf -> {
                 csrf.ignoringRequestMatchers("/api/ranking/**"); // "/api/payment/**" のみ CSRF 無効化
+            });
+            http.csrf(csrf -> {
+                csrf.ignoringRequestMatchers("/admin/**"); // 管理者画面のCSRFを無効化
             });
 //            http.csrf(csrf -> csrf.disable());
 

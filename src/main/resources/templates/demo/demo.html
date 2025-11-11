@@ -430,11 +430,15 @@
             </a>
           </div>
 
-          <!-- Share Button -->
-          <button onclick="shareDemo()" class="w-full bg-white text-gray-700 font-semibold py-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 flex items-center justify-center group">
-            <i class="fas fa-share-alt mr-2 group-hover:scale-110 transition-transform"></i>
-            シェアする
-          </button>
+          <!-- Activity Report Button -->
+          <a th:if="${demo.activityReportUrl != null and !#strings.isEmpty(demo.activityReportUrl)}"
+             th:href="${demo.activityReportUrl}"
+             target="_blank"
+             class="w-full bg-blue-500 text-white font-semibold py-4 rounded-xl hover:bg-blue-600 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
+            <i class="fab fa-twitter mr-2 group-hover:scale-110 transition-transform"></i>
+            活動報告を見る
+            <i class="fas fa-external-link-alt ml-2 text-sm opacity-75"></i>
+          </a>
         </div>
 
         <!-- Time Info -->

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSV出力プレビュー - 管理画面 - Demo Wave</title>
+  <meta name="description" content="Demo Wave管理画面 - CSV出力プレビュー">
+  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    * {
+      font-family: 'Noto Sans JP', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f8f8f8;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      padding: 48px 0;
+      margin-bottom: 32px;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-title-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .summary-item {
+      background-color: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #e8e8e8;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #666;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #dc2626;
+    }
+
+    .summary-unit {
+      font-size: 14px;
+      color: #666;
+      margin-left: 4px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table thead {
+      background-color: #f9fafb;
+    }
+
+    .data-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+      border-bottom: 2px solid #e8e8e8;
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .data-table tbody tr:hover {
+      background-color: #fafafa;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: white;
+      color: #666;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      margin-top: 32px;
+    }
+
+    .warning-box {
+      background-color: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .warning-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .warning-box-text {
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.6;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #dc2626;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .modal-text {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Success Message */
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 2000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    .success-message.hiding {
+      animation: slideOut 0.3s ease-out;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    .spinner.show {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="admin-badge">
+      <i class="fas fa-shield-alt"></i> 管理者専用
+    </div>
+    <h2 class="text-3xl font-bold mb-2">CSV出力プレビュー</h2>
+    <p class="text-lg opacity-90">
+      対象月: <span th:text="${targetMonth}">2025-01</span>
+    </p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-4 pb-16">
+
+  <a th:href="@{/admin/gift-export}" class="back-link">
+    <i class="fas fa-arrow-left"></i>
+    戻る
+  </a>
+
+  <div class="content-card">
+    <h3 class="card-title">
+      <div class="card-title-icon">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      集計サマリー
+    </h3>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-label">対象ユーザー数</div>
+        <div class="summary-value">
+          <span th:text="${preview.totalUsers}">42</span>
+          <span class="summary-unit">名</span>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">支援金合計額</div>
+        <div class="summary-value">
+          <span th:text="${#numbers.formatDecimal(preview.totalAmount, 0, 'COMMA', 0, 'POINT')}">1,234,567</span>
+          <span class="summary-unit">円</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning Box -->
+    <div class="warning-box">
+      <div class="warning-box-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        実行前の確認
+      </div>
+      <div class="warning-box-text">
+        以下の内容でCSVを出力し、データベースに送金履歴を記録します。<br>
+        実行後は取り消しできませんので、内容をよく確認してください。
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <h3 class="card-title">
+      <div class="card-title-icon">
+        <i class="fas fa-table"></i>
+      </div>
+      出力データ一覧
+    </h3>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">No.</th>
+            <th>ユーザーID</th>
+            <th>メールアドレス</th>
+            <th style="text-align: right;">支援金額</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="entry, stat : ${preview.entries}">
+            <td th:text="${stat.count}">1</td>
+            <td th:text="${entry.userId}">user-id-123</td>
+            <td th:text="${entry.email}">user@example.com</td>
+            <td style="text-align: right; font-weight: 700;">
+              <span th:text="${#numbers.formatDecimal(entry.amount, 0, 'COMMA', 0, 'POINT')}">12,345</span> 円
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="button-group">
+      <a th:href="@{/admin/gift-export}" class="btn-secondary">
+        <i class="fas fa-times"></i>
+        キャンセル
+      </a>
+      <button type="button" id="executeBtn" class="btn-primary" th:data-target-month="${targetMonth}">
+        <i class="fas fa-download"></i>
+        CSV出力を実行
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3 class="modal-title">
+      <i class="fas fa-question-circle" style="color: #f59e0b;"></i>
+      実行確認
+    </h3>
+    <p class="modal-text">
+      CSV出力とデータベースへの送金履歴記録を実行します。<br>
+      この操作は取り消せません。本当に実行しますか？
+    </p>
+    <div class="modal-buttons">
+      <button type="button" id="cancelBtn" class="btn-secondary" style="padding: 10px 20px; font-size: 14px;">
+        キャンセル
+      </button>
+      <button type="button" id="confirmBtn" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">
+        <span id="confirmBtnText">実行する</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Message -->
+<div id="successMessage" class="success-message">
+  <i class="fas fa-check-circle" style="font-size: 20px;"></i>
+  <span>CSV出力が完了しました！</span>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 Demo Wave. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const executeBtn = document.getElementById('executeBtn');
+  const confirmModal = document.getElementById('confirmModal');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const confirmBtn = document.getElementById('confirmBtn');
+
+  executeBtn.addEventListener('click', function() {
+    confirmModal.classList.add('show');
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    confirmModal.classList.remove('show');
+  });
+
+  confirmBtn.addEventListener('click', async function() {
+    const targetMonth = executeBtn.dataset.targetMonth;
+    const spinner = document.getElementById('spinner');
+    const confirmBtnText = document.getElementById('confirmBtnText');
+    const successMessage = document.getElementById('successMessage');
+
+    // ボタンを無効化してローディング表示
+    confirmBtn.disabled = true;
+    confirmBtnText.style.display = 'none';
+    spinner.classList.add('show');
+
+    try {
+      // Ajax でCSV出力を実行
+      const response = await fetch('/demo_wave/admin/gift-export/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `targetMonth=${encodeURIComponent(targetMonth)}`
+      });
+
+      if (!response.ok) {
+        // エラーレスポンスの場合
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      // CSVファイルをダウンロード
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = targetMonth.replace(/-/g, '') + '-gift.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      // 成功メッセージを表示
+      confirmModal.classList.remove('show');
+      successMessage.classList.add('show');
+
+      // 3秒後にメッセージを消す
+      setTimeout(() => {
+        successMessage.classList.add('hiding');
+        setTimeout(() => {
+          successMessage.classList.remove('show', 'hiding');
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      // エラー処理
+      alert('エラーが発生しました: ' + error.message);
+      confirmModal.classList.remove('show');
+    } finally {
+      // ボタンを元に戻す
+      confirmBtn.disabled = false;
+      confirmBtnText.style.display = 'inline';
+      spinner.classList.remove('show');
+    }
+  });
+
+  // モーダル外クリックで閉じる
+  confirmModal.addEventListener('click', function(e) {
+    if (e.target === confirmModal) {
+      confirmModal.classList.remove('show');
+    }
+  });
+</script>
+
+</body>
+</html>

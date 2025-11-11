@@ -656,6 +656,43 @@
         <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
       </div>
 
+      <!-- Activity Report Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fab fa-twitter"></i>
+          </div>
+          <div>
+            <h2 class="section-title">活動報告（推奨）</h2>
+            <p class="section-description">デモ終了後の活動報告用Twitterスレッドを作成しましょう</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="activityReportUrl" class="form-label">
+            <i class="fab fa-twitter text-blue-400"></i>
+            活動報告TwitterスレッドURL
+            <span class="optional-badge">任意</span>
+          </label>
+          <input type="url"
+            id="activityReportUrl"
+            name="activityReportUrl"
+            placeholder="例：https://twitter.com/username/status/1234567890"
+            class="form-input"
+            th:value="${demoForm?.activityReportUrl}"
+            maxlength="500"
+          />
+          <p class="input-hint" style="background-color: #eff6ff; padding: 12px; border-radius: 8px; border-left: 4px solid #2563eb;">
+            <i class="fas fa-info-circle"></i>
+            <span><strong>推奨：</strong>デモ開催前にTwitterでスレッドを作成し、そのURLをここに登録してください。参加者はそのスレッドに活動報告（写真・コメント）を投稿できます。これにより支援者への透明性が高まり、次回の支援につながりやすくなります。</span>
+          </p>
+          <p th:if="${#fields.hasErrors('activityReportUrl')}" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:errors="*{activityReportUrl}"></span>
+          </p>
+        </div>
+      </div>
+
       <!-- Submit Section -->
       <div class="submit-section">
         <button type="submit" class="submit-btn">

@@ -48,7 +48,10 @@ record DemoForm(
     @NotNull(message = "カテゴリを選択してください")
     Integer categoryId,
 
-    Integer prefectureId
+    Integer prefectureId,
+
+    @Size(max = 500, message = "活動報告URLは500文字以内にしてください")
+    String activityReportUrl
 ) {
     /**
      * DemoエンティティからDemoFormを生成
@@ -66,7 +69,8 @@ record DemoForm(
             demo.getDemoAddressLatitude(),
             demo.getDemoAddressLongitude(),
             demo.getCategory() != null ? demo.getCategory().getId() : null,
-            demo.getPrefecture() != null ? demo.getPrefecture().getId() : null
+            demo.getPrefecture() != null ? demo.getPrefecture().getId() : null,
+            demo.getActivityReportUrl()
         );
     }
 }

@@ -29,7 +29,10 @@ class MypageGetUserContext {
     private List<Demo> participatedDemos;
     private List<Demo> favoriteDemos;
     private List<Demo> supportedDemos;
+    private List<SupportedDemoDTO> supportedDemosWithAmount;
     private List<Demo> postedDemos;
+    private List<Demo> receivedGiftDemos;
+    private List<MonthlyGiftSummaryDTO> monthlyGiftSummaries;
 
     void fetchUser() throws UnsupportedOperationException {
         user = mypageFacadeDBLogic.fetchUser();
@@ -51,6 +54,18 @@ class MypageGetUserContext {
         postedDemos = mypageFacadeDBLogic.fetchPostedDemos();
     }
 
+    void fetchReceivedGiftDemos() throws UnsupportedOperationException {
+        receivedGiftDemos = mypageFacadeDBLogic.fetchReceivedGiftDemos();
+    }
+
+    void fetchMonthlyGiftSummaries() throws UnsupportedOperationException {
+        monthlyGiftSummaries = mypageFacadeDBLogic.fetchMonthlyGiftSummaries();
+    }
+
+    void fetchSupportedDemosWithAmount() throws UnsupportedOperationException {
+        supportedDemosWithAmount = mypageFacadeDBLogic.fetchSupportedDemosWithAmount();
+    }
+
     void setModelAndView() {
         this.mv.addObject("user", this.user);
         System.out.println("user: " + user);
@@ -62,6 +77,12 @@ class MypageGetUserContext {
         System.out.println("supportedDemos: " + supportedDemos);
         this.mv.addObject("postedDemos", this.postedDemos);
         System.out.println("postedDemos: " + postedDemos);
+        this.mv.addObject("receivedGiftDemos", this.receivedGiftDemos);
+        System.out.println("receivedGiftDemos: " + receivedGiftDemos);
+        this.mv.addObject("monthlyGiftSummaries", this.monthlyGiftSummaries);
+        System.out.println("monthlyGiftSummaries: " + monthlyGiftSummaries);
+        this.mv.addObject("supportedDemosWithAmount", this.supportedDemosWithAmount);
+        System.out.println("supportedDemosWithAmount: " + supportedDemosWithAmount);
         this.mv.addObject("pageType", this.pageType);
 
         // ページタイプに応じてビュー名を変更
