@@ -32,6 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+### macOS ###
+.DS_Store
+
+### OAuth Tokens ###
+tokens/
+
 ### Application Configuration ###
 # Ignore all application properties files containing sensitive information
 src/main/resources/application-*.properties
