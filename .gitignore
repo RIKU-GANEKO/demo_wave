@@ -46,3 +46,9 @@ src/main/resources/firebase/
 src/main/resources/application-*.properties
 # Keep only template files
 !src/main/resources/application-*.properties.template
+
+### Environment Variables ###
+# Production environment variables (contains secrets)
+.env.production
+.env.*.local
+.env.local

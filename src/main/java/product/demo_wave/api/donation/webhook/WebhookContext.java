@@ -71,14 +71,16 @@ public class WebhookContext {
 					String supabaseUid = paymentIntentNode.at("/metadata/supabaseUid").asText(null);
 					String demoIdStr = paymentIntentNode.at("/metadata/demoId").asText(null);
 					long amountMinor = paymentIntentNode.at("/amount").asLong(0);
+					String donorEmail = paymentIntentNode.at("/receipt_email").asText(null);
 
 					System.out.println("Raw JSON metadata check:");
 					System.out.println("supabaseUid from JSON: " + supabaseUid);
 					System.out.println("demoId from JSON: " + demoIdStr);
 					System.out.println("amount from JSON: " + amountMinor);
+					System.out.println("donorEmail from JSON: " + donorEmail);
 					System.out.println("Full metadata node: " + paymentIntentNode.at("/metadata"));
 
-					if (supabaseUid == null || supabaseUid.trim().isEmpty() || 
+					if (supabaseUid == null || supabaseUid.trim().isEmpty() ||
 					    demoIdStr == null || demoIdStr.trim().isEmpty()) {
 						System.err.println("❌ メタデータが不足しています");
 						System.err.println("Available metadata: " + paymentIntentNode.at("/metadata"));
@@ -93,7 +95,7 @@ public class WebhookContext {
 					System.out.println("demoId: " + demoId);
 
 					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
-					sendMail(amount);
+					sendMail(donorEmail, amount);
 
 				} else {
 					// 通常通りデシリアライズ成功
@@ -104,9 +106,10 @@ public class WebhookContext {
 					String supabaseUid = metadata.get("supabaseUid");
 					Integer demoId = Integer.parseInt(metadata.get("demoId"));
 					BigDecimal amount = BigDecimal.valueOf(paymentIntent.getAmount());
+					String donorEmail = paymentIntent.getReceiptEmail();
 
 					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
-					sendMail(amount);
+					sendMail(donorEmail, amount);
 				}
 			} else {
 				// 他のイベントタイプの場合はログだけ出して成功を返す
@@ -124,15 +127,21 @@ public class WebhookContext {
 		}
 	}
 
-	void sendMail(BigDecimal amount) {
+	void sendMail(String recipientEmail, BigDecimal amount) {
 		try {
+			// 支援者のメールアドレスが取得できない場合はスキップ
+			if (recipientEmail == null || recipientEmail.trim().isEmpty()) {
+				System.err.println("⚠️ 支援者のメールアドレスが取得できませんでした。メール送信をスキップします。");
+				return;
+			}
+
 			// SES を使用してメール送信
 			sesService.sendEmail(
-					"uemayorimiyanahakokusai@gmail.com", // 本番デプロイ前に支援者Emailアドレスへ修正
+					recipientEmail,
 					"DemoWave 支援金送信完了",
-					amount + "円を送金しました！");
+					amount + "円を送金しました！\n\nご支援ありがとうございます。");
 
-			System.out.println("メール送信完了");
+			System.out.println("メール送信完了: " + recipientEmail);
 		} catch (Exception e) {
 			// メール送信関連の例外処理
 			System.err.println("メール送信エラー (SES): " + e.getMessage());
