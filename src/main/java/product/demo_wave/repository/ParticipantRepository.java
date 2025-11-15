@@ -16,10 +16,6 @@ import product.demo_wave.entity.User;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
-//  List<Participant> findByDemoId(Integer demoId);
-
-//  List<Participant> findByUserId(Integer userId);
-
   // `demo_id` に基づいて、現在のユーザーが参加しているかどうかをチェック
   boolean existsByDemoAndUserAndDeletedAtIsNull(Demo demo, User user);
 

@@ -94,7 +94,7 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     @CustomRetry
     List<Demo> fetchPostedDemos() {
         java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
-        return demoRepository.findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
+        return demoRepository.findOwnDemosByUserIdOrderByUpcomingFirst(userId);
     }
 
     // ログイン中のユーザーが支援金を受け取ったデモ活動を取得

@@ -3,7 +3,6 @@ package product.demo_wave.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -18,8 +17,8 @@ import product.demo_wave.api.demoList.FavoriteDemoListRecord;
 import product.demo_wave.api.demoList.ranking.donation.DemoDonationRankingRecord;
 import product.demo_wave.api.demoList.ranking.participation.DemoParticipationRankingRecord;
 import product.demo_wave.api.demoList.todayDemoList.TodayDemoListRecord;
-import product.demo_wave.entity.Demo;
 import product.demo_wave.demo.DemoWithParticipantDTO;
+import product.demo_wave.entity.Demo;
 
 @Repository
 public interface DemoRepository extends JpaRepository<Demo, Integer> {
@@ -70,8 +69,6 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   @Query("SELECT i FROM Demo i WHERE i.id IN (SELECT p.demo.id FROM Participant p WHERE p.user.id = :userId AND p.deletedAt IS NULL) " +
          "ORDER BY CASE WHEN i.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, i.demoStartDate DESC")
   List<Demo> findParticipatedDemoByUserId(@Param("userId") UUID userId);
-
-  Optional<Demo> findById(Integer demoId);
 
   // Search with filters - sorted by participant count (popular)
   @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
@@ -289,10 +286,10 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
   @Query("SELECT d.id FROM Demo d WHERE d.demoStartDate BETWEEN :start AND :end")
   List<Integer> findDemoIdsByStartDateBetween(LocalDateTime start, LocalDateTime end);
 
-  // ユーザーが投稿したデモを取得（削除されていないもののみ、開催予定優先）
+  // ユーザーが投稿したデモを取得（削除されていないもののみ、開催予定優先、開催日降順）
   @Query("SELECT d FROM Demo d WHERE d.user.id = :userId AND d.deletedAt IS NULL " +
          "ORDER BY CASE WHEN d.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, d.demoStartDate DESC")
-  List<Demo> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(@Param("userId") UUID userId);
+  List<Demo> findOwnDemosByUserIdOrderByUpcomingFirst(@Param("userId") UUID userId);
 
   /**
    * ユーザーが参加したデモのうち、支援金を受け取ったデモを取得

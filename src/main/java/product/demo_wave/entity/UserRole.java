@@ -2,11 +2,6 @@ package product.demo_wave.entity;
 
 import java.util.Date;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import lombok.Data;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -17,13 +12,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "user_role")
 @SQLDelete(sql = "UPDATE user_role SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at is null")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"user", "role"})
+@EqualsAndHashCode(exclude = {"user", "role"})
 public class UserRole {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

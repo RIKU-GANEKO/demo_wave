@@ -7,13 +7,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import lombok.Data;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,13 +17,26 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at is null")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"userRole"})
+@EqualsAndHashCode(exclude = {"userRole"})
 public class User {
   @Id
   @Column(name = "id", columnDefinition = "UUID")
@@ -79,18 +85,5 @@ public class User {
       userRole.setRole(role);
       return userRole;
     }).collect(Collectors.toList());
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder();
-    sb.append("User [");
-    sb.append("id:").append(this.id).append(", ");
-    sb.append("name:").append(this.name).append(", ");
-    sb.append("email:").append(this.email).append(", ");
-    sb.append("profileImagePath:").append(this.profileImagePath).append(", ");
-    sb.append("status:").append(this.status);
-    sb.append("]");
-    return sb.toString();
   }
 }
