@@ -70,7 +70,7 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4">
-          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover">
+          <img src="/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover">
         </div>
         <h1 class="text-3xl font-bold text-gradient mb-2">Demo Wave</h1>
         <p class="text-gray-600 text-sm">新しいアカウントを作成</p>
@@ -235,7 +235,7 @@
 
       <!-- Back to Home -->
       <div class="mt-4 text-center">
-        <a href="/demo_wave/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+        <a href="/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
           <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
         </a>
       </div>
@@ -258,7 +258,7 @@
 
   async function initializeSupabase() {
     try {
-      const response = await fetch('/demo_wave/api/config/supabase');
+      const response = await fetch('/api/config/supabase');
       config = await response.json();
       
       supabase = createClient(config.url, config.anonKey);
@@ -297,7 +297,7 @@
       try {
         // バックエンドAPIにユーザー登録リクエストを送信
         console.log('Calling backend API to register user...');
-        const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+        const registerResponse = await fetch('/api/user/create/email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -328,7 +328,7 @@
 
           setTimeout(() => {
             // ホーム画面に遷移
-            window.location.href = '/demo_wave/';
+            window.location.href = '/';
           }, 1000);
         } else {
           console.error('User registration failed:', registerData);
@@ -354,13 +354,13 @@
       document.cookie = 'supabase-user-email=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       
       console.log('Config:', config);
-      console.log('Redirect URL:', `${window.location.origin}/demo_wave/user/signup`);
+      console.log('Redirect URL:', `${window.location.origin}/user/signup`);
       console.log('Current URL:', window.location.href);
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/demo_wave/user/signup`,
+          redirectTo: `${window.location.origin}/user/signup`,
           queryParams: {
             prompt: 'select_account'  // Googleアカウント選択を強制
           }

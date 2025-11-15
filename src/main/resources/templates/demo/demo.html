@@ -306,7 +306,7 @@
 
           <div sec:authorize="!isAuthenticated()" class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
             <p class="text-gray-700 mb-4">コメントを投稿するにはログインが必要です</p>
-            <a href="/demo_wave/login" class="inline-block gradient-bg text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
+            <a href="/login" class="inline-block gradient-bg text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
               <i class="fas fa-sign-in-alt mr-2"></i>ログインする
             </a>
           </div>
@@ -424,7 +424,7 @@
 
           <!-- Not Logged In Users -->
           <div sec:authorize="!isAuthenticated()">
-            <a href="/demo_wave/login" class="block w-full gradient-bg text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all duration-200 text-center group">
+            <a href="/login" class="block w-full gradient-bg text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all duration-200 text-center group">
               <i class="fas fa-sign-in-alt mr-2 inline-block group-hover:scale-110 transition-transform"></i>
               ログインして参加・支援する
             </a>
@@ -543,7 +543,7 @@
 <footer class="bg-gray-900 text-white py-12 mt-16">
   <div class="max-w-7xl mx-auto px-4 text-center">
     <div class="flex items-center justify-center space-x-3 mb-4">
-      <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+      <img src="/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
       <h3 class="text-xl font-bold">Demo Wave</h3>
     </div>
     <p class="text-gray-400">&copy; 2025 Demo Wave. All rights reserved.</p>
@@ -590,7 +590,7 @@
 
     if (isFavorited) {
       // Remove from favorites
-      fetch('/demo_wave/api/demo/favorite', {
+      fetch('/api/demo/favorite', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -603,7 +603,7 @@
           sessionStorage.setItem('pendingFavorite', demoId);
           const returnUrl = window.location.pathname + window.location.search;
           alert('お気に入り機能を使用するにはログインが必要です');
-          window.location.href = '/demo_wave/login?returnUrl=' + encodeURIComponent(returnUrl);
+          window.location.href = '/login?returnUrl=' + encodeURIComponent(returnUrl);
         } else if (response.ok) {
           icon.classList.remove('fas');
           icon.classList.add('far');
@@ -619,7 +619,7 @@
       });
     } else {
       // Add to favorites
-      fetch('/demo_wave/api/demo/favorite', {
+      fetch('/api/demo/favorite', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -632,7 +632,7 @@
           sessionStorage.setItem('pendingFavorite', demoId);
           const returnUrl = window.location.pathname + window.location.search;
           alert('お気に入り機能を使用するにはログインが必要です');
-          window.location.href = '/demo_wave/login?returnUrl=' + encodeURIComponent(returnUrl);
+          window.location.href = '/login?returnUrl=' + encodeURIComponent(returnUrl);
         } else if (response.ok) {
           icon.classList.remove('far');
           icon.classList.add('fas');
@@ -662,7 +662,7 @@
     const pendingFavorite = sessionStorage.getItem('pendingFavorite');
     if (pendingFavorite && pendingFavorite === demoId) {
       // Add to favorites
-      fetch('/demo_wave/api/demo/favorite', {
+      fetch('/api/demo/favorite', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -684,7 +684,7 @@
     }
 
     // Load favorite status (will work if user is logged in via session)
-    fetch(`/demo_wave/api/demo/favorite-status?demoId=${demoId}`)
+    fetch(`/api/demo/favorite-status?demoId=${demoId}`)
     .then(response => {
       console.log('Favorite status response:', response.status);
       if (response.ok) {
@@ -756,7 +756,7 @@
       const demoId = [[${demo.id}]];
 
       // API呼び出し（セッションベース認証）
-      const response = await fetch('/demo_wave/api/payment/create-checkout-session', {
+      const response = await fetch('/api/payment/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -120,9 +120,10 @@ public class WebhookContext {
 			return ResponseEntity.ok(SuccessResponse.of("Webhook received"));
 
 		} catch (SignatureVerificationException e) {
+			System.err.println("Stripe署名検証エラー: " + e.getMessage());
 			return errorResponse(ErrorCode.INVALID_SIGNATURE.getCode(), "Stripe署名が無効です", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("Webhook処理エラー: " + e.getMessage());
 			return errorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "Webhookの処理中にエラーが発生しました", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -145,7 +146,6 @@ public class WebhookContext {
 		} catch (Exception e) {
 			// メール送信関連の例外処理
 			System.err.println("メール送信エラー (SES): " + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 

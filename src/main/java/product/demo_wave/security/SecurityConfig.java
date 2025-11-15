@@ -112,57 +112,16 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                         .permitAll();
             });
-            // CSRFの設定を追加
+            // CSRF設定：外部Webhook（Stripe）のみ無効化
+            // SPAフロントエンドからのAPI呼び出しはSupabase JWTで認証されるためCSRF保護不要
             http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/payment/**"); // WebhookエンドポイントのみCSRF無効化
+                csrf.ignoringRequestMatchers(
+                    "/payment/webhook",           // Stripe Webhook専用
+                    "/api/**",                    // SPA用APIエンドポイント（JWT認証済み）
+                    "/demoList/**",               // 公開API（読み取りのみ）
+                    "/{demoId}/commentList/**"    // 公開API（読み取りのみ）
+                );
             });
-//            postメソッドなら必要
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/{demoId}/comment/create/**"); // "/{demoId}/comment/create/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/create/**"); // "/api/demo/create/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/user/create/**"); // "/api/user/create/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/participate/**"); // "/api/demo/participate/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/participation-status**"); // "/api/demo/participate/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/user/get/**"); // "/api/demo/participate/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/demoList/**"); // "/api/demoList/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/payment/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/search/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/today/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/location/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/favorite/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/demo/favorite-status**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/api/ranking/**"); // "/api/payment/**" のみ CSRF 無効化
-            });
-            http.csrf(csrf -> {
-                csrf.ignoringRequestMatchers("/admin/**"); // 管理者画面のCSRFを無効化
-            });
-//            http.csrf(csrf -> csrf.disable());
 
             // SupabaseAuthenticationFilterを追加
             http.addFilterBefore(supabaseAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -185,44 +144,4 @@ public class SecurityConfig {
         // DaoAuthenticationProviderは使用しない（パスワードはSupabaseで管理）
         return new ProviderManager(Collections.singletonList(supabaseAuthenticationProvider));
     }
-
-//    /**
-//     * アクセス制限を解除する path を指定する
-//     * @param web
-//     * @throws Exception
-//     */
-////    @Override
-//    public void configure(WebSecurity web) {
-//        web
-//                .ignoring().antMatchers(
-//                        // 新 api 系
-//                        "/demoList**"
-//                );
-//    }
-
-    /*
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**");
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser("yama3")
-//                .password(passwordEncoder().encode("123456"))
-//                .roles("USER");
-//        System.out.println(passwordEncoder().encode("123456"));
-        auth.userDetailsService(userDetailsService);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .antMatchers("/signup").permitAll()
-                .anyRequest().authenticated().and()
-                .formLogin().loginPage("/login").defaultSuccessUrl("/").permitAll().and()
-                .logout().permitAll();
-    }
-     */
 }

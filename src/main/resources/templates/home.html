@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Demo Wave - あなたの声が社会を変える</title>
   <meta name="description" content="Demo Waveは市民の声を社会に届ける新しいプラットフォーム。デモを開催し、参加し、支援することで、誰もが社会変革の当事者になれます。">
-  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -642,7 +642,7 @@
       あなたの想いを形にして、社会に届けましょう。<br>
       Demo Waveなら、簡単にデモを企画・開催できます。
     </p>
-    <a href="/demo_wave/demo/create" class="btn-primary px-8 py-4 rounded-full text-lg inline-block">
+    <a href="/demo/create" class="btn-primary px-8 py-4 rounded-full text-lg inline-block">
       デモを作成する <i class="fas fa-arrow-right ml-2"></i>
     </a>
   </section>
@@ -654,7 +654,7 @@
 
 <!-- Fixed Right Sidebar -->
 <div class="fixed-right-sidebar">
-  <a href="/demo_wave/organizer-guide" class="sidebar-link">
+  <a href="/organizer-guide" class="sidebar-link">
     <span>デモ活動の開催に挑戦したい方はこちら</span>
     <div class="sidebar-circle">
       <i class="fas fa-chevron-right"></i>
@@ -668,7 +668,7 @@
     <div class="grid md:grid-cols-4 gap-8 mb-8">
       <div class="md:col-span-2">
         <div class="flex items-center space-x-3 mb-4">
-          <img src="/demo_wave/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
+          <img src="/images/demowave_icon.png" alt="Demo Wave" class="w-10 h-10">
           <h3 class="text-xl font-bold">Demo Wave</h3>
         </div>
         <p class="text-gray-400 leading-relaxed">
@@ -679,16 +679,16 @@
       <div>
         <h4 class="font-bold mb-4">サービス</h4>
         <ul class="space-y-2 text-gray-400">
-          <li><a href="/demo_wave/search" class="hover:text-white">デモを探す</a></li>
-          <li><a href="/demo_wave/about" class="hover:text-white">Demo Waveとは</a></li>
-          <li><a href="/demo_wave/login" class="hover:text-white">ログイン</a></li>
+          <li><a href="/search" class="hover:text-white">デモを探す</a></li>
+          <li><a href="/about" class="hover:text-white">Demo Waveとは</a></li>
+          <li><a href="/login" class="hover:text-white">ログイン</a></li>
         </ul>
       </div>
 
       <div>
         <h4 class="font-bold mb-4">サポート</h4>
         <ul class="space-y-2 text-gray-400">
-          <li><a href="/demo_wave/about#faq" class="hover:text-white">よくある質問</a></li>
+          <li><a href="/about#faq" class="hover:text-white">よくある質問</a></li>
           <li><a href="#" class="hover:text-white">プライバシーポリシー</a></li>
           <li><a href="#" class="hover:text-white">利用規約</a></li>
         </ul>
@@ -712,7 +712,7 @@
 
       try {
         // Get Supabase configuration from API
-        const configResponse = await fetch('/demo_wave/api/config/supabase');
+        const configResponse = await fetch('/api/config/supabase');
         const config = await configResponse.json();
 
         // Import Supabase client
@@ -726,7 +726,7 @@
           console.log('Authentication successful:', session.user.email);
 
           // Call backend API to authenticate user
-          const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+          const registerResponse = await fetch('/api/user/create/email', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -773,15 +773,15 @@
   // Aside functionality - Redirect to search page with category filter
   function filterByCategory(categoryId) {
     if (categoryId === 'all') {
-      window.location.href = '/demo_wave/search';
+      window.location.href = '/search';
     } else {
-      window.location.href = `/demo_wave/search?categoryId=${categoryId}`;
+      window.location.href = `/search?categoryId=${categoryId}`;
     }
   }
 
   // Aside functionality - Redirect to search page with prefecture filter
   function filterByRegion(prefecture) {
-    window.location.href = `/demo_wave/search?prefectureName=${encodeURIComponent(prefecture)}`;
+    window.location.href = `/search?prefectureName=${encodeURIComponent(prefecture)}`;
   }
 
   // Search functionality

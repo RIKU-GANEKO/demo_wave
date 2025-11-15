@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CSV出力プレビュー - 管理画面 - Demo Wave</title>
   <meta name="description" content="Demo Wave管理画面 - CSV出力プレビュー">
-  <link rel="icon" href="/demo_wave/images/demowave_icon.png" type="image/png">
+  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -520,7 +520,7 @@
 
     try {
       // Ajax でCSV出力を実行
-      const response = await fetch('/demo_wave/admin/gift-export/execute', {
+      const response = await fetch('/admin/gift-export/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

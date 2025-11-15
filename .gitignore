@@ -42,8 +42,10 @@ tokens/
 src/main/resources/firebase/
 
 ### Application Configuration ###
-# Ignore all application properties files containing sensitive information
-src/main/resources/application-*.properties
+# Ignore development properties files (contains local credentials)
+src/main/resources/application-dev.properties
+src/main/resources/application-batch.properties
+# Production properties uses environment variables only - safe to commit
 # Keep only template files
 !src/main/resources/application-*.properties.template
 

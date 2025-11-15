@@ -368,7 +368,7 @@
       try {
         console.log('🔍 [Today Demo] Fetching today demos...');
 
-        const response = await fetch('/demo_wave/api/today-demos', {
+        const response = await fetch('/api/today-demos', {
           method: 'GET',
           credentials: 'same-origin' // Cookie（セッション）を送信
         });
@@ -556,7 +556,7 @@
         btn.textContent = '判定中...';
 
         // サーバーに送信（セッション認証を使用）
-        const response = await fetch('/demo_wave/api/location', {
+        const response = await fetch('/api/location', {
           method: 'POST',
           credentials: 'same-origin', // Cookie（セッション）を送信
           headers: {
