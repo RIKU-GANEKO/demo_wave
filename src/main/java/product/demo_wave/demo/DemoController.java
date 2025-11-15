@@ -25,12 +25,6 @@ class DemoController {
 	private final AppProperties properties;
 	private final GetUserLogic getUserLogic;
 
-	@GetMapping
-	ModelAndView rootByGet(ModelAndView mv, Pageable pageable) {
-		DemoGetContext demoGetContext = new DemoGetContext(properties, getUserLogic, mv, pageable);
-		return demoService.rootByGet(demoGetContext);
-	}
-
 	@GetMapping("/show")
 	ModelAndView showByGet(@RequestParam("demoId") Integer demoId, ModelAndView mv) {
 		DemoShowGetContext demoShowGetContext = new DemoShowGetContext(demoId, mv);
@@ -46,9 +40,10 @@ class DemoController {
 
 	@PostMapping("/create")
 	ModelAndView createByPost(@Valid DemoForm demoForm, BindingResult bindingResult,
+			@RequestParam(required = false) String back,
 			ModelAndView modelAndView, RedirectAttributes redirectAttributes) {
 		DemoCreatePostContext demoPostContext = new DemoCreatePostContext(
-				modelAndView, demoForm, bindingResult, redirectAttributes);
+				modelAndView, demoForm, bindingResult, redirectAttributes, back);
 		return demoService.createByPost(demoPostContext);
 	}
 
@@ -96,9 +91,11 @@ class DemoController {
 
 	@PostMapping("/edit")
 	ModelAndView editByPost(@Valid DemoForm demoForm, BindingResult bindingResult,
-			@RequestParam("demoId") Integer demoId, ModelAndView modelAndView) {
+			@RequestParam("demoId") Integer demoId,
+			@RequestParam(required = false) String back,
+			ModelAndView modelAndView) {
 		DemoEditPostContext demoEditPostContext = new DemoEditPostContext(
-				modelAndView, demoForm, demoId, bindingResult);
+				modelAndView, demoForm, demoId, bindingResult, back);
 		return demoService.editByPost(demoEditPostContext);
 	}
 

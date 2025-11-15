@@ -38,6 +38,15 @@ public class EmailUserCreateContext {
 	}
 
 	/**
+	 * 既存ユーザーかどうかをチェック
+	 *
+	 * @return 既存ユーザーの場合true
+	 */
+	public boolean isExistingUser() {
+		return emailUserCreateDBLogic.isExistingUser(java.util.UUID.fromString(supabaseUid));
+	}
+
+	/**
 	 * ユーザー作成処理
 	 *
 	 * @return 成功時のAPIレスポンス

@@ -54,13 +54,13 @@ public class LpController {
     public ModelAndView home(ModelAndView mv) {
         // 認証情報を取得
         addLoggedInUser(mv);
-        // 参加人数が多い上位9件のデモを取得（人気のデモ）
+        // 開催中・開催予定のデモを優先して上位9件を取得（人気のデモ）
         Pageable topPageable = PageRequest.of(0, 9);
-        List<DemoWithParticipantDTO> popularDemos = demoRepository.findTopDemosByParticipantCount(topPageable);
+        List<DemoWithParticipantDTO> popularDemos = demoRepository.findDemosByPopularityPrioritizingUpcoming(topPageable);
 
-        // すべてのデモを取得（最新順で24件）
+        // すべてのデモを取得（開催中・開催予定を優先、24件）
         Pageable allPageable = PageRequest.of(0, 24);
-        List<DemoWithParticipantDTO> allDemos = demoRepository.findTopDemosByParticipantCount(allPageable);
+        List<DemoWithParticipantDTO> allDemos = demoRepository.findDemosByPopularityPrioritizingUpcoming(allPageable);
 
         mv.addObject("popularDemos", popularDemos);
         mv.addObject("allDemos", allDemos);

@@ -26,16 +26,9 @@ class MypageController {
 
 	@GetMapping
 	ModelAndView rootByGet(ModelAndView mv) {
-		MypageGetContext mypageGetContext = new MypageGetContext(mv);
-		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId(); // キャッシュからログインユーザーID取得
-		mypageGetContext.setUserId(userId); // コンテキストに userId をセット
-		return mypageService.rootByGet(mypageGetContext);
-	}
-
-	@GetMapping("{userId}")
-	ModelAndView userByGet(@PathVariable String userId, ModelAndView mv) {
 		MypageGetUserContext mypageGetUserContext = new MypageGetUserContext(mv);
-		mypageGetUserContext.setUserId(java.util.UUID.fromString(userId));
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId(); // キャッシュからログインユーザーID取得
+		mypageGetUserContext.setUserId(userId); // コンテキストに userId をセット
 		return mypageService.userByGet(mypageGetUserContext);
 	}
 
@@ -82,6 +75,20 @@ class MypageController {
 		mypageGetUserContext.setUserId(userId);
 		mypageGetUserContext.setPageType("settings");
 		return mypageService.userByGet(mypageGetUserContext);
+	}
+
+	@PostMapping("/settings/profile")
+	ModelAndView updateProfile(@RequestParam("name") String name, RedirectAttributes redirectAttributes) {
+		java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+
+		try {
+			mypageService.updateUserName(userId, name);
+			redirectAttributes.addFlashAttribute("successMessage", "ユーザー名を更新しました");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "ユーザー名の更新に失敗しました");
+		}
+
+		return new ModelAndView("redirect:/mypage/settings");
 	}
 
 //	@GetMapping("/show")

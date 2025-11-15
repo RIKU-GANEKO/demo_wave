@@ -24,8 +24,14 @@ class DemoEditPostContext {
 
   private final BindingResult bindingResult;
 
+  private final String back;
+
   @Setter
   private DemoFacadeDBLogic demoFacadeDBLogic;
+
+  boolean isBackFromConfirm() {
+    return "true".equals(this.back);
+  }
 
   boolean hasErrors() {
     return this.bindingResult.hasErrors();
@@ -33,6 +39,20 @@ class DemoEditPostContext {
 
   void setErrorModelAndView() {
     // エラー時もカテゴリ・都道府県の一覧が必要
+    List<Category> categories = demoFacadeDBLogic.fetchAllCategories();
+    List<Prefecture> prefectures = demoFacadeDBLogic.fetchAllPrefectures();
+    boolean canEditLocationAndTime = demoFacadeDBLogic.canEditLocationAndTime(demoId);
+
+    this.modelAndView.addObject("demoForm", this.demoForm);
+    this.modelAndView.addObject("categories", categories);
+    this.modelAndView.addObject("prefectures", prefectures);
+    this.modelAndView.addObject("canEditLocationAndTime", canEditLocationAndTime);
+    this.modelAndView.addObject("demoId", this.demoId);
+    this.modelAndView.setViewName("demo/demoEdit");
+  }
+
+  void setBackModelAndView() {
+    // 確認画面から戻る場合は、フォームデータを保持して編集画面を表示
     List<Category> categories = demoFacadeDBLogic.fetchAllCategories();
     List<Prefecture> prefectures = demoFacadeDBLogic.fetchAllPrefectures();
     boolean canEditLocationAndTime = demoFacadeDBLogic.canEditLocationAndTime(demoId);

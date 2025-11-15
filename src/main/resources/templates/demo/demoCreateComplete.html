@@ -343,6 +343,11 @@
       </div>
 
       <div class="complete-item">
+        <div class="complete-label">カテゴリ</div>
+        <div class="complete-value" th:text="${category?.jaName}"></div>
+      </div>
+
+      <div class="complete-item">
         <div class="complete-label">デモの詳細説明</div>
         <div class="complete-value" style="white-space: pre-wrap;" th:text="${demoForm.content}"></div>
       </div>

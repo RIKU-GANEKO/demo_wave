@@ -43,6 +43,14 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
         return user.orElse(new User());
     }
 
+    @CustomRetry
+    void updateUserName(java.util.UUID userId, String name) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new java.util.NoSuchElementException("User not found"));
+        user.setName(name);
+        userRepository.save(user);
+    }
+
     // ログイン中のユーザーが参加した(する予定の)デモ活動を取得
     @CustomRetry
     List<Demo> fetchParticipatedDemo() {

@@ -217,26 +217,58 @@
   // OAuth認証後にaccess_tokenがある場合の処理
   if (hashParams.get('access_token')) {
     console.log('OAuth callback detected, processing...');
-    
+
     // セッションが既に存在するかチェック
     if (session && session.user) {
       console.log('Authentication successful!', session.user);
       console.log('User email:', session.user.email);
       console.log('User name:', session.user.user_metadata?.full_name);
-      
-      alert(`ログイン成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
-      
-      // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
-      document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
-      document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
-      
-      // URLのハッシュをクリーンアップしてからリダイレクト
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      setTimeout(() => {
-        // デモ一覧画面に遷移
-        window.location.href = '/demo_wave/demo';
-      }, 1000);
+
+      try {
+        // バックエンドAPIにログイン/登録リクエストを送信
+        console.log('Calling backend API to authenticate user...');
+        const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+            imageUrl: session.user.user_metadata?.avatar_url || null
+          })
+        });
+
+        console.log('Backend API response status:', registerResponse.status);
+        const registerData = await registerResponse.json();
+        console.log('Backend API response:', registerData);
+
+        if (registerResponse.ok) {
+          // 認証成功（新規: 201 Created、既存: 200 OK）
+          console.log('User authenticated successfully');
+
+          // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
+          document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+          document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+
+          alert(`ログイン成功！ユーザー: ${session.user.user_metadata?.full_name || session.user.email}`);
+
+          // URLのハッシュをクリーンアップしてからリダイレクト
+          window.history.replaceState({}, document.title, window.location.pathname);
+
+          setTimeout(() => {
+            // 元々のリダイレクト先（returnUrl）または検索画面に遷移
+            const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+            window.location.href = returnUrl || '/demo_wave/search';
+          }, 1000);
+        } else {
+          console.error('User authentication failed:', registerData);
+          alert(`ログインに失敗しました: ${registerData.errorDescription || 'エラーが発生しました'}`);
+        }
+      } catch (error) {
+        console.error('Error during user authentication:', error);
+        alert(`ログイン処理でエラーが発生しました: ${error.message}`);
+      }
     }
   }
   
@@ -268,21 +300,21 @@
       document.cookie = 'supabase-user-email=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       
       console.log('Config:', config);
-      console.log('Redirect URL:', `${window.location.origin}/demo_wave/demo`);
+      console.log('Redirect URL:', `${window.location.origin}/demo_wave/`);
       console.log('Current URL:', window.location.href);
-      
+
       // デバッグ用にローカルストレージに記録
       localStorage.setItem('oauth_debug', JSON.stringify({
         timestamp: new Date().toISOString(),
         config: config,
-        redirectUrl: `${window.location.origin}/demo_wave/demo`,
+        redirectUrl: `${window.location.origin}/demo_wave/`,
         currentUrl: window.location.href
       }));
-      
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/demo_wave/demo`,
+          redirectTo: `${window.location.origin}/demo_wave/`,
           queryParams: {
             prompt: 'select_account'  // Googleアカウント選択を強制
           }
@@ -323,13 +355,13 @@
   
   supabase.auth.onAuthStateChange((event, session) => {
     console.log('Auth state changed:', event, session);
-    
+
     if (event === 'SIGNED_IN' && session && !isRedirecting) {
       console.log('User signed in successfully:', session.user);
       isRedirecting = true;
-      window.location.href = '/demo_wave/demo';
+      window.location.href = '/demo_wave/search';
     }
-    
+
     if (event === 'SIGNED_OUT') {
       console.log('User signed out');
       isRedirecting = false;
@@ -340,15 +372,15 @@
   window.addEventListener('load', async () => {
     if (sessionChecked) return;
     sessionChecked = true;
-    
+
     console.log('Page loaded, checking session...');
     const { data: { session } } = await supabase.auth.getSession();
     console.log('Current session:', session);
-    
+
     if (session && !isRedirecting) {
       console.log('Session found, redirecting to demo...');
       isRedirecting = true;
-      window.location.href = '/demo_wave/demo';
+      window.location.href = '/demo_wave/search';
     }
   });
   */

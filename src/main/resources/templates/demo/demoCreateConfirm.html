@@ -439,12 +439,10 @@
       <!-- Action Buttons -->
       <div class="action-section">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="/demo_wave/demo/create">
-            <button type="button" class="btn-back w-full sm:w-auto">
-              <i class="fas fa-arrow-left"></i>
-              <span>戻って修正する</span>
-            </button>
-          </a>
+          <button type="submit" formaction="/demo_wave/demo/create" formmethod="post" class="btn-back w-full sm:w-auto" name="back" value="true">
+            <i class="fas fa-arrow-left"></i>
+            <span>戻って修正する</span>
+          </button>
           <button type="submit" class="btn-submit w-full sm:w-auto">
             <i class="fas fa-check-circle"></i>
             <span>作成して公開</span>

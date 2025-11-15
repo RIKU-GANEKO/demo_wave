@@ -626,7 +626,7 @@
               <i class="fas fa-users"></i>
               <h3>参加デモがありません</h3>
               <p>まだ参加しているデモがありません。<br>新しいデモを探してみませんか？</p>
-              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+              <a href="/demo_wave/search" class="action-button">デモを探す</a>
             </div>
           </div>
 
@@ -657,7 +657,7 @@
               <i class="fas fa-heart"></i>
               <h3>お気に入りデモがありません</h3>
               <p>まだお気に入りのデモがありません。<br>気になるデモをお気に入りに追加しましょう。</p>
-              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+              <a href="/demo_wave/search" class="action-button">デモを探す</a>
             </div>
           </div>
 
@@ -693,7 +693,7 @@
               <i class="fas fa-yen-sign"></i>
               <h3>支援デモがありません</h3>
               <p>まだ支援しているデモがありません。<br>デモを支援してみませんか？</p>
-              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+              <a href="/demo_wave/search" class="action-button">デモを探す</a>
             </div>
           </div>
 
@@ -726,20 +726,22 @@
                   style="display: none;">
                   <div class="gift-detail-list">
                     <div th:each="detail : ${summary.details}" class="gift-detail-item">
-                      <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                          <h5 class="gift-detail-demo-title" th:text="${detail.demoName}">デモ名</h5>
-                          <div class="gift-detail-date">
-                            <i class="fas fa-calendar-alt mr-1"></i>
-                            <span th:text="${detail.demoDate}">2025-06-15</span>
+                      <a th:href="@{/demo/show(demoId=${detail.demoId})}" class="block hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2">
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h5 class="gift-detail-demo-title hover:text-blue-600 transition-colors" th:text="${detail.demoName}">デモ名</h5>
+                            <div class="gift-detail-date">
+                              <i class="fas fa-calendar-alt mr-1"></i>
+                              <span th:text="${detail.demoDate}">2025-06-15</span>
+                            </div>
+                          </div>
+                          <div class="gift-detail-amount">
+                            <i class="fas fa-yen-sign mr-1"></i>
+                            <span th:text="${#numbers.formatInteger(detail.amount, 0, 'COMMA')}">500</span>
+                            <span class="text-sm">円</span>
                           </div>
                         </div>
-                        <div class="gift-detail-amount">
-                          <i class="fas fa-yen-sign mr-1"></i>
-                          <span th:text="${#numbers.formatInteger(detail.amount, 0, 'COMMA')}">500</span>
-                          <span class="text-sm">円</span>
-                        </div>
-                      </div>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -750,7 +752,7 @@
               <i class="fas fa-gift"></i>
               <h3>受取支援金がありません</h3>
               <p>まだ支援金を受け取っていません。<br>デモに参加して活動を盛り上げましょう。</p>
-              <a href="/demo_wave/demo" class="action-button">デモを探す</a>
+              <a href="/demo_wave/search" class="action-button">デモを探す</a>
             </div>
           </div>
         </div>

@@ -11,16 +11,6 @@ import lombok.AllArgsConstructor;
 class DemoService {
 	private final DemoFacadeDBLogic demoFacadeDBLogic;
 
-	ModelAndView rootByGet(DemoGetContext demoGetContext) {
-		demoGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
-		demoGetContext.init();
-
-		demoGetContext.getOrganizerUserName();
-		demoGetContext.fetchDemo();
-		demoGetContext.setModelAndView();
-		return demoGetContext.getMv();
-	}
-
 	ModelAndView showByGet(DemoShowGetContext demoShowGetContext) throws DataAccessException {
 		// runtime exceptionは何が出るかわからないから、
 		demoShowGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
@@ -43,6 +33,14 @@ class DemoService {
 	}
 
 	ModelAndView createByPost(DemoCreatePostContext demoCreatePostContext) {
+		demoCreatePostContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+
+		// 確認画面から戻る場合は、フォームデータを保持して作成画面を再表示
+		if (demoCreatePostContext.isBackFromConfirm()) {
+			demoCreatePostContext.setBackModelAndView();
+			return demoCreatePostContext.getModelAndView();
+		}
+
 		if (demoCreatePostContext.hasErrors()) {
 			demoCreatePostContext.setErrorModelAndView();
 			return demoCreatePostContext.getModelAndView();
@@ -70,6 +68,7 @@ class DemoService {
 
 	ModelAndView createCompleteByGet(
 			DemoCreateCompleteGetContext demoCreateCompleteGetContext) {
+		demoCreateCompleteGetContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
 		demoCreateCompleteGetContext.setModelAndView();
 		return demoCreateCompleteGetContext.getModelAndView();
 	}
@@ -99,6 +98,12 @@ class DemoService {
 
 	ModelAndView editByPost(DemoEditPostContext demoEditPostContext) {
 		demoEditPostContext.setDemoFacadeDBLogic(demoFacadeDBLogic);
+
+		// 確認画面から戻る場合は、フォームデータを保持して編集画面を再表示
+		if (demoEditPostContext.isBackFromConfirm()) {
+			demoEditPostContext.setBackModelAndView();
+			return demoEditPostContext.getModelAndView();
+		}
 
 		if (demoEditPostContext.hasErrors()) {
 			demoEditPostContext.setErrorModelAndView();

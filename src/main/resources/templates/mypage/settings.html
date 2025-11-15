@@ -318,72 +318,40 @@
       プロフィール情報
     </h3>
 
-    <div class="info-box">
-      <p><i class="fas fa-info-circle" style="color: #2563eb; margin-right: 8px;"></i>現在、プロフィール情報の編集機能は開発中です。</p>
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="info-box" style="background: #f0fdf4; border-left-color: #22c55e; margin-bottom: 24px;">
+      <p style="color: #166534;">
+        <i class="fas fa-check-circle" style="color: #22c55e; margin-right: 8px;"></i>
+        <span th:text="${successMessage}"></span>
+      </p>
     </div>
 
-    <form>
+    <!-- Error Message -->
+    <div th:if="${errorMessage}" class="info-box" style="background: #fef2f2; border-left-color: #ef4444; margin-bottom: 24px;">
+      <p style="color: #991b1b;">
+        <i class="fas fa-exclamation-circle" style="color: #ef4444; margin-right: 8px;"></i>
+        <span th:text="${errorMessage}"></span>
+      </p>
+    </div>
+
+    <form id="profileForm" method="post" th:action="@{/mypage/settings/profile}">
       <div class="form-group">
         <label class="form-label">ユーザー名</label>
-        <input type="text" class="form-input" th:value="${user.name}" disabled>
+        <input type="text" name="name" class="form-input" th:value="${user.name}" required minlength="1" maxlength="100">
+        <p class="text-sm text-gray-500 mt-1">公開される表示名です。自由に変更できます。</p>
       </div>
 
       <div class="form-group">
         <label class="form-label">メールアドレス</label>
         <input type="email" class="form-input" th:value="${user.email}" disabled>
+        <p class="text-sm text-gray-500 mt-1">メールアドレスは現在変更できません。</p>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">登録日</label>
-        <input type="text" class="form-input" th:value="${#temporals.format(user.createdAt, 'yyyy年MM月dd日')}" disabled>
-      </div>
-
-      <!-- Future feature: Enable editing
       <div class="flex gap-3">
         <button type="submit" class="btn-primary">変更を保存</button>
-        <button type="button" class="btn-secondary">キャンセル</button>
+        <button type="button" class="btn-secondary" onclick="window.location.reload()">キャンセル</button>
       </div>
-      -->
     </form>
-  </div>
-
-  <!-- Notification Settings -->
-  <div class="content-card">
-    <h3 class="card-title">
-      <i class="fas fa-bell"></i>
-      通知設定
-    </h3>
-
-    <div class="info-box">
-      <p><i class="fas fa-info-circle" style="color: #2563eb; margin-right: 8px;"></i>通知機能は現在開発中です。今後、デモの開催通知やお知らせを受け取れるようになります。</p>
-    </div>
-  </div>
-
-  <!-- Privacy Settings -->
-  <div class="content-card">
-    <h3 class="card-title">
-      <i class="fas fa-shield-alt"></i>
-      プライバシー設定
-    </h3>
-
-    <div class="info-box">
-      <p><i class="fas fa-info-circle" style="color: #2563eb; margin-right: 8px;"></i>プライバシー設定は現在開発中です。</p>
-    </div>
-  </div>
-
-  <!-- Danger Zone -->
-  <div class="danger-zone">
-    <div class="danger-zone-title">
-      <i class="fas fa-exclamation-triangle"></i>
-      危険な操作
-    </div>
-    <p class="danger-zone-desc">
-      この操作は取り消すことができません。慎重に行ってください。
-    </p>
-    <button class="btn-danger" onclick="alert('アカウント削除機能は現在開発中です。')">
-      <i class="fas fa-trash-alt" style="margin-right: 6px;"></i>
-      アカウントを削除
-    </button>
   </div>
 </main>
 

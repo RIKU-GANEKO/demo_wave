@@ -13,7 +13,7 @@ public record DemoWithParticipantDTO(
 		Long participantCount,
 		BigDecimal totalDonationAmount,
 		Integer categoryId,
-		String categoryName,
+		String categoryName,  // 日本語カテゴリー名（ja_nameから取得）
 		String prefectureName,
 		String organizerName
 ) {}

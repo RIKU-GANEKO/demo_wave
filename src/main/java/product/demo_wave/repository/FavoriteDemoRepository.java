@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import product.demo_wave.entity.Demo;
@@ -18,6 +20,9 @@ public interface FavoriteDemoRepository extends JpaRepository<FavoriteDemo, Inte
 
 	Optional<FavoriteDemo> findByDemoAndUser(Demo demo, User user);
 
-	List<FavoriteDemo> findAllByUserAndDeletedAtIsNull(User user);
+	// お気に入りのデモを取得（開催予定優先、開催日が新しい順）
+	@Query("SELECT f FROM FavoriteDemo f WHERE f.user = :user AND f.deletedAt IS NULL " +
+	       "ORDER BY CASE WHEN f.demo.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, f.demo.demoStartDate DESC")
+	List<FavoriteDemo> findAllByUserAndDeletedAtIsNull(@Param("user") User user);
 
 }

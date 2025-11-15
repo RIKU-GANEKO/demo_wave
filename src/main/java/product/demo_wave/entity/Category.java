@@ -33,6 +33,9 @@ public class Category {
   @Column(name = "name", nullable = false)
   private String name;
 
+  @Column(name = "ja_name", nullable = false)
+  private String jaName;
+
   @Column(name = "image_url", nullable = false)
   private String imageUrl;
 

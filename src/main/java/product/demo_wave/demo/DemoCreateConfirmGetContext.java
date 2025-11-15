@@ -24,9 +24,9 @@ class DemoCreateConfirmGetContext {
     // Get category and prefecture names for display
     Category category = demoFacadeDBLogic.fetchCategory(demoForm.categoryId());
     Prefecture prefecture = demoFacadeDBLogic.fetchPrefecture(demoForm.prefectureId());
-    
+
     this.modelAndView.addObject("demoForm", demoForm);
-    this.modelAndView.addObject("selectedCategoryName", category.getName());
+    this.modelAndView.addObject("selectedCategoryName", category.getJaName());
     this.modelAndView.addObject("selectedPrefectureName", prefecture.getName());
     this.modelAndView.setViewName("demo/demoCreateConfirm");
   }

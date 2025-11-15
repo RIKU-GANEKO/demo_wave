@@ -457,6 +457,7 @@
             class="form-input"
             th:value="${demoForm?.title}"
             maxlength="255"
+            required
           />
           <div class="char-counter">
             <span id="titleCounter">0</span> / 255文字
@@ -478,10 +479,13 @@
             id="categoryId"
             name="categoryId"
             class="form-input"
-            th:value="${demoForm?.categoryId}"
+            required
           >
             <option value="">カテゴリを選択してください</option>
-            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.jaName}"
+                    th:selected="${category.id == demoForm?.categoryId}"></option>
           </select>
           <p th:if="${#fields.hasErrors('categoryId')}" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
@@ -502,6 +506,7 @@
             placeholder="デモの目的、背景、参加者へのメッセージなどを詳しく記入してください&#10;&#10;例：&#10;私たちは気候変動問題に対する政府の対応が不十分であると考えています。&#10;このデモを通じて、再生可能エネルギーへの転換を加速させる政策を求めます。&#10;市民の皆様のご参加をお待ちしています。"
             class="form-textarea"
             th:text="${demoForm?.content}"
+            required
           ></textarea>
           <p class="input-hint">
             <i class="fas fa-lightbulb"></i>
@@ -538,6 +543,7 @@
             name="demoDate"
             class="form-input"
             th:value="${demoForm?.demoDate}"
+            required
           />
           <p th:if="${#fields.hasErrors('demoDate')}" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
@@ -559,6 +565,7 @@
               name="demoStartTime"
               class="form-input"
               th:value="${demoForm?.demoStartTime}"
+              required
             />
             <p th:if="${#fields.hasErrors('demoStartTime')}" class="error-message">
               <i class="fas fa-exclamation-circle"></i>
@@ -578,6 +585,7 @@
               name="demoEndTime"
               class="form-input"
               th:value="${demoForm?.demoEndTime}"
+              required
             />
             <p th:if="${#fields.hasErrors('demoEndTime')}" class="error-message">
               <i class="fas fa-exclamation-circle"></i>
@@ -622,14 +630,26 @@
             placeholder="例：渋谷駅前広場"
             class="form-input"
             th:value="${demoForm?.demoPlace}"
+            required
           />
+          <button type="button"
+            id="showMapBtn"
+            class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center gap-2"
+            onclick="handleShowMapClick()">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>マップを表示して開催場所を確定する</span>
+          </button>
           <p class="input-hint">
-            <i class="fas fa-search-location"></i>
-            会場名を入力すると候補が表示されます。候補から選択すると自動的に住所と位置情報が設定されます
+            <i class="fas fa-info-circle"></i>
+            会場名を入力後、上記のボタンを押すと地図が表示され、位置情報が自動的に設定されます
           </p>
           <p th:if="${#fields.hasErrors('demoPlace')}" class="error-message">
             <i class="fas fa-exclamation-circle"></i>
             <span th:errors="*{demoPlace}"></span>
+          </p>
+          <p id="mapValidationError" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>「マップを表示して開催場所を確定する」ボタンを押して、地図上で場所を確認してください</span>
           </p>
         </div>
 
@@ -650,10 +670,10 @@
         </div>
 
         <!-- Hidden Fields -->
-        <input type="hidden" id="demoAddress" name="demoAddress" />
-        <input type="hidden" id="prefectureId" name="prefectureId" />
-        <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" />
-        <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" />
+        <input type="hidden" id="demoAddress" name="demoAddress" th:value="${demoForm?.demoAddress}" />
+        <input type="hidden" id="prefectureId" name="prefectureId" th:value="${demoForm?.prefectureId}" />
+        <input type="hidden" id="demoAddressLatitude" name="demoAddressLatitude" th:value="${demoForm?.demoAddressLatitude}" />
+        <input type="hidden" id="demoAddressLongitude" name="demoAddressLongitude" th:value="${demoForm?.demoAddressLongitude}" />
       </div>
 
       <!-- Activity Report Section -->
@@ -735,29 +755,62 @@
       });
       console.log('Map initialized');
 
-      // 会場名入力時に自動ジオコーディング
-      const placeInput = document.getElementById('demoPlace');
-      if (placeInput) {
-        console.log('Place input found');
+      // 確認画面から戻った時など、既に緯度経度が設定されている場合はマーカーを表示
+      const existingLat = document.getElementById('demoAddressLatitude').value;
+      const existingLng = document.getElementById('demoAddressLongitude').value;
+      if (existingLat && existingLng) {
+        const lat = parseFloat(existingLat);
+        const lng = parseFloat(existingLng);
+        console.log('Existing coordinates found, displaying marker:', lat, lng);
 
-        // blurイベントで自動的にジオコーディングを実行
-        let lastValue = placeInput.value;
-        placeInput.addEventListener('blur', function() {
-          const placeName = placeInput.value.trim();
-          // 値が変更されていて、空でない場合のみ実行
-          if (placeName && placeName !== lastValue) {
-            lastValue = placeName;
-            geocodePlace(placeName);
-          }
+        const placeInput = document.getElementById('demoPlace');
+
+        // 地図コンテナを表示
+        document.getElementById('mapContainer').classList.remove('hidden');
+
+        // 地図の中心を既存の位置に移動
+        map.setCenter({ lat: lat, lng: lng });
+
+        // マーカーを表示
+        if (marker) {
+          marker.setMap(null);
+        }
+        marker = new google.maps.Marker({
+          position: { lat: lat, lng: lng },
+          map: map,
+          title: placeInput ? placeInput.value : "開催場所"
         });
 
-        console.log('Auto-geocoding enabled on blur');
+        // 住所情報を表示
+        const addressValue = document.getElementById('demoAddress').value;
+        if (addressValue) {
+          document.getElementById('addressText').textContent = addressValue;
+        }
       }
 
       console.log('=== initMap completed successfully ===');
     } catch (error) {
       console.error('Error in initMap:', error);
     }
+  }
+
+  // Handle show map button click
+  function handleShowMapClick() {
+    const placeInput = document.getElementById('demoPlace');
+    const placeName = placeInput.value.trim();
+
+    if (!placeName) {
+      alert('会場名を入力してください');
+      placeInput.focus();
+      return;
+    }
+
+    if (!geocoder) {
+      alert('Google Maps APIがまだ読み込まれていません。少々お待ちください。');
+      return;
+    }
+
+    geocodePlace(placeName);
   }
 
   // Geocoding function
@@ -837,6 +890,9 @@
 
         placeSelected = true;
 
+        // エラーメッセージを非表示
+        $('#mapValidationError').hide();
+
         alert('場所が設定されました: ' + place.formatted_address);
 
         console.log('Place info set:', {
@@ -886,10 +942,26 @@
       }
     });
 
-    // Form submission validation - 位置情報の検証を削除
+    // Form submission validation - 位置情報の検証
     $('form').on('submit', function(e) {
-      // 位置情報がなくてもフォーム送信を許可
-      // バックエンドで会場名から位置情報を取得する
+      const latitude = $('#demoAddressLatitude').val();
+      const longitude = $('#demoAddressLongitude').val();
+      const placeName = $('#demoPlace').val().trim();
+
+      // 会場名が入力されているのに位置情報が設定されていない場合
+      if (placeName && (!latitude || !longitude)) {
+        e.preventDefault();
+
+        // エラーメッセージを表示
+        $('#mapValidationError').show();
+
+        // 会場名フィールドまでスクロール
+        document.getElementById('demoPlace').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+      }
+
+      // バリデーションOKならエラーメッセージを非表示
+      $('#mapValidationError').hide();
       return true;
     });
   });

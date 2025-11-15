@@ -9,6 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Demo Card Styles -->
   <th:block th:replace="~{common/demoCard :: demoCardStyles}"></th:block>
 
@@ -148,9 +151,9 @@
                  class="dropdown-item"
                  th:classappend="${category.id == selectedCategoryId} ? 'active' : ''"
                  th:data-category-id="${category.id}"
-                 th:data-category-name="${category.name}"
+                 th:data-category-name="${category.jaName}"
                  onclick="selectCategoryFromData(this)"
-                 th:text="${category.name}">
+                 th:text="${category.jaName}">
             </div>
           </div>
         </div>
@@ -228,14 +231,72 @@
     let currentKeyword = /*[[${keyword}]]*/ '';
     let currentSort = /*[[${sort}]]*/ 'newest';
 
-    // Initialize labels
-    window.addEventListener('DOMContentLoaded', function() {
+    // OAuth callback handler
+    async function handleOAuthCallback() {
+      // Check for OAuth callback (access_token in URL hash)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+      if (hashParams.get('access_token')) {
+        console.log('OAuth callback detected in search page');
+
+        try {
+          // Get Supabase configuration from API
+          const configResponse = await fetch('/demo_wave/api/config/supabase');
+          const config = await configResponse.json();
+
+          // Import Supabase client
+          const { createClient } = supabase;
+          const supabaseClient = createClient(config.url, config.anonKey);
+
+          // Get session
+          const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+
+          if (session && session.user) {
+            console.log('Authentication successful:', session.user.email);
+
+            // Call backend API to authenticate user
+            const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+              },
+              body: JSON.stringify({
+                name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+                imageUrl: session.user.user_metadata?.avatar_url || null
+              })
+            });
+
+            if (registerResponse.ok) {
+              console.log('User authenticated successfully');
+
+              // Set cookies
+              document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+              document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+
+              // Clean up URL hash and reload
+              window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+              window.location.reload();
+            } else {
+              console.error('Authentication failed');
+            }
+          }
+        } catch (error) {
+          console.error('Error during OAuth callback:', error);
+        }
+      }
+    }
+
+    // Initialize labels and handle OAuth callback
+    window.addEventListener('DOMContentLoaded', async function() {
+      // Handle OAuth callback first
+      await handleOAuthCallback();
       // Set category label
       if (currentCategoryId) {
         const categories = /*[[${categories}]]*/ [];
         const selectedCategory = categories.find(c => c.id === currentCategoryId);
         if (selectedCategory) {
-          document.getElementById('categoryLabel').textContent = selectedCategory.name;
+          document.getElementById('categoryLabel').textContent = selectedCategory.jaName;
           document.getElementById('categoryButton').classList.add('active');
         }
       }

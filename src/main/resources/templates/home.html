@@ -9,6 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Demo Card Styles -->
   <th:block th:replace="~{common/demoCard :: demoCardStyles}"></th:block>
 
@@ -700,6 +703,66 @@
 
 <script th:inline="javascript">
 /*<![CDATA[*/
+  // OAuth callback handler
+  async function handleOAuthCallback() {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+    if (hashParams.get('access_token')) {
+      console.log('OAuth callback detected in home page');
+
+      try {
+        // Get Supabase configuration from API
+        const configResponse = await fetch('/demo_wave/api/config/supabase');
+        const config = await configResponse.json();
+
+        // Import Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(config.url, config.anonKey);
+
+        // Get session
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+
+        if (session && session.user) {
+          console.log('Authentication successful:', session.user.email);
+
+          // Call backend API to authenticate user
+          const registerResponse = await fetch('/demo_wave/api/user/create/email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+              imageUrl: session.user.user_metadata?.avatar_url || null
+            })
+          });
+
+          if (registerResponse.ok) {
+            console.log('User authenticated successfully');
+
+            // Set cookies
+            document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+            document.cookie = `supabase-user-email=${session.user.email}; path=/; max-age=3600; SameSite=Lax`;
+
+            // Clean up URL hash and reload
+            window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+            window.location.reload();
+          } else {
+            console.error('Authentication failed');
+          }
+        }
+      } catch (error) {
+        console.error('Error during OAuth callback:', error);
+      }
+    }
+  }
+
+  // Initialize OAuth callback handler
+  window.addEventListener('DOMContentLoaded', async function() {
+    await handleOAuthCallback();
+  });
+
   // Aside functionality - Search by tag
   function searchByTag(tag) {
     const searchInput = document.getElementById('searchInput');

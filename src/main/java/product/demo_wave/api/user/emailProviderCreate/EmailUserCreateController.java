@@ -63,8 +63,9 @@ public class EmailUserCreateController {
 
 		ResponseEntity<APIResponse> response = emailUserCreateService.postUser(context);
 
-		// ユーザー作成が成功した場合、Spring SecurityのSecurityContextに認証情報を設定
-		if (response.getStatusCode() == HttpStatus.CREATED) {
+		// ユーザー作成または更新が成功した場合、Spring SecurityのSecurityContextに認証情報を設定
+		// 201 Created（新規ユーザー）または 200 OK（既存ユーザーのマージ）の場合
+		if (response.getStatusCode() == HttpStatus.CREATED || response.getStatusCode() == HttpStatus.OK) {
 			// Supabaseユーザー用の簡易UserDetailsを作成
 			SupabaseUserDetails supabaseUser = new SupabaseUserDetails(decodedToken.getEmail(), decodedToken.getUid());
 
@@ -78,6 +79,7 @@ public class EmailUserCreateController {
 
 			// SecurityContextに認証情報を設定
 			SecurityContextHolder.getContext().setAuthentication(authToken);
+			System.out.println("✅ Authentication set in SecurityContext for user: " + decodedToken.getEmail());
 		}
 
 		return response;

@@ -305,7 +305,7 @@
           },
           body: JSON.stringify({
             name: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
-            profileImagePath: session.user.user_metadata?.avatar_url || null
+            imageUrl: session.user.user_metadata?.avatar_url || null
           })
         });
 
@@ -313,9 +313,9 @@
         const registerData = await registerResponse.json();
         console.log('Backend API response:', registerData);
 
-        if (registerResponse.ok || registerResponse.status === 409) {
-          // 登録成功または既に登録済み（409 Conflict）の場合
-          console.log('User registered or already exists');
+        if (registerResponse.ok) {
+          // 登録成功（新規: 201 Created、既存: 200 OK）
+          console.log('User registered successfully');
 
           // セッション情報をCookieに保存（バックエンドで読み取り可能にする）
           document.cookie = `supabase-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;

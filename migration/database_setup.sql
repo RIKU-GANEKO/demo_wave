@@ -88,11 +88,15 @@ DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    ja_name VARCHAR(255) NOT NULL,
     image_url VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
+
+COMMENT ON COLUMN category.name IS '英語名（システム内部用）';
+COMMENT ON COLUMN category.ja_name IS '日本語名（表示用）';
 
 -- demoテーブルの作成
 DROP TABLE IF EXISTS demo CASCADE;

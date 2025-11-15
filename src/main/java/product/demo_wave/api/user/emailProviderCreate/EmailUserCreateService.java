@@ -21,26 +21,38 @@ public class EmailUserCreateService {
 	private final EmailUserCreateDBLogic emailUserCreateDBLogic;
 
 	/**
-	 * {@link EmailUserCreateContext}を使用してユーザー作成のレスポンスを返すメソッドです。
+	 * {@link EmailUserCreateContext}を使用してユーザー作成・更新のレスポンスを返すメソッドです。
 	 *
-	 * ユーザー追加の処理フローは以下の通りです：
+	 * ユーザー処理フローは以下の通りです：
 	 * <ol>
 	 *     <li>{@link EmailUserCreateDBLogic}を設定します。</li>
-	 *     <li>APIキーが正しいかどうかを確認します。</li>
-	 *     <li>APIキーが正しければ、デモ一覧情報を取得し、APIレスポンスを生成します。</li>
-	 *     <li>APIキーが正しくない場合は401エラーレスポンスを返します。</li>
+	 *     <li>新規ユーザーの場合は作成、既存ユーザーの場合はマージ処理を行います。</li>
+	 *     <li>成功した場合は適切なHTTPステータスを返します（新規: 201 Created、既存: 200 OK）。</li>
 	 *     <li>その他のエラーが発生した場合は500エラーレスポンスを返します。</li>
 	 * </ol>
 	 *
 	 * @param emailUserCreateContext
-	 * @return ユーザー追加に関するレスポンス
+	 * @return ユーザー作成・更新に関するレスポンス
 	 */
 	ResponseEntity<APIResponse> postUser(EmailUserCreateContext emailUserCreateContext) {
 		emailUserCreateContext.setEmailUserCreateDBLogic(emailUserCreateDBLogic);
 		try {
-			return emailUserCreateContext.postUser();
+			// 既存ユーザーかどうかをチェック（saveUser内でマージ処理される）
+			boolean isExistingUser = emailUserCreateContext.isExistingUser();
+
+			// 新規作成またはマージ処理を実行
+			ResponseEntity<APIResponse> response = emailUserCreateContext.postUser();
+
+			// 既存ユーザーの場合は200 OKに変更（マージ処理が成功したことを示す）
+			if (isExistingUser && response.getStatusCode() == HttpStatus.CREATED) {
+				return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
+			}
+
+			return response;
 		}
 		catch (Exception e) { // 内部的なエラーが起きた場合
+			System.err.println("Error in postUser: " + e.getMessage());
+			e.printStackTrace();
 			return emailUserCreateContext.errorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getDescription(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}

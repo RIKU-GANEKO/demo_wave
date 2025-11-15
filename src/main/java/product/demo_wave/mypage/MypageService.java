@@ -10,11 +10,6 @@ import lombok.AllArgsConstructor;
 class MypageService {
 	private final MypageFacadeDBLogic mypageFacadeDBLogic;
 
-	ModelAndView rootByGet(MypageGetContext mypageGetContext) {
-		mypageGetContext.setModelAndView();
-		return mypageGetContext.getMv();
-	}
-
 	ModelAndView userByGet(MypageGetUserContext mypageGetUserContext) {
 		mypageGetUserContext.setMypageFacadeDBLogic(mypageFacadeDBLogic);
 		mypageGetUserContext.fetchUser();
@@ -27,6 +22,10 @@ class MypageService {
 		mypageGetUserContext.fetchMonthlyGiftSummaries();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
+	}
+
+	void updateUserName(java.util.UUID userId, String name) {
+		mypageFacadeDBLogic.updateUserName(userId, name);
 	}
 
 //	ModelAndView showByGet(demoShowGetContext demoShowGetContext) throws DataAccessException {
