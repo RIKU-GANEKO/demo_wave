@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["maven", "jdk21"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -Dspring.profiles.active=prod -Dserver.port=$PORT -jar target/demo_wave-0.0.1-SNAPSHOT.jar"
