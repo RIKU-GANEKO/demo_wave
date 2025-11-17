@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>デモを探す - Demo Wave</title>
   <meta name="description" content="Demo Waveでデモを探す。カテゴリーや地域で絞り込んで、あなたが参加したいデモを見つけよう。">
-  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -225,6 +225,9 @@
 
   <script th:inline="javascript">
     /*<![CDATA[*/
+    // Context path for URL generation
+    const contextPath = /*[[${contextPath}]]*/ '';
+
     // Get current parameters
     let currentCategoryId = /*[[${selectedCategoryId}]]*/ null;
     let currentPrefectureId = /*[[${selectedPrefectureId}]]*/ null;
@@ -241,7 +244,7 @@
 
         try {
           // Get Supabase configuration from API
-          const configResponse = await fetch('/api/config/supabase');
+          const configResponse = await fetch(contextPath + '/api/config/supabase');
           const config = await configResponse.json();
 
           // Import Supabase client
@@ -255,7 +258,7 @@
             console.log('Authentication successful:', session.user.email);
 
             // Call backend API to authenticate user
-            const registerResponse = await fetch('/api/user/create/email', {
+            const registerResponse = await fetch(contextPath + '/api/user/create/email', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

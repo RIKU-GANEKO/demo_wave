@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>お気に入り - Demo Wave</title>
   <meta name="description" content="お気に入りに登録したデモの一覧">
-  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -358,7 +358,8 @@
   <!-- Demo Cards Grid -->
   <div th:if="${!#lists.isEmpty(favoriteDemos)}" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <div th:each="demo : ${favoriteDemos}" class="demo-card"
-         th:onclick="|window.location.href='/demo/show?demoId=${demo.id}'|">
+         th:data-demo-url="@{/demo/show(demoId=${demo.id})}"
+         onclick="window.location.href=this.getAttribute('data-demo-url')">
 
       <!-- Content -->
       <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
@@ -414,7 +415,7 @@
     <i class="fas fa-heart"></i>
     <h3>お気に入りデモがありません</h3>
     <p>まだお気に入りのデモがありません。<br>気になるデモをお気に入りに追加しましょう。</p>
-    <a href="/search" class="action-button">デモを探す</a>
+    <a th:href="@{/search}" class="action-button">デモを探す</a>
   </div>
 </main>
 

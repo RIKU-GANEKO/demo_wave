@@ -1,6 +1,5 @@
 package product.demo_wave.repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -12,11 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import product.demo_wave.api.demoList.DemoListRecord;
-import product.demo_wave.api.demoList.FavoriteDemoListRecord;
-import product.demo_wave.api.demoList.ranking.donation.DemoDonationRankingRecord;
-import product.demo_wave.api.demoList.ranking.participation.DemoParticipationRankingRecord;
-import product.demo_wave.api.demoList.todayDemoList.TodayDemoListRecord;
 import product.demo_wave.demo.DemoWithParticipantDTO;
 import product.demo_wave.entity.Demo;
 
@@ -145,143 +139,6 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
           @Param("prefectureId") Integer prefectureId,
           @Param("keyword") String keyword,
           Pageable pageable);
-
-  @Query("""
-    SELECT new product.demo_wave.api.demoList.DemoListRecord(
-        d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
-        COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
-    )
-    FROM Demo d
-    LEFT JOIN d.category c
-    LEFT JOIN d.user u
-    LEFT JOIN Participant p ON p.demo = d
-    LEFT JOIN Payment pay ON pay.demo = d
-    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-  """)
-  List<DemoListRecord> getDemoList();
-
-  @Query("""
-    SELECT new product.demo_wave.api.demoList.DemoListRecord(
-        d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
-        COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
-    )
-    FROM Demo d
-    LEFT JOIN d.category c
-    LEFT JOIN d.user u
-    LEFT JOIN Participant p ON p.demo = d
-    LEFT JOIN Payment pay ON pay.demo = d
-    WHERE (:prefectureId IS NULL OR d.prefecture.id = :prefectureId)
-      AND (:categoryId IS NULL OR d.category.id = :categoryId)
-      AND (:demoDate IS NULL OR FUNCTION('DATE', d.demoStartDate) = :demoDate)
-      AND ((:keyword IS NULL OR :keyword = '') OR d.title LIKE %:keyword% OR d.content LIKE %:keyword%)
-    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-             d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-""")
-  List<DemoListRecord> getDemoSearchList(
-          @Param("prefectureId") Integer prefectureId,
-          @Param("demoDate") LocalDate demoDate,
-          @Param("categoryId") Integer categoryId,
-          @Param("keyword") String keyword
-  );
-
-  @Query("""
-  SELECT new product.demo_wave.api.demoList.todayDemoList.TodayDemoListRecord(
-    d.id, d.title, d.content, d.demoStartDate, d.demoEndDate, d.demoPlace,
-    d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
-    COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
-  )
-  FROM Demo d
-  LEFT JOIN d.user u
-  LEFT JOIN Participant p ON p.demo = d
-  LEFT JOIN Payment pay ON pay.demo = d
-  WHERE p.user.id = :userId
-    AND FUNCTION('DATE', d.demoStartDate) = CURRENT_DATE
-  GROUP BY d.id, d.title, d.content, d.demoStartDate, d.demoEndDate, d.demoPlace,
-    d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-""")
-  List<TodayDemoListRecord> getTodayDemoList(@Param("userId") UUID userId);
-
-  @Query("""
-    SELECT new product.demo_wave.api.demoList.FavoriteDemoListRecord(
-        d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath,
-        COUNT(DISTINCT p.id), COALESCE(SUM(pay.donateAmount), 0)
-    )
-    FROM Demo d
-    LEFT JOIN d.category c
-    LEFT JOIN d.user u
-    LEFT JOIN Participant p ON p.demo = d
-    LEFT JOIN Payment pay ON pay.demo = d
-    WHERE d.id IN :favoriteDemoIds
-    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-        d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-""")
-  List<FavoriteDemoListRecord> getFavoriteDemoList(@Param("favoriteDemoIds") List<Integer> favoriteDemoIds);
-
-  @Query("""
-    SELECT new product.demo_wave.api.demoList.ranking.participation.DemoParticipationRankingRecord(
-        d.id,
-        d.title,
-        d.content,
-        c.imageUrl,
-        d.demoStartDate,
-        d.demoEndDate,
-        d.demoPlace,
-        d.demoAddressLatitude,
-        d.demoAddressLongitude,
-        u.name,
-        u.profileImagePath,
-        COUNT(DISTINCT p.id),
-        COALESCE(SUM(pay.donateAmount), 0)
-    )
-    FROM Demo d
-    LEFT JOIN d.category c
-    LEFT JOIN d.user u
-    LEFT JOIN Participant p ON p.demo = d
-    LEFT JOIN Payment pay ON pay.demo = d
-    WHERE d.demoStartDate BETWEEN :startOfMonth AND :endOfMonth
-    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-             d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-    ORDER BY COUNT(DISTINCT p.id) DESC
-""")
-  List<DemoParticipationRankingRecord> getTop10DemoParticipationRankingList(
-          @Param("startOfMonth") LocalDateTime startOfMonth,
-          @Param("endOfMonth") LocalDateTime endOfMonth
-  );
-
-  @Query("""
-    SELECT new product.demo_wave.api.demoList.ranking.donation.DemoDonationRankingRecord(
-        d.id,
-        d.title,
-        d.content,
-        c.imageUrl,
-        d.demoStartDate,
-        d.demoEndDate,
-        d.demoPlace,
-        d.demoAddressLatitude,
-        d.demoAddressLongitude,
-        u.name,
-        u.profileImagePath,
-        COUNT(DISTINCT p.id),
-        COALESCE(SUM(pay.donateAmount), 0)
-    )
-    FROM Demo d
-    LEFT JOIN d.category c
-    LEFT JOIN d.user u
-    LEFT JOIN Participant p ON p.demo = d
-    LEFT JOIN Payment pay ON pay.demo = d
-    WHERE d.demoStartDate BETWEEN :startOfMonth AND :endOfMonth
-    GROUP BY d.id, d.title, d.content, c.imageUrl, d.demoStartDate, d.demoEndDate, d.demoPlace,
-             d.demoAddressLatitude, d.demoAddressLongitude, u.name, u.profileImagePath
-    ORDER BY COALESCE(SUM(pay.donateAmount), 0) DESC
-""")
-  List<DemoDonationRankingRecord> getTop10DemoDonationRankingList(
-          @Param("startOfMonth") LocalDateTime startOfMonth,
-          @Param("endOfMonth") LocalDateTime endOfMonth
-  );
 
   @Query("SELECT d.id FROM Demo d WHERE d.demoStartDate BETWEEN :start AND :end")
   List<Integer> findDemoIdsByStartDateBetween(LocalDateTime start, LocalDateTime end);

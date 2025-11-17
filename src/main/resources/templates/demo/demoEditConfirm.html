@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>デモ編集確認 - Demo Wave</title>
   <meta name="description" content="Demo Waveでデモ作成内容を確認してください">
-  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -442,7 +442,7 @@
       <!-- Action Buttons -->
       <div class="action-section">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <button type="submit" formaction="/demo/edit" formmethod="post" class="btn-back w-full sm:w-auto" name="back" value="true">
+          <button type="submit" formth:action="@{/demo/edit}" formmethod="post" class="btn-back w-full sm:w-auto" name="back" value="true">
             <i class="fas fa-arrow-left"></i>
             <span>戻って修正する</span>
           </button>

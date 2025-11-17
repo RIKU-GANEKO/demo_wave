@@ -70,7 +70,7 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4">
-          <img src="/images/demowave_icon.png" alt="Demo Wave" class="w-full h-full object-cover">
+          <img th:src="@{/images/demowave_icon.png}" alt="Demo Wave" class="w-full h-full object-cover">
         </div>
         <h1 class="text-3xl font-bold text-gradient mb-2">Demo Wave</h1>
         <p class="text-gray-600 text-sm">あなたの声が社会を変える</p>
@@ -165,7 +165,7 @@
 
       <!-- Back to Home -->
       <div class="mt-4 text-center">
-        <a href="/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+        <a th:href="@{/}" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
           <i class="fas fa-arrow-left mr-2"></i>ホームに戻る
         </a>
       </div>
@@ -178,6 +178,13 @@
   </div>
 </div>
 
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // Context path for URL generation
+  const contextPath = /*[[${contextPath}]]*/ '';
+  /*]]>*/
+</script>
+
 <!-- Supabase SDK (一時的に無効化) -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
@@ -188,7 +195,7 @@
 
   async function initializeSupabase() {
     try {
-      const response = await fetch('/api/config/supabase');
+      const response = await fetch(contextPath + '/api/config/supabase');
       config = await response.json();
       
       supabase = createClient(config.url, config.anonKey);
@@ -227,7 +234,7 @@
       try {
         // バックエンドAPIにログイン/登録リクエストを送信
         console.log('Calling backend API to authenticate user...');
-        const registerResponse = await fetch('/api/user/create/email', {
+        const registerResponse = await fetch(contextPath + '/api/user/create/email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

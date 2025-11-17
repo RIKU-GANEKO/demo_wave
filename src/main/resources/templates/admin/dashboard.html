@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>管理者ダッシュボード - Demo Wave</title>
   <meta name="description" content="Demo Wave 管理者ダッシュボード">
-  <link rel="icon" href="/images/demowave_icon.png" type="image/png">
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -173,18 +173,18 @@
 <div class="admin-header">
   <div class="admin-header-content">
     <div class="admin-logo">
-      <img src="/images/demowave_icon.png" alt="Demo Wave" style="width: 32px; height: 32px;">
+      <img th:src="@{/images/demowave_icon.png}" alt="Demo Wave" style="width: 32px; height: 32px;">
       <span>Demo Wave Admin</span>
       <span class="admin-badge-small">管理者</span>
     </div>
     <div class="admin-nav">
-      <a href="/admin" class="nav-link">
+      <a th:href="@{/admin}" class="nav-link">
         <i class="fas fa-tachometer-alt"></i> ダッシュボード
       </a>
-      <a href="/" class="nav-link" target="_blank">
+      <a th:href="@{/}" class="nav-link" target="_blank">
         <i class="fas fa-external-link-alt"></i> サイトを表示
       </a>
-      <form method="post" action="/logout" style="display: inline;">
+      <form method="post" th:action="@{/logout}" style="display: inline;">
         <button type="submit" class="logout-btn">
           <i class="fas fa-sign-out-alt"></i> ログアウト
         </button>
@@ -207,7 +207,7 @@
   <!-- Menu Grid -->
   <div class="content-grid">
     <!-- CSV出力 -->
-    <a href="/admin/gift-export" class="menu-card">
+    <a th:href="@{/admin/gift-export}" class="menu-card">
       <div class="menu-icon">
         <i class="fas fa-file-csv"></i>
       </div>

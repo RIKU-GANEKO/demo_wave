@@ -353,7 +353,11 @@
     </div>
   </div>
 
-  <script>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    // Context path for URL generation
+    const contextPath = /*[[${contextPath}]]*/ '';
+
     // グローバル変数
     let todayDemos = [];
     let currentSlideIndex = 0;
@@ -368,7 +372,7 @@
       try {
         console.log('🔍 [Today Demo] Fetching today demos...');
 
-        const response = await fetch('/api/today-demos', {
+        const response = await fetch(contextPath + '/api/today-demos', {
           method: 'GET',
           credentials: 'same-origin' // Cookie（セッション）を送信
         });
@@ -556,7 +560,7 @@
         btn.textContent = '判定中...';
 
         // サーバーに送信（セッション認証を使用）
-        const response = await fetch('/api/location', {
+        const response = await fetch(contextPath + '/api/location', {
           method: 'POST',
           credentials: 'same-origin', // Cookie（セッション）を送信
           headers: {
