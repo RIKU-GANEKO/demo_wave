@@ -30,6 +30,9 @@ public class DonationController {
 	@Value("${stripe.key.secret}")
 	private String stripeSecretKey;
 
+	@Value("${other.app.base-url}")
+	private String baseUrl;
+
 	@PostMapping("/create-checkout-session")
 	public ResponseEntity<?> createCheckoutSession(@RequestBody DonationRequestDTO request) {
 		System.out.println("Received request: " + request);
@@ -55,6 +58,7 @@ public class DonationController {
 					.userEmail(userEmail)
 					.request(request)
 					.stripeSecretKey(stripeSecretKey)
+					.baseUrl(baseUrl)
 					.build();
 
 			return donationService.createCheckoutSession(context);

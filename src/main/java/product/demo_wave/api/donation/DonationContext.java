@@ -22,6 +22,7 @@ public class DonationContext {
 	private final String userEmail;
 	private final DonationRequestDTO request;
 	private final String stripeSecretKey;
+	private final String baseUrl;
 
 	public ResponseEntity<DonationCheckoutResponseDTO> createCheckoutSession() {
 		Stripe.apiKey = stripeSecretKey;
@@ -35,8 +36,8 @@ public class DonationContext {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
 					.setCustomerEmail(userEmail) // ログインユーザーのメールを自動設定
-					.setSuccessUrl("http://localhost:8082/demo_wave/demo/show?demoId=" + request.getDemoId() + "&payment_success=true")
-					.setCancelUrl("http://localhost:8082/demo_wave/demo/show?demoId=" + request.getDemoId() + "&payment_cancel=true")
+					.setSuccessUrl(baseUrl + "/demo/show?demoId=" + request.getDemoId() + "&payment_success=true")
+					.setCancelUrl(baseUrl + "/demo/show?demoId=" + request.getDemoId() + "&payment_cancel=true")
 					.addLineItem(SessionCreateParams.LineItem.builder()
 							.setQuantity(1L)
 							.setPriceData(SessionCreateParams.LineItem.PriceData.builder()
