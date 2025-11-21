@@ -243,11 +243,45 @@
       margin-bottom: 12px;
       border: 1px solid #e8e8e8;
       transition: all 0.2s;
+      display: block;
+      text-decoration: none;
+      color: inherit;
     }
 
     .demo-item:hover {
       background: white;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* スマホ時: 詳細ボタン非表示、枠全体をクリック可能に */
+    @media (max-width: 768px) {
+      .demo-item {
+        cursor: pointer;
+        position: relative;
+        padding-right: 40px;
+      }
+      .demo-item .action-button {
+        display: none;
+      }
+      .demo-item .demo-inner {
+        flex-direction: column;
+      }
+      /* タップ可能を示す矢印アイコン */
+      .demo-item::after {
+        content: '\f054';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 14px;
+      }
+      .demo-item:active {
+        background: #f3f4f6;
+        transform: scale(0.98);
+      }
     }
 
     .demo-title {
@@ -259,9 +293,16 @@
 
     .demo-meta {
       display: flex;
+      flex-wrap: wrap;
       gap: 16px;
       font-size: 14px;
       color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .demo-meta {
+        gap: 8px 16px;
+      }
     }
 
     .demo-meta-item {
@@ -336,33 +377,67 @@
 
     /* Tab Navigation */
     .tab-nav {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       border-bottom: 2px solid #f0f0f0;
       margin-bottom: 24px;
     }
 
+    /* スマホ対応: 768px以下で2列グリッド */
+    @media (max-width: 768px) {
+      .tab-nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        border-bottom: none;
+        padding-bottom: 12px;
+      }
+    }
+
+    /* 小さいスマホ: 480px以下で1列 */
+    @media (max-width: 480px) {
+      .tab-nav {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .tab-button {
-      padding: 12px 24px;
-      background: none;
-      border: none;
-      font-size: 14px;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 600;
       color: #666;
       cursor: pointer;
-      border-bottom: 3px solid transparent;
       transition: all 0.2s;
       display: flex;
       align-items: center;
+      justify-content: center;
+      white-space: nowrap;
     }
 
     .tab-button:hover {
       color: #2563eb;
+      background: #eff6ff;
+      border-color: #2563eb;
     }
 
     .tab-button.active {
       color: #2563eb;
-      border-bottom-color: #2563eb;
+      background: #eff6ff;
+      border-color: #2563eb;
+    }
+
+    /* スマホでアイコンを小さく */
+    @media (max-width: 768px) {
+      .tab-button {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+      .tab-button i {
+        margin-right: 4px !important;
+      }
     }
 
     .tab-content {
@@ -630,7 +705,7 @@
           <!-- Posted Demos Tab -->
           <div id="posted-tab" class="tab-content active">
             <div th:if="${!#lists.isEmpty(postedDemos)}">
-              <div th:each="demo : ${postedDemos}" class="demo-item">
+              <a th:each="demo : ${postedDemos}" th:href="@{/demo/show(demoId=${demo.id})}" class="demo-item">
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <h4 class="demo-title" th:text="${demo.title}">デモタイトル</h4>
@@ -649,9 +724,9 @@
                       </div>
                     </div>
                   </div>
-                  <a th:href="@{/demo/show(demoId=${demo.id})}" class="action-button">詳細を見る</a>
+                  <span class="action-button">詳細を見る</span>
                 </div>
-              </div>
+              </a>
             </div>
 
             <div th:if="${#lists.isEmpty(postedDemos)}" class="empty-state">
@@ -665,7 +740,7 @@
           <!-- Participated Demos Tab -->
           <div id="participated-tab" class="tab-content">
             <div th:if="${!#lists.isEmpty(participatedDemos)}">
-              <div th:each="demo : ${participatedDemos}" class="demo-item">
+              <a th:each="demo : ${participatedDemos}" th:href="@{/demo/show(demoId=${demo.id})}" class="demo-item">
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <h4 class="demo-title" th:text="${demo.title}">デモタイトル</h4>
@@ -680,9 +755,9 @@
                       </div>
                     </div>
                   </div>
-                  <a th:href="@{/demo/show(demoId=${demo.id})}" class="action-button">詳細を見る</a>
+                  <span class="action-button">詳細を見る</span>
                 </div>
-              </div>
+              </a>
             </div>
 
             <div th:if="${#lists.isEmpty(participatedDemos)}" class="empty-state">
@@ -696,7 +771,7 @@
           <!-- Favorites Tab -->
           <div id="favorites-tab" class="tab-content">
             <div th:if="${!#lists.isEmpty(favoriteDemos)}">
-              <div th:each="demo : ${favoriteDemos}" class="demo-item">
+              <a th:each="demo : ${favoriteDemos}" th:href="@{/demo/show(demoId=${demo.id})}" class="demo-item">
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <h4 class="demo-title" th:text="${demo.title}">デモタイトル</h4>
@@ -711,9 +786,9 @@
                       </div>
                     </div>
                   </div>
-                  <a th:href="@{/demo/show(demoId=${demo.id})}" class="action-button">詳細を見る</a>
+                  <span class="action-button">詳細を見る</span>
                 </div>
-              </div>
+              </a>
             </div>
 
             <div th:if="${#lists.isEmpty(favoriteDemos)}" class="empty-state">
@@ -727,7 +802,7 @@
           <!-- Supported Demos Tab -->
           <div id="supported-tab" class="tab-content">
             <div th:if="${!#lists.isEmpty(supportedDemosWithAmount)}">
-              <div th:each="supportedDemo : ${supportedDemosWithAmount}" class="demo-item">
+              <a th:each="supportedDemo : ${supportedDemosWithAmount}" th:href="@{/demo/show(demoId=${supportedDemo.demo.id})}" class="demo-item">
                 <div class="flex items-start justify-between">
                   <div class="flex-1">
                     <h4 class="demo-title" th:text="${supportedDemo.demo.title}">デモタイトル</h4>
@@ -747,9 +822,9 @@
                       </div>
                     </div>
                   </div>
-                  <a th:href="@{/demo/show(demoId=${supportedDemo.demo.id})}" class="action-button">詳細を見る</a>
+                  <span class="action-button">詳細を見る</span>
                 </div>
-              </div>
+              </a>
             </div>
 
             <div th:if="${#lists.isEmpty(supportedDemosWithAmount)}" class="empty-state">
