@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>利用規約 - Demo Wave</title>
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    * { font-family: 'Noto Sans JP', sans-serif; }
+    .content-section { margin-bottom: 2.5rem; }
+    .content-section h2 { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #2563eb; }
+    .content-section h3 { font-size: 1rem; font-weight: 600; color: #374151; margin: 1rem 0 0.5rem 0; }
+    .content-section p, .content-section li { color: #4b5563; line-height: 1.8; }
+    .content-section ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem; }
+    .content-section li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<th:block th:replace="~{common/mainHeader :: header}"></th:block>
+
+<main class="max-w-4xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">利用規約</h1>
+  <p class="text-gray-600 text-center mb-12">最終更新日: 2025年11月22日</p>
+
+  <div class="bg-white rounded-2xl shadow-lg p-8">
+
+    <!-- 第1章 総則 -->
+    <div class="content-section">
+      <h2>第1条（適用）</h2>
+      <p>本規約は、Demo Wave（以下「当社」）が提供するサービス「Demo Wave」（以下「本サービス」）の利用に関する条件を定めるものです。ユーザーは、本規約に同意の上、本サービスを利用するものとします。</p>
+    </div>
+
+    <div class="content-section">
+      <h2>第2条（定義）</h2>
+      <p>本規約において、以下の用語は以下の意味を有します。</p>
+      <ul>
+        <li><strong>「ユーザー」</strong>：本サービスを利用するすべての方</li>
+        <li><strong>「デモ活動」</strong>：本サービス上で掲載される集会・デモンストレーション等の活動</li>
+        <li><strong>「主催者」</strong>：デモ活動を企画・投稿するユーザー</li>
+        <li><strong>「参加者」</strong>：デモ活動に参加表明したユーザー</li>
+        <li><strong>「応援者」</strong>：応援ポイントを使用してデモ活動を応援するユーザー</li>
+        <li><strong>「応援ポイント」</strong>：本サービス内で購入・使用できるポイント</li>
+        <li><strong>「報酬」</strong>：デモ参加者に対して当社から支払われる報酬</li>
+      </ul>
+    </div>
+
+    <!-- 第2章 会員登録 -->
+    <div class="content-section">
+      <h2>第3条（会員登録）</h2>
+      <ul>
+        <li>本サービスの利用を希望する方は、当社所定の方法により会員登録を行うものとします。</li>
+        <li>会員登録の際、ユーザーは真実かつ正確な情報を提供するものとします。</li>
+        <li>当社は、以下の場合に会員登録を拒否することがあります。
+          <ul>
+            <li>虚偽の情報を登録した場合</li>
+            <li>過去に本規約に違反したことがある場合</li>
+            <li>その他、当社が不適切と判断した場合</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>第4条（アカウントの管理）</h2>
+      <ul>
+        <li>ユーザーは、自己のアカウント情報を適切に管理する責任を負います。</li>
+        <li>アカウントの不正使用による損害について、当社は一切の責任を負いません。</li>
+        <li>ユーザーは、アカウントを第三者に譲渡、貸与することはできません。</li>
+      </ul>
+    </div>
+
+    <!-- 第3章 応援ポイント -->
+    <div class="content-section">
+      <h2>第5条（応援ポイントの購入）</h2>
+      <ul>
+        <li>応援ポイントは、当社が定める価格および方法により購入することができます。</li>
+        <li>購入した応援ポイントは、返金・払戻し・現金化することはできません。</li>
+        <li>応援ポイントは、本サービス内でのみ使用することができます。</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>第6条（応援ポイントの使用）</h2>
+      <ul>
+        <li>ユーザーは、応援ポイントを使用してデモ活動を応援することができます。</li>
+        <li>一度使用した応援ポイントは、取り消し・返還することはできません。</li>
+        <li>応援ポイントの使用は、報酬額を保証するものではありません。</li>
+      </ul>
+    </div>
+
+    <!-- 第4章 報酬 -->
+    <div class="content-section">
+      <h2>第7条（報酬について）</h2>
+      <ul>
+        <li>報酬は、当社からデモ参加者に対して支払われるものであり、応援者からの直接送金ではありません。</li>
+        <li>報酬の金額は、集まった応援ポイント数等を考慮して当社が決定します。</li>
+        <li>報酬の支払い方法・時期は、当社が別途定めるものとします。</li>
+        <li>報酬の受取には、当社が定める条件を満たす必要があります。</li>
+        <li>報酬に係る税金の申告・納付は、ユーザー自身の責任において行うものとします。</li>
+      </ul>
+    </div>
+
+    <!-- 第5章 禁止事項 -->
+    <div class="content-section">
+      <h2>第8条（禁止事項）</h2>
+      <p>ユーザーは、本サービスの利用にあたり、以下の行為を行ってはなりません。</p>
+      <ul>
+        <li>法令または公序良俗に違反する行為</li>
+        <li>犯罪行為に関連する行為</li>
+        <li>暴力的、差別的、または他者を誹謗中傷するデモ活動の開催・参加</li>
+        <li>虚偽の情報を登録・投稿する行為</li>
+        <li>他のユーザーになりすます行為</li>
+        <li>当社または第三者の知的財産権、肖像権、プライバシー等を侵害する行為</li>
+        <li>本サービスの運営を妨害する行為</li>
+        <li>不正な方法でポイントを取得・使用する行為</li>
+        <li>反社会的勢力等への利益供与</li>
+        <li>その他、当社が不適切と判断する行為</li>
+      </ul>
+    </div>
+
+    <!-- 第6章 サービスの変更等 -->
+    <div class="content-section">
+      <h2>第9条（サービスの変更・中断・終了）</h2>
+      <ul>
+        <li>当社は、事前の通知なく、本サービスの内容を変更し、または提供を中断・終了することができます。</li>
+        <li>当社は、本サービスの変更・中断・終了によりユーザーに生じた損害について、一切の責任を負いません。</li>
+      </ul>
+    </div>
+
+    <!-- 第7章 免責 -->
+    <div class="content-section">
+      <h2>第10条（免責事項）</h2>
+      <ul>
+        <li>当社は、デモ活動の内容、適法性、安全性について保証しません。</li>
+        <li>当社は、デモ活動が実際に開催されることを保証しません。</li>
+        <li>ユーザー間のトラブルについて、当社は一切の責任を負いません。</li>
+        <li>デモ活動への参加は、ユーザー自身の責任において行うものとします。</li>
+        <li>当社の責任は、当社に故意または重大な過失がある場合を除き、ユーザーが当社に支払った金額を上限とします。</li>
+      </ul>
+    </div>
+
+    <!-- 第8章 その他 -->
+    <div class="content-section">
+      <h2>第11条（利用規約の変更）</h2>
+      <p>当社は、必要に応じて本規約を変更することができます。変更後の規約は、本サービス上に掲載した時点から効力を生じるものとします。重要な変更がある場合は、本サービス上でお知らせします。</p>
+    </div>
+
+    <div class="content-section">
+      <h2>第12条（分離可能性）</h2>
+      <p>本規約のいずれかの条項が無効または執行不能と判断された場合でも、その他の条項は引き続き有効に存続するものとします。</p>
+    </div>
+
+    <div class="content-section">
+      <h2>第13条（準拠法・裁判管轄）</h2>
+      <ul>
+        <li>本規約の解釈は、日本法に準拠するものとします。</li>
+        <li>本サービスに関する紛争については、東京地方裁判所を第一審の専属的合意管轄裁判所とします。</li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<footer class="bg-gray-900 text-white py-8 mt-16">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <p class="text-gray-400">&copy; 2025 Demo Wave. All rights reserved.</p>
+  </div>
+</footer>
+
+<th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
+</body>
+</html>

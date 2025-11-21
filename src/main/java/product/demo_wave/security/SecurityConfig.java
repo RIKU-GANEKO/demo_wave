@@ -88,6 +88,8 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll() // ルートパス（ホーム）を認証不要に設定
                         .requestMatchers("/about").permitAll() // Demo Waveとはページを認証不要に設定
                         .requestMatchers("/organizer-guide").permitAll() // 主催者向けガイドページを認証不要に設定
+                        .requestMatchers("/privacy").permitAll() // プライバシーポリシーを認証不要に設定
+                        .requestMatchers("/terms").permitAll() // 利用規約を認証不要に設定
                         .requestMatchers("/search").permitAll() // 検索ページを認証不要に設定
                         .requestMatchers("/search**").permitAll() // 検索ページ（クエリパラメータ付き）を認証不要に設定
                         .requestMatchers("/demo/show").permitAll() // デモ詳細ページを認証不要に設定

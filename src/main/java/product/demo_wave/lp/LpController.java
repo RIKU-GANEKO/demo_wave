@@ -82,6 +82,20 @@ public class LpController {
         return mv;
     }
 
+    @GetMapping("/privacy")
+    public ModelAndView privacy(ModelAndView mv) {
+        addLoggedInUser(mv);
+        mv.setViewName("privacy");
+        return mv;
+    }
+
+    @GetMapping("/terms")
+    public ModelAndView terms(ModelAndView mv) {
+        addLoggedInUser(mv);
+        mv.setViewName("terms");
+        return mv;
+    }
+
     @GetMapping("/search")
     public ModelAndView search(
             @RequestParam(required = false) Integer categoryId,
