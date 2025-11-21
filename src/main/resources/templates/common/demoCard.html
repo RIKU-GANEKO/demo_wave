@@ -61,9 +61,9 @@
         <span class="demo-card-meta-value" th:text="${demo.participantCount} + '人'">127人</span>
       </div>
       <div class="demo-card-meta-item donation">
-        <i class="fas fa-yen-sign"></i>
-        <span class="demo-card-meta-label">支援総額</span>
-        <span class="demo-card-meta-value" th:text="${#numbers.formatInteger(demo.totalDonationAmount ?: 0, 0, 'COMMA')} + '円'">15,000円</span>
+        <i class="fas fa-coins"></i>
+        <span class="demo-card-meta-label">応援ポイント</span>
+        <span class="demo-card-meta-value" th:text="${#numbers.formatInteger(demo.totalPoints ?: 0, 0, 'COMMA')} + 'pt'">15,000pt</span>
       </div>
     </div>
   </div>

@@ -36,6 +36,9 @@ public class WebhookContext {
 	@Setter
 	private SESService sesService;
 
+	@Setter
+	private product.demo_wave.service.PointService pointService;
+
 	/**
 	 * エラーレスポンスを生成して返す。
 	 *
@@ -67,35 +70,72 @@ public class WebhookContext {
 					JsonNode root = mapper.readTree(payload);
 					JsonNode paymentIntentNode = root.at("/data/object");
 
-					// 必要な値をJsonNodeから取得
-					String supabaseUid = paymentIntentNode.at("/metadata/supabaseUid").asText(null);
-					String demoIdStr = paymentIntentNode.at("/metadata/demoId").asText(null);
-					long amountMinor = paymentIntentNode.at("/amount").asLong(0);
-					String donorEmail = paymentIntentNode.at("/receipt_email").asText(null);
+					// メタデータからtypeを取得して処理を分岐
+					String type = paymentIntentNode.at("/metadata/type").asText(null);
+					System.out.println("Transaction type: " + type);
 
-					System.out.println("Raw JSON metadata check:");
-					System.out.println("supabaseUid from JSON: " + supabaseUid);
-					System.out.println("demoId from JSON: " + demoIdStr);
-					System.out.println("amount from JSON: " + amountMinor);
-					System.out.println("donorEmail from JSON: " + donorEmail);
-					System.out.println("Full metadata node: " + paymentIntentNode.at("/metadata"));
+					if ("point_purchase".equals(type)) {
+						// ポイント購入処理
+						String userIdStr = paymentIntentNode.at("/metadata/userId").asText(null);
+						String userEmail = paymentIntentNode.at("/metadata/userEmail").asText(null);
+						String pointsStr = paymentIntentNode.at("/metadata/points").asText(null);
+						String priceStr = paymentIntentNode.at("/metadata/price").asText(null);
+						String paymentIntentId = paymentIntentNode.at("/id").asText(null);
 
-					if (supabaseUid == null || supabaseUid.trim().isEmpty() ||
-					    demoIdStr == null || demoIdStr.trim().isEmpty()) {
-						System.err.println("❌ メタデータが不足しています");
-						System.err.println("Available metadata: " + paymentIntentNode.at("/metadata"));
-						throw new IllegalStateException("必要なメタデータがありません: supabaseUid=" + supabaseUid + ", demoId=" + demoIdStr);
+						System.out.println("Point purchase metadata:");
+						System.out.println("userId: " + userIdStr);
+						System.out.println("points: " + pointsStr);
+						System.out.println("price: " + priceStr);
+						System.out.println("paymentIntentId: " + paymentIntentId);
+
+						if (paymentIntentId == null || paymentIntentId.trim().isEmpty()) {
+							throw new IllegalStateException("PaymentIntent IDが取得できません");
+						}
+						if (userIdStr == null || userIdStr.trim().isEmpty()) {
+							throw new IllegalStateException("User IDが取得できません");
+						}
+
+						// ポイント購入を作成＆完了
+						java.util.UUID userId = java.util.UUID.fromString(userIdStr);
+						Integer points = Integer.parseInt(pointsStr);
+						BigDecimal price = new BigDecimal(priceStr);
+
+						pointService.createAndCompletePurchase(userId, points, price, paymentIntentId);
+
+						// ポイント購入完了メールを送信
+						sendPointPurchaseMail(userEmail, points);
+
+					} else {
+						// 寄付処理（既存の処理）
+						String supabaseUid = paymentIntentNode.at("/metadata/supabaseUid").asText(null);
+						String demoIdStr = paymentIntentNode.at("/metadata/demoId").asText(null);
+						long amountMinor = paymentIntentNode.at("/amount").asLong(0);
+						String donorEmail = paymentIntentNode.at("/receipt_email").asText(null);
+
+						System.out.println("Raw JSON metadata check:");
+						System.out.println("supabaseUid from JSON: " + supabaseUid);
+						System.out.println("demoId from JSON: " + demoIdStr);
+						System.out.println("amount from JSON: " + amountMinor);
+						System.out.println("donorEmail from JSON: " + donorEmail);
+						System.out.println("Full metadata node: " + paymentIntentNode.at("/metadata"));
+
+						if (supabaseUid == null || supabaseUid.trim().isEmpty() ||
+						    demoIdStr == null || demoIdStr.trim().isEmpty()) {
+							System.err.println("❌ メタデータが不足しています");
+							System.err.println("Available metadata: " + paymentIntentNode.at("/metadata"));
+							throw new IllegalStateException("必要なメタデータがありません: supabaseUid=" + supabaseUid + ", demoId=" + demoIdStr);
+						}
+
+						int demoId = Integer.parseInt(demoIdStr);
+						BigDecimal amount = BigDecimal.valueOf(amountMinor);
+
+						System.out.println("supabaseUid: " + supabaseUid);
+						System.out.println("amount: " + amount);
+						System.out.println("demoId: " + demoId);
+
+						webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
+						sendDonationMail(donorEmail, amount);
 					}
-
-					int demoId = Integer.parseInt(demoIdStr);
-					BigDecimal amount = BigDecimal.valueOf(amountMinor);
-
-					System.out.println("supabaseUid: " + supabaseUid);
-					System.out.println("amount: " + amount);
-					System.out.println("demoId: " + demoId);
-
-					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
-					sendMail(donorEmail, amount);
 
 				} else {
 					// 通常通りデシリアライズ成功
@@ -103,13 +143,40 @@ public class WebhookContext {
 							new IllegalStateException("Missing payment intent object"));
 
 					Map<String, String> metadata = paymentIntent.getMetadata();
-					String supabaseUid = metadata.get("supabaseUid");
-					Integer demoId = Integer.parseInt(metadata.get("demoId"));
-					BigDecimal amount = BigDecimal.valueOf(paymentIntent.getAmount());
-					String donorEmail = paymentIntent.getReceiptEmail();
+					String type = metadata.get("type");
+					System.out.println("Transaction type: " + type);
 
-					webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
-					sendMail(donorEmail, amount);
+					if ("point_purchase".equals(type)) {
+						// ポイント購入処理
+						String paymentIntentId = paymentIntent.getId();
+						String userIdStr = metadata.get("userId");
+						String userEmail = metadata.get("userEmail");
+						Integer points = Integer.parseInt(metadata.get("points"));
+						BigDecimal price = new BigDecimal(metadata.get("price"));
+
+						System.out.println("Point purchase metadata:");
+						System.out.println("paymentIntentId: " + paymentIntentId);
+						System.out.println("userId: " + userIdStr);
+						System.out.println("points: " + points);
+						System.out.println("price: " + price);
+
+						// ポイント購入を作成＆完了
+						java.util.UUID userId = java.util.UUID.fromString(userIdStr);
+						pointService.createAndCompletePurchase(userId, points, price, paymentIntentId);
+
+						// ポイント購入完了メールを送信
+						sendPointPurchaseMail(userEmail, points);
+
+					} else {
+						// 寄付処理（既存の処理）
+						String supabaseUid = metadata.get("supabaseUid");
+						Integer demoId = Integer.parseInt(metadata.get("demoId"));
+						BigDecimal amount = BigDecimal.valueOf(paymentIntent.getAmount());
+						String donorEmail = paymentIntent.getReceiptEmail();
+
+						webhookDBLogic.saveDonation(supabaseUid, amount, demoId);
+						sendDonationMail(donorEmail, amount);
+					}
 				}
 			} else {
 				// 他のイベントタイプの場合はログだけ出して成功を返す
@@ -128,7 +195,7 @@ public class WebhookContext {
 		}
 	}
 
-	void sendMail(String recipientEmail, BigDecimal amount) {
+	void sendDonationMail(String recipientEmail, BigDecimal amount) {
 		try {
 			// 支援者のメールアドレスが取得できない場合はスキップ
 			if (recipientEmail == null || recipientEmail.trim().isEmpty()) {
@@ -143,6 +210,27 @@ public class WebhookContext {
 					amount + "円を送金しました！\n\nご支援ありがとうございます。");
 
 			System.out.println("メール送信完了: " + recipientEmail);
+		} catch (Exception e) {
+			// メール送信関連の例外処理
+			System.err.println("メール送信エラー (SES): " + e.getMessage());
+		}
+	}
+
+	void sendPointPurchaseMail(String recipientEmail, Integer points) {
+		try {
+			// メールアドレスが取得できない場合はスキップ
+			if (recipientEmail == null || recipientEmail.trim().isEmpty()) {
+				System.err.println("⚠️ ユーザーのメールアドレスが取得できませんでした。メール送信をスキップします。");
+				return;
+			}
+
+			// SES を使用してメール送信
+			sesService.sendEmail(
+					recipientEmail,
+					"DemoWave ポイント購入完了",
+					points + "ポイントの購入が完了しました！\n\nご利用ありがとうございます。\n\nポイントを使ってデモ活動を応援しましょう！");
+
+			System.out.println("ポイント購入完了メール送信完了: " + recipientEmail);
 		} catch (Exception e) {
 			// メール送信関連の例外処理
 			System.err.println("メール送信エラー (SES): " + e.getMessage());

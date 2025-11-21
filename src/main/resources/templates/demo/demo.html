@@ -363,9 +363,9 @@
                 <div class="flex-1">
                   <p class="font-semibold text-gray-900" th:text="${supporter.user?.name ?: '匿名ユーザー'}">ユーザー名</p>
                   <p class="text-sm text-gray-500">
-                    <span th:text="${supporter.donateAmount != null ? #numbers.formatInteger(supporter.donateAmount, 0, 'COMMA') + '円' : '金額非公開'}">1,000円</span>
+                    <span th:text="${supporter.points != null ? #numbers.formatInteger(supporter.points, 0, 'COMMA') + 'pt' : 'ポイント非公開'}">1,000pt</span>
                     <span class="mx-2">•</span>
-                    <span th:text="'支援日: ' + ${#temporals.format(supporter.createdAt, 'yyyy/MM/dd')}">支援日: 2025/01/10</span>
+                    <span th:text="'応援日: ' + ${#temporals.format(supporter.createdAt, 'yyyy/MM/dd')}">応援日: 2025/01/10</span>
                   </p>
                 </div>
               </div>
@@ -395,12 +395,14 @@
           <div class="text-sm text-gray-500">が参加を表明</div>
         </div>
 
-        <!-- Donation Amount -->
+        <!-- Point Amount -->
         <div class="pt-6 border-t border-gray-200">
-          <div class="text-2xl font-bold text-green-600 mb-2">
-            ¥<span th:text="${donateAmount != null ? #numbers.formatDecimal(donateAmount, 0, 'COMMA', 0, 'POINT') : '0'}">0</span>
+          <div class="text-2xl font-bold text-yellow-600 mb-2 flex items-center">
+            <i class="fas fa-coins mr-2"></i>
+            <span th:text="${totalPoints != null ? #numbers.formatInteger(totalPoints, 0, 'COMMA') : '0'}">0</span>
+            <span class="text-base ml-1">pt</span>
           </div>
-          <div class="text-sm text-gray-500">支援金総額</div>
+          <div class="text-sm text-gray-500">応援ポイント総数</div>
         </div>
 
         <!-- Action Buttons -->
@@ -409,16 +411,16 @@
           <div sec:authorize="isAuthenticated()" class="space-y-3">
             <form th:action="@{/demo/{id}/participant/add(id=${demo.id})}" method="post" class="w-full">
               <button type="submit" class="w-full gradient-bg text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
-                <i th:class="${isParticipant} ? 'fas fa-user-minus' : 'fas fa-user-plus'" class="mr-2 group-hover:scale-110 transition-transform"></i>
+                <i class="fas fa-user mr-2 group-hover:scale-110 transition-transform"></i>
                 <span th:text="${isParticipant} ? '参加をキャンセル' : 'このデモに参加する'">
                   このデモに参加する
                 </span>
               </button>
             </form>
 
-            <button onclick="openDonationModal()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
-              <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i>
-              支援金を送る
+            <button onclick="openSupportModal()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group">
+              <i class="fas fa-coins mr-2 group-hover:scale-110 transition-transform"></i>
+              このデモを応援する
             </button>
           </div>
 
@@ -460,8 +462,8 @@
       <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <i class="fas fa-check text-green-600 text-3xl"></i>
       </div>
-      <h3 class="text-2xl font-bold text-gray-900 mb-2">支援金送信完了！</h3>
-      <p class="text-gray-600">ご支援ありがとうございます。<br>支援金の送信が完了しました。</p>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">応援完了！</h3>
+      <p class="text-gray-600">ご支援ありがとうございます。<br>応援が完了しました。</p>
     </div>
     <button
       onclick="closePaymentSuccessModal()"
@@ -477,14 +479,14 @@
 <div id="donationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
   <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-2xl font-bold text-gray-900">支援金を送る</h3>
+      <h3 class="text-2xl font-bold text-gray-900">デモを応援する</h3>
       <button onclick="closeDonationModal()" class="text-gray-400 hover:text-gray-600 transition">
         <i class="fas fa-times text-2xl"></i>
       </button>
     </div>
 
     <div class="mb-6">
-      <p class="text-gray-600 mb-4">このデモへの支援金額を選択してください</p>
+      <p class="text-gray-600 mb-4">応援する金額を選択してください</p>
 
       <!-- Preset Buttons -->
       <div class="grid grid-cols-2 gap-3 mb-4">
@@ -535,6 +537,137 @@
     >
       <i class="fas fa-heart mr-2"></i>
       支援する
+    </button>
+  </div>
+</div>
+
+<!-- Support Modal (Point送付) -->
+<div id="supportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-gray-900">デモを応援</h3>
+      <button onclick="closeSupportModal()" class="text-gray-400 hover:text-gray-600 transition">
+        <i class="fas fa-times text-2xl"></i>
+      </button>
+    </div>
+
+    <!-- 残高表示 -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+      <div class="flex items-center justify-between">
+        <span class="text-gray-700">保有ポイント</span>
+        <span class="text-2xl font-bold text-blue-600">
+          <i class="fas fa-coins mr-1"></i>
+          <span id="userPointsDisplay">0</span>pt
+        </span>
+      </div>
+    </div>
+
+    <!-- ポイント入力 -->
+    <div class="mb-6">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">
+        送付ポイント数
+      </label>
+
+      <!-- プリセットボタン -->
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <button onclick="setSupportPoints(100)" class="py-2 px-3 border-2 border-gray-300 rounded-lg hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition font-semibold">
+          100pt
+        </button>
+        <button onclick="setSupportPoints(500)" class="py-2 px-3 border-2 border-gray-300 rounded-lg hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition font-semibold">
+          500pt
+        </button>
+        <button onclick="setSupportPoints(1000)" class="py-2 px-3 border-2 border-gray-300 rounded-lg hover:border-green-600 hover:bg-green-50 hover:text-green-600 transition font-semibold">
+          1000pt
+        </button>
+      </div>
+
+      <!-- カスタム入力 -->
+      <div class="relative">
+        <input
+          type="number"
+          id="supportPoints"
+          min="1"
+          placeholder="カスタム"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-green-600 focus:ring-2 focus:ring-green-200 outline-none transition"
+        />
+        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">pt</span>
+      </div>
+    </div>
+
+    <!-- 説明文 -->
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+      <p class="text-sm text-gray-700">
+        💡 あなたの応援が、デモ参加者への励みになります。<br>
+        応援ポイントはデモ参加者への報酬につながります。
+      </p>
+    </div>
+
+    <!-- エラー表示 -->
+    <div id="supportError" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+      <p class="text-red-600 text-sm font-semibold"></p>
+    </div>
+
+    <!-- 送信ボタン -->
+    <button
+      onclick="submitSupport()"
+      id="submitSupportBtn"
+      class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+    >
+      <i class="fas fa-gift mr-2"></i>
+      応援する
+    </button>
+
+    <!-- ポイント購入リンク -->
+    <div class="mt-4 text-center">
+      <a th:href="@{/point/purchase}" class="text-blue-600 hover:underline text-sm">
+        ポイントを購入する →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Point Shortage Modal (ポイント不足モーダル) -->
+<div id="pointShortageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center">
+    <div class="mb-6">
+      <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-coins text-yellow-600 text-3xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">ポイントが不足しています</h3>
+      <p class="text-gray-600">ポイントを購入してデモを応援しましょう</p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        onclick="closePointShortageModal()"
+        class="flex-1 bg-gray-200 text-gray-700 font-bold py-4 rounded-xl hover:bg-gray-300 transition"
+      >
+        キャンセル
+      </button>
+      <button
+        onclick="goToPurchasePage()"
+        class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition"
+      >
+        <i class="fas fa-shopping-cart mr-2"></i>購入する
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Point Send Success Modal (ポイント送付成功モーダル) -->
+<div id="pointSendSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center">
+    <div class="mb-6">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-check-circle text-green-600 text-3xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">応援完了！</h3>
+      <p class="text-gray-600">ご支援ありがとうございます</p>
+    </div>
+    <button
+      onclick="closeSuccessModalAndReload()"
+      class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition"
+    >
+      OK
     </button>
   </div>
 </div>
@@ -744,7 +877,7 @@
     }
 
     if (amount < 50) {
-      errorText.textContent = '支援金額は50円以上である必要があります';
+      errorText.textContent = '応援金額は50円以上である必要があります';
       errorDiv.classList.remove('hidden');
       return;
     }
@@ -774,7 +907,7 @@
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.errorDescription || '支援金の送信に失敗しました');
+        throw new Error(errorData.errorDescription || '応援の送信に失敗しました');
       }
 
       const data = await response.json();
@@ -805,6 +938,142 @@
   });
 
   // ============================================
+  // Support Modal Functions (Point送付)
+  // ============================================
+
+  let userPoints = 0;
+
+  async function openSupportModal() {
+    // ポイント残高を取得
+    try {
+      const response = await fetch(contextPath + '/api/point/balance', {
+        credentials: 'same-origin'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        userPoints = data.points || 0;
+        document.getElementById('userPointsDisplay').textContent = userPoints;
+
+        if (userPoints === 0) {
+          // ポイントがない場合はポイント不足モーダルを表示
+          const shortageModal = document.getElementById('pointShortageModal');
+          shortageModal.style.display = 'flex';
+        } else {
+          // モーダル表示
+          const modal = document.getElementById('supportModal');
+          modal.style.display = 'flex';
+          document.getElementById('supportPoints').value = '';
+          document.getElementById('supportError').classList.add('hidden');
+        }
+      } else {
+        throw new Error('ポイント残高の取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      alert('ポイント残高の取得に失敗しました');
+    }
+  }
+
+  function closeSupportModal() {
+    const modal = document.getElementById('supportModal');
+    modal.style.display = 'none';
+  }
+
+  function setSupportPoints(amount) {
+    document.getElementById('supportPoints').value = amount;
+  }
+
+  async function submitSupport() {
+    const pointsInput = document.getElementById('supportPoints');
+    const points = parseInt(pointsInput.value);
+    const errorDiv = document.getElementById('supportError');
+    const errorText = errorDiv.querySelector('p');
+    const submitBtn = document.getElementById('submitSupportBtn');
+
+    // バリデーション
+    if (!points || isNaN(points) || points < 1) {
+      errorText.textContent = 'ポイント数を入力してください';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    if (points > userPoints) {
+      errorText.textContent = 'ポイント残高が不足しています';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    // エラーメッセージを非表示
+    errorDiv.classList.add('hidden');
+
+    // ボタンを無効化
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>処理中...';
+
+    try {
+      const demoId = [[${demo.id}]];
+
+      const response = await fetch(contextPath + '/api/point/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          demoId: demoId,
+          points: points
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errorDescription || 'ポイント送付に失敗しました');
+      }
+
+      // 成功 - モーダル表示
+      closeSupportModal();
+      showSuccessModal();
+
+    } catch (error) {
+      console.error('Error:', error);
+      errorText.textContent = error.message || '通信エラーが発生しました';
+      errorDiv.classList.remove('hidden');
+
+      // ボタンを再度有効化
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-gift mr-2"></i>応援する';
+    }
+  }
+
+  // モーダル外クリックで閉じる
+  document.getElementById('supportModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeSupportModal();
+    }
+  });
+
+  // ============================================
+  // Point Shortage Modal Functions
+  // ============================================
+
+  function closePointShortageModal() {
+    const modal = document.getElementById('pointShortageModal');
+    modal.style.display = 'none';
+  }
+
+  function goToPurchasePage() {
+    window.location.href = contextPath + '/point/purchase';
+  }
+
+  // モーダル外クリックで閉じる
+  document.getElementById('pointShortageModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closePointShortageModal();
+    }
+  });
+
+  // ============================================
   // Payment Success Modal
   // ============================================
 
@@ -823,6 +1092,28 @@
     if (urlParams.get('payment_success') === 'true') {
       const modal = document.getElementById('paymentSuccessModal');
       modal.style.display = 'flex';
+    }
+  });
+
+  // ============================================
+  // Point Send Success Modal Functions
+  // ============================================
+
+  function showSuccessModal() {
+    const modal = document.getElementById('pointSendSuccessModal');
+    modal.style.display = 'flex';
+  }
+
+  function closeSuccessModalAndReload() {
+    const modal = document.getElementById('pointSendSuccessModal');
+    modal.style.display = 'none';
+    location.reload();
+  }
+
+  // モーダル外クリックで閉じる
+  document.getElementById('pointSendSuccessModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeSuccessModalAndReload();
     }
   });
 </script>

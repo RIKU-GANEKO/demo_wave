@@ -33,6 +33,8 @@ class MypageGetUserContext {
     private List<Demo> postedDemos;
     private List<Demo> receivedGiftDemos;
     private List<MonthlyGiftSummaryDTO> monthlyGiftSummaries;
+    private Integer userPoints;
+    private List<product.demo_wave.entity.PointPurchase> pointPurchaseHistory;
 
     void fetchUser() throws UnsupportedOperationException {
         user = mypageFacadeDBLogic.fetchUser();
@@ -66,6 +68,14 @@ class MypageGetUserContext {
         supportedDemosWithAmount = mypageFacadeDBLogic.fetchSupportedDemosWithAmount();
     }
 
+    void fetchUserPoints() throws UnsupportedOperationException {
+        userPoints = mypageFacadeDBLogic.fetchUserPoints();
+    }
+
+    void fetchPointPurchaseHistory() throws UnsupportedOperationException {
+        pointPurchaseHistory = mypageFacadeDBLogic.fetchPointPurchaseHistory();
+    }
+
     void setModelAndView() {
         this.mv.addObject("user", this.user);
         System.out.println("user: " + user);
@@ -83,6 +93,10 @@ class MypageGetUserContext {
         System.out.println("monthlyGiftSummaries: " + monthlyGiftSummaries);
         this.mv.addObject("supportedDemosWithAmount", this.supportedDemosWithAmount);
         System.out.println("supportedDemosWithAmount: " + supportedDemosWithAmount);
+        this.mv.addObject("userPoints", this.userPoints);
+        System.out.println("userPoints: " + userPoints);
+        this.mv.addObject("pointPurchaseHistory", this.pointPurchaseHistory);
+        System.out.println("pointPurchaseHistory: " + pointPurchaseHistory);
         this.mv.addObject("pageType", this.pageType);
 
         // ページタイプに応じてビュー名を変更

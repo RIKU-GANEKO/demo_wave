@@ -13,6 +13,7 @@ class MypageService {
 	ModelAndView userByGet(MypageGetUserContext mypageGetUserContext) {
 		mypageGetUserContext.setMypageFacadeDBLogic(mypageFacadeDBLogic);
 		mypageGetUserContext.fetchUser();
+		mypageGetUserContext.fetchUserPoints();
 		mypageGetUserContext.fetchParticipatedDemo();
 		mypageGetUserContext.fetchFavoriteDemos();
 		mypageGetUserContext.fetchSupportedDemos();
@@ -20,6 +21,7 @@ class MypageService {
 		mypageGetUserContext.fetchPostedDemos();
 		mypageGetUserContext.fetchReceivedGiftDemos();
 		mypageGetUserContext.fetchMonthlyGiftSummaries();
+		mypageGetUserContext.fetchPointPurchaseHistory();
 		mypageGetUserContext.setModelAndView();
 		return mypageGetUserContext.getMv();
 	}

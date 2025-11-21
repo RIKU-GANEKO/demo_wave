@@ -373,7 +373,7 @@
       display: block;
     }
 
-    /* 受取支援金スタイル */
+    /* 受取報酬額スタイル */
     .monthly-gift-item {
       background: white;
       border-radius: 12px;
@@ -500,42 +500,105 @@
 </div>
 
 <!-- Main Content -->
-<main class="max-w-7xl mx-auto px-4 pb-16">
+<main class="max-w-4xl mx-auto px-4 pb-16">
 
-  <div class="grid lg:grid-cols-3 gap-8">
+  <!-- User Profile Card -->
+  <div class="content-card">
+    <h3 class="card-title">
+      <div class="card-title-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      プロフィール
+    </h3>
 
-    <!-- User Profile Card -->
-    <div class="lg:col-span-1">
-      <div class="content-card">
+    <div>
+      <div class="info-row">
+        <div class="info-label">ユーザー名</div>
+        <div class="info-value" th:text="${user.name}">ユーザー名</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">メールアドレス</div>
+        <div class="info-value" th:text="${user.email}">user@example.com</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">登録日</div>
+        <div class="info-value" th:text="${#temporals.format(user.createdAt, 'yyyy年MM月dd日')}">2025年01月15日</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Points Card -->
+  <div class="content-card mt-6">
         <h3 class="card-title">
           <div class="card-title-icon">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-coins"></i>
           </div>
-          プロフィール
+          <span>保有ポイント</span>
         </h3>
 
+        <div style="text-align: center; padding: 2rem 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 1.5rem;">
+          <div style="font-size: 3rem; font-weight: bold; color: #2563eb; margin-bottom: 1.5rem;">
+            <i class="fas fa-coins" style="color: #fbbf24;"></i>
+            <span th:text="${userPoints != null ? userPoints : 0}">0</span>
+            <span style="font-size: 1.5rem; margin-left: 0.5rem;">pt</span>
+          </div>
+          <a th:href="@{/point/purchase}" class="action-button">
+            <i class="fas fa-shopping-cart" style="margin-right: 0.5rem;"></i>ポイントを購入する
+          </a>
+        </div>
+
+        <!-- Point Purchase History Accordion -->
         <div>
-          <div class="info-row">
-            <div class="info-label">ユーザー名</div>
-            <div class="info-value" th:text="${user.name}">ユーザー名</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">メールアドレス</div>
-            <div class="info-value" th:text="${user.email}">user@example.com</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">登録日</div>
-            <div class="info-value" th:text="${#temporals.format(user.createdAt, 'yyyy年MM月dd日')}">2025年01月15日</div>
+          <button
+            id="purchase-history-toggle"
+            onclick="togglePurchaseHistory()"
+            style="width: 100%; padding: 16px; background: #f9fafb; border: 1px solid #e8e8e8; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #333; font-size: 14px; transition: all 0.2s; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-history" style="color: #2563eb;"></i>
+              <span>ポイント購入履歴</span>
+            </div>
+            <i id="purchase-history-icon" class="fas fa-chevron-down" style="transition: transform 0.2s; color: #666;"></i>
+          </button>
+
+          <div id="purchase-history-content" style="display: none; transition: all 0.3s ease;">
+            <div th:if="${!#lists.isEmpty(pointPurchaseHistory)}" style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                <thead>
+                  <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #64748b; font-size: 0.875rem;">購入日</th>
+                    <th style="padding: 12px; text-align: right; font-weight: 600; color: #64748b; font-size: 0.875rem;">ポイント数</th>
+                    <th style="padding: 12px; text-align: right; font-weight: 600; color: #64748b; font-size: 0.875rem;">金額</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="purchase : ${pointPurchaseHistory}" style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 16px; color: #334155;" th:text="${#temporals.format(purchase.createdAt, 'yyyy/MM/dd HH:mm')}">2025/01/15 14:30</td>
+                    <td style="padding: 16px; text-align: right; font-weight: 600; color: #f59e0b;">
+                      <i class="fas fa-coins" style="margin-right: 4px;"></i>
+                      <span th:text="${#numbers.formatInteger(purchase.points, 0, 'COMMA')}">1,000</span>
+                      <span>pt</span>
+                    </td>
+                    <td style="padding: 16px; text-align: right; color: #64748b;">
+                      <span th:text="${#numbers.formatInteger(purchase.price, 0, 'COMMA')}">1,000</span>
+                      <span>円</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div th:if="${#lists.isEmpty(pointPurchaseHistory)}" style="text-align: center; padding: 2rem 1rem; color: #94a3b8;">
+              <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.3;"></i>
+              <p style="font-size: 0.875rem;">購入履歴がありません</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Activity Section -->
-    <div class="lg:col-span-2">
-
-      <!-- Tabs and Demo List -->
-      <div class="content-card">
+  <!-- Activity Section -->
+  <div class="content-card mt-6">
         <h3 class="card-title">
           <div class="card-title-icon">
             <i class="fas fa-flag"></i>
@@ -558,7 +621,7 @@
             <i class="fas fa-yen-sign mr-2"></i>支援したデモ
           </button>
           <button class="tab-button" data-tab="received-gift">
-            <i class="fas fa-gift mr-2"></i>受取支援金
+            <i class="fas fa-gift mr-2"></i>受取報酬額
           </button>
         </div>
 
@@ -677,10 +740,10 @@
                         <i class="fas fa-map-marker-alt"></i>
                         <span th:text="${supportedDemo.demo.demoPlace}">渋谷駅前</span>
                       </div>
-                      <div class="demo-meta-item" style="color: #10b981; font-weight: 700;">
-                        <i class="fas fa-yen-sign"></i>
-                        <span th:text="${#numbers.formatInteger(supportedDemo.totalAmount, 0, 'COMMA')}">1,000</span>
-                        <span>円</span>
+                      <div class="demo-meta-item" style="color: #f59e0b; font-weight: 700;">
+                        <i class="fas fa-coins"></i>
+                        <span th:text="${#numbers.formatInteger(supportedDemo.totalPoints, 0, 'COMMA')}">1,000</span>
+                        <span>pt</span>
                       </div>
                     </div>
                   </div>
@@ -750,16 +813,13 @@
 
             <div th:if="${#lists.isEmpty(monthlyGiftSummaries)}" class="empty-state">
               <i class="fas fa-gift"></i>
-              <h3>受取支援金がありません</h3>
-              <p>まだ支援金を受け取っていません。<br>デモに参加して活動を盛り上げましょう。</p>
+              <h3>受取報酬額がありません</h3>
+              <p>まだ報酬を受け取っていません。<br>デモに参加して活動を盛り上げましょう。</p>
               <a th:href="@{/search}" class="action-button">デモを探す</a>
             </div>
           </div>
         </div>
-
       </div>
-
-    </div>
   </div>
 
 </main>
@@ -867,6 +927,22 @@
       toggleIcon.classList.remove('fa-chevron-up');
       toggleIcon.classList.add('fa-chevron-down');
       toggleText.textContent = '詳細を見る';
+    }
+  }
+
+  // Purchase history toggle functionality
+  function togglePurchaseHistory() {
+    const content = document.getElementById('purchase-history-content');
+    const icon = document.getElementById('purchase-history-icon');
+
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.classList.remove('fa-chevron-down');
+      icon.classList.add('fa-chevron-up');
+    } else {
+      content.style.display = 'none';
+      icon.classList.remove('fa-chevron-up');
+      icon.classList.add('fa-chevron-down');
     }
   }
 </script>

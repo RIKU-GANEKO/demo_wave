@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 月ごとの受取支援金サマリーDTO
+ * 月ごとの受取報酬額サマリーDTO
  */
 @Data
 @NoArgsConstructor

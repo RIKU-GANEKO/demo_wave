@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * デモごとの受取支援金詳細DTO
+ * デモごとの受取報酬額詳細DTO
  */
 @Data
 @NoArgsConstructor

@@ -17,18 +17,21 @@ public class WebhookService {
 
 	private final WebhookDBLogic webhookDBLogic;
 	private final SESService sesService;
+	private final product.demo_wave.service.PointService pointService;
 
 	@Value("${stripe.webhook.secret}")
 	private String webhookSecret;
 
-	public WebhookService(WebhookDBLogic webhookDBLogic, SESService sesService) {
+	public WebhookService(WebhookDBLogic webhookDBLogic, SESService sesService, product.demo_wave.service.PointService pointService) {
 		this.webhookDBLogic = webhookDBLogic;
 		this.sesService = sesService;
+		this.pointService = pointService;
 	}
 
 	ResponseEntity<APIResponse> handleEvent(WebhookContext webhookContext) {
 		webhookContext.setWebhookDBLogic(webhookDBLogic);
 		webhookContext.setSesService(sesService);
+		webhookContext.setPointService(pointService);
 		try {
 			return webhookContext.handleEvent();
 		}

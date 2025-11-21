@@ -12,7 +12,7 @@ import lombok.Setter;
 import product.demo_wave.entity.Comment;
 import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.Participant;
-import product.demo_wave.entity.Payment;
+import product.demo_wave.entity.PointTransaction;
 
 @RequiredArgsConstructor
 class DemoShowGetContext {
@@ -20,11 +20,12 @@ class DemoShowGetContext {
     private Demo demo;
     private List<Comment> comments;
     private List<Participant> participants;
-    private List<Payment> supporters;
+    private List<PointTransaction> supporters;
 
     private Boolean isParticipant;
     private Integer participantCount;
     private BigDecimal donateAmount;
+    private Integer totalPoints;
 
     @Getter
     private final ModelAndView mv;
@@ -60,12 +61,17 @@ class DemoShowGetContext {
         supporters = demoFacadeDBLogic.supporters(demoId);
     }
 
+    void fetchTotalPoints() {
+        totalPoints = demoFacadeDBLogic.totalPoints(demoId);
+    }
+
     void setModelAndView() {
         this.mv.addObject("demo", this.demo);
         this.mv.addObject("isParticipant", this.isParticipant);
         this.mv.addObject("comments", this.comments);
         this.mv.addObject("participantCount", this.participantCount);
         this.mv.addObject("donateAmount", this.donateAmount);
+        this.mv.addObject("totalPoints", this.totalPoints);
         this.mv.addObject("participants", this.participants);
         this.mv.addObject("supporters", this.supporters);
         this.mv.setViewName("demo/demo");

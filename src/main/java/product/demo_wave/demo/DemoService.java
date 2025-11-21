@@ -20,6 +20,7 @@ class DemoService {
 		demoShowGetContext.fetchIsParticipant();
 		demoShowGetContext.fetchParticipantCount();
 		demoShowGetContext.fetchDonateAmount();
+		demoShowGetContext.fetchTotalPoints();
 		demoShowGetContext.fetchParticipants();
 		demoShowGetContext.fetchSupporters();
 		demoShowGetContext.setModelAndView();

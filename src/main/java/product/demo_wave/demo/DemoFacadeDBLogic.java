@@ -28,6 +28,7 @@ import product.demo_wave.repository.CategoryRepository;
 import product.demo_wave.repository.PrefectureRepository;
 import product.demo_wave.entity.Category;
 import product.demo_wave.entity.Prefecture;
+import product.demo_wave.service.PointService;
 
 @Component
 @AllArgsConstructor
@@ -39,7 +40,9 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     private final PaymentRepository paymentRepository;
     private final CategoryRepository categoryRepository;
     private final PrefectureRepository prefectureRepository;
+    private final product.demo_wave.repository.PointTransactionRepository pointTransactionRepository;
     private final GetUserLogic getUserLogic;
+    private final PointService pointService;
 
     @CustomRetry
     PageData<DemoWithParticipantDTO> fetchAllDemo(Pageable pageable) {
@@ -220,9 +223,21 @@ class DemoFacadeDBLogic extends BasicFacadeDBLogic {
     }
 
     @CustomRetry
-    public List<product.demo_wave.entity.Payment> supporters(Integer demoId) {
-        List<product.demo_wave.entity.Payment> supporters = paymentRepository.findByDemoAndDeletedAtIsNull(fetchDemo(demoId));
-        return supporters;
+    public List<product.demo_wave.entity.PointTransaction> supporters(Integer demoId) {
+        // PointTransactionテーブルから応援者リストを取得
+        List<product.demo_wave.entity.PointTransaction> supporters =
+            pointTransactionRepository.findByDemoIdOrderByCreatedAtDesc(demoId);
+
+        // 論理削除されていないものだけをフィルタリング
+        return supporters.stream()
+            .filter(t -> t.getDeletedAt() == null)
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    @CustomRetry
+    public Integer totalPoints(Integer demoId) {
+        Integer totalPoints = pointService.getTotalPointsByDemoId(demoId);
+        return totalPoints != null ? totalPoints : 0;
     }
 
     /**

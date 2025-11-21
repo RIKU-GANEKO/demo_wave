@@ -23,6 +23,7 @@ import product.demo_wave.repository.GiftTransferDetailRepository;
 import product.demo_wave.repository.GiftTransferRepository;
 import product.demo_wave.repository.ParticipantRepository;
 import product.demo_wave.repository.UserRepository;
+import product.demo_wave.service.PointService;
 
 @Component
 @AllArgsConstructor
@@ -34,7 +35,10 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     private final product.demo_wave.repository.PaymentRepository paymentRepository;
     private final GiftTransferRepository giftTransferRepository;
     private final GiftTransferDetailRepository giftTransferDetailRepository;
+    private final product.demo_wave.repository.PointTransactionRepository pointTransactionRepository;
+    private final product.demo_wave.repository.PointPurchaseRepository pointPurchaseRepository;
     private final GetUserLogic getUserLogic; // GetUserLogicをフィールドとして追加
+    private final PointService pointService;
 
     @CustomRetry
     User fetchUser() {
@@ -75,16 +79,39 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
         return paymentRepository.findDistinctDemosByUserAndDeletedAtIsNull(user);
     }
 
-    // ログイン中のユーザーが支援したデモ活動と支援金額を取得
+    // ログイン中のユーザーが支援したデモ活動と支援ポイント数を取得
     @CustomRetry
     List<SupportedDemoDTO> fetchSupportedDemosWithAmount() {
-        User user = fetchUser();
-        List<Demo> demos = paymentRepository.findDistinctDemosByUserAndDeletedAtIsNull(user);
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
 
+        // point_transactionsテーブルからユーザーが応援したデモを取得
+        List<product.demo_wave.entity.PointTransaction> transactions =
+            pointTransactionRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        // deletedAtがnullのものだけをフィルタリング
+        transactions = transactions.stream()
+            .filter(t -> t.getDeletedAt() == null)
+            .collect(java.util.stream.Collectors.toList());
+
+        // デモごとにポイント数を集計
+        java.util.Map<Integer, Integer> demoPointsMap = new java.util.HashMap<>();
+        java.util.Map<Integer, Demo> demoMap = new java.util.HashMap<>();
+
+        for (product.demo_wave.entity.PointTransaction transaction : transactions) {
+            Demo demo = transaction.getDemo();
+            Integer demoId = demo.getId();
+
+            demoMap.putIfAbsent(demoId, demo);
+            demoPointsMap.merge(demoId, transaction.getPoints(), Integer::sum);
+        }
+
+        // DTOリストを作成
         List<SupportedDemoDTO> result = new ArrayList<>();
-        for (Demo demo : demos) {
-            BigDecimal totalAmount = paymentRepository.getTotalDonatedAmountByUserAndDemo(user, demo);
-            result.add(new SupportedDemoDTO(demo, totalAmount));
+        for (java.util.Map.Entry<Integer, Demo> entry : demoMap.entrySet()) {
+            Integer demoId = entry.getKey();
+            Demo demo = entry.getValue();
+            Integer totalPoints = demoPointsMap.get(demoId);
+            result.add(new SupportedDemoDTO(demo, totalPoints));
         }
 
         return result;
@@ -97,14 +124,14 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
         return demoRepository.findOwnDemosByUserIdOrderByUpcomingFirst(userId);
     }
 
-    // ログイン中のユーザーが支援金を受け取ったデモ活動を取得
+    // ログイン中のユーザーが報酬を受け取ったデモ活動を取得
     @CustomRetry
     List<Demo> fetchReceivedGiftDemos() {
         java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findReceivedGiftDemosByUserId(userId);
     }
 
-    // ログイン中のユーザーの月ごとの受取支援金データを取得
+    // ログイン中のユーザーの月ごとの受取報酬額データを取得
     @CustomRetry
     List<MonthlyGiftSummaryDTO> fetchMonthlyGiftSummaries() {
         java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
@@ -254,5 +281,22 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
 //        Boolean isParticipant = participantRepository.existsBydemoIdAndUserIdAndDeletedAtIsNull(demoId, this.getUserLogic.getUserFromCache().getId());
 //        return isParticipant;
 //    }
+
+    @CustomRetry
+    public Integer fetchUserPoints() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        product.demo_wave.entity.PointBalance balance = pointService.getOrCreatePointBalance(userId);
+        return balance.getBalance();
+    }
+
+    // ポイント購入履歴を取得
+    @CustomRetry
+    public List<product.demo_wave.entity.PointPurchase> fetchPointPurchaseHistory() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        return pointPurchaseRepository.findByUserIdOrderByCreatedAtDesc(userId)
+            .stream()
+            .filter(p -> p.getDeletedAt() == null && p.getStatus() == product.demo_wave.entity.PointPurchase.PurchaseStatus.COMPLETED)
+            .collect(java.util.stream.Collectors.toList());
+    }
 
 }

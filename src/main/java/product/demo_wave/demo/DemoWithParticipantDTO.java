@@ -1,6 +1,5 @@
 package product.demo_wave.demo;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record DemoWithParticipantDTO(
@@ -11,7 +10,7 @@ public record DemoWithParticipantDTO(
 		LocalDateTime demoStartDate,
 		LocalDateTime demoEndDate,
 		Long participantCount,
-		BigDecimal totalDonationAmount,
+		Long totalPoints,  // 応援ポイント総数（SUM関数がLongを返すため）
 		Integer categoryId,
 		String categoryName,  // 日本語カテゴリー名（ja_nameから取得）
 		String prefectureName,

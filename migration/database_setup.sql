@@ -223,6 +223,76 @@ COMMENT ON COLUMN gift_transfer_details.created_at IS '登録日時';
 COMMENT ON COLUMN gift_transfer_details.deleted_at IS '論理削除日時';
 
 -- ========================================
+-- ポイントシステム関連テーブル
+-- ========================================
+
+-- point_balancesテーブル（ユーザーのポイント残高）
+DROP TABLE IF EXISTS point_balances CASCADE;
+CREATE TABLE point_balances (
+    user_id UUID PRIMARY KEY,
+    balance INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_point_balances_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+COMMENT ON TABLE point_balances IS 'ユーザーのポイント残高';
+COMMENT ON COLUMN point_balances.user_id IS 'ユーザーID';
+COMMENT ON COLUMN point_balances.balance IS 'ポイント残高';
+COMMENT ON COLUMN point_balances.created_at IS '作成日時';
+COMMENT ON COLUMN point_balances.updated_at IS '更新日時';
+
+-- point_purchasesテーブル（ポイント購入履歴）
+DROP TABLE IF EXISTS point_purchases CASCADE;
+CREATE TABLE point_purchases (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL,
+    points INTEGER NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stripe_payment_intent_id VARCHAR(255),
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    CONSTRAINT fk_point_purchases_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT chk_point_purchases_status CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED'))
+);
+
+COMMENT ON TABLE point_purchases IS 'ポイント購入履歴';
+COMMENT ON COLUMN point_purchases.id IS 'ID';
+COMMENT ON COLUMN point_purchases.user_id IS 'ユーザーID';
+COMMENT ON COLUMN point_purchases.points IS '購入ポイント数';
+COMMENT ON COLUMN point_purchases.price IS '支払金額（円）';
+COMMENT ON COLUMN point_purchases.stripe_payment_intent_id IS 'Stripe PaymentIntent ID';
+COMMENT ON COLUMN point_purchases.status IS 'ステータス (PENDING/COMPLETED/FAILED)';
+COMMENT ON COLUMN point_purchases.created_at IS '作成日時';
+COMMENT ON COLUMN point_purchases.updated_at IS '更新日時';
+COMMENT ON COLUMN point_purchases.deleted_at IS '削除日時';
+
+-- point_transactionsテーブル（ポイント送付履歴）
+DROP TABLE IF EXISTS point_transactions CASCADE;
+CREATE TABLE point_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL,
+    demo_id INTEGER NOT NULL,
+    points INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    CONSTRAINT fk_point_transactions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_point_transactions_demo FOREIGN KEY (demo_id) REFERENCES demo(id) ON DELETE CASCADE
+);
+
+COMMENT ON TABLE point_transactions IS 'ポイント送付履歴（デモへの応援）';
+COMMENT ON COLUMN point_transactions.id IS 'ID';
+COMMENT ON COLUMN point_transactions.user_id IS '送付者ユーザーID';
+COMMENT ON COLUMN point_transactions.demo_id IS '送付先デモID';
+COMMENT ON COLUMN point_transactions.points IS '送付ポイント数';
+COMMENT ON COLUMN point_transactions.created_at IS '作成日時';
+COMMENT ON COLUMN point_transactions.updated_at IS '更新日時';
+COMMENT ON COLUMN point_transactions.deleted_at IS '削除日時';
+
+-- ========================================
 -- インデックス作成（パフォーマンス最適化）
 -- ========================================
 CREATE INDEX idx_users_firebase_uid ON users(firebase_uid);
@@ -236,6 +306,15 @@ CREATE INDEX idx_gift_transfer_details_user ON gift_transfer_details(user_id);
 CREATE INDEX idx_gift_transfer_details_demo ON gift_transfer_details(demo_id);
 CREATE INDEX idx_gift_transfer_details_gift_transfer ON gift_transfer_details(gift_transfer_id);
 CREATE INDEX idx_gift_transfer_details_user_created ON gift_transfer_details(user_id, created_at);
+
+-- ポイントシステム関連のインデックス
+CREATE INDEX idx_point_balances_user_id ON point_balances(user_id);
+CREATE INDEX idx_point_purchases_user_id ON point_purchases(user_id);
+CREATE INDEX idx_point_purchases_stripe_payment_intent_id ON point_purchases(stripe_payment_intent_id);
+CREATE INDEX idx_point_purchases_created_at ON point_purchases(created_at DESC);
+CREATE INDEX idx_point_transactions_user_id ON point_transactions(user_id);
+CREATE INDEX idx_point_transactions_demo_id ON point_transactions(demo_id);
+CREATE INDEX idx_point_transactions_created_at ON point_transactions(created_at DESC);
 
 -- ========================================
 -- セットアップ完了
