@@ -439,7 +439,7 @@
       <!-- Action Buttons -->
       <div class="action-section">
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <button type="submit" formth:action="@{/demo/create}" formmethod="post" class="btn-back w-full sm:w-auto" name="back" value="true">
+          <button type="submit" th:formaction="@{/demo/create}" formmethod="post" class="btn-back w-full sm:w-auto" name="back" value="true">
             <i class="fas fa-arrow-left"></i>
             <span>戻って修正する</span>
           </button>

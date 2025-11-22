@@ -654,6 +654,10 @@
             <i class="fas fa-exclamation-circle"></i>
             <span>「マップを表示して開催場所を確定する」ボタンを押して、地図上で場所を確認してください</span>
           </p>
+          <p id="geocodeError" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>場所が見つかりませんでした。別の名前で試してください。</span>
+          </p>
         </div>
 
         <!-- Map Preview -->
@@ -802,14 +806,17 @@
     const placeInput = document.getElementById('demoPlace');
     const placeName = placeInput.value.trim();
 
+    // 前回のエラーを非表示
+    $('#geocodeError').hide();
+
     if (!placeName) {
-      alert('会場名を入力してください');
+      $('#geocodeError').show();
       placeInput.focus();
       return;
     }
 
     if (!geocoder) {
-      alert('Google Maps APIがまだ読み込まれていません。少々お待ちください。');
+      console.warn('Google Maps APIがまだ読み込まれていません');
       return;
     }
 
@@ -819,7 +826,7 @@
   // Geocoding function
   function geocodePlace(address) {
     if (!geocoder) {
-      alert('Google Maps APIがまだ読み込まれていません');
+      console.warn('Google Maps APIがまだ読み込まれていません');
       return;
     }
 
@@ -895,8 +902,7 @@
 
         // エラーメッセージを非表示
         $('#mapValidationError').hide();
-
-        alert('場所が設定されました: ' + place.formatted_address);
+        $('#geocodeError').hide();
 
         console.log('Place info set:', {
           address: place.formatted_address,
@@ -906,7 +912,8 @@
         });
       } else {
         console.error('Geocode failed:', status);
-        alert('場所が見つかりませんでした。別の名前で試してください。');
+        // 赤文字でエラーメッセージを表示
+        $('#geocodeError').show();
       }
     });
   }
