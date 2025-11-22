@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import product.demo_wave.entity.Demo;
 import product.demo_wave.entity.User;
+import product.demo_wave.demo.DemoWithParticipantDTO;
 
 @RequiredArgsConstructor
 class MypageGetUserContext {
@@ -26,11 +27,11 @@ class MypageGetUserContext {
     private String pageType; // "demos", "participated", "favorites", "supported", "settings"
 
     private User user;
-    private List<Demo> participatedDemos;
-    private List<Demo> favoriteDemos;
+    private List<DemoWithParticipantDTO> participatedDemos;
+    private List<DemoWithParticipantDTO> favoriteDemos;
     private List<Demo> supportedDemos;
     private List<SupportedDemoDTO> supportedDemosWithAmount;
-    private List<Demo> postedDemos;
+    private List<DemoWithParticipantDTO> postedDemos;
     private List<Demo> receivedGiftDemos;
     private List<MonthlyGiftSummaryDTO> monthlyGiftSummaries;
     private Integer userPoints;
@@ -41,11 +42,11 @@ class MypageGetUserContext {
     }
 
     void fetchParticipatedDemo() throws UnsupportedOperationException {
-        participatedDemos = mypageFacadeDBLogic.fetchParticipatedDemo();
+        participatedDemos = mypageFacadeDBLogic.fetchParticipatedDemosWithParticipant();
     }
 
     void fetchFavoriteDemos() throws UnsupportedOperationException {
-        favoriteDemos = mypageFacadeDBLogic.fetchFavoriteDemos();
+        favoriteDemos = mypageFacadeDBLogic.fetchFavoriteDemosWithParticipant();
     }
 
     void fetchSupportedDemos() throws UnsupportedOperationException {
@@ -53,7 +54,7 @@ class MypageGetUserContext {
     }
 
     void fetchPostedDemos() throws UnsupportedOperationException {
-        postedDemos = mypageFacadeDBLogic.fetchPostedDemos();
+        postedDemos = mypageFacadeDBLogic.fetchPostedDemosWithParticipant();
     }
 
     void fetchReceivedGiftDemos() throws UnsupportedOperationException {

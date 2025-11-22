@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import product.demo_wave.common.annotation.CustomRetry;
 import product.demo_wave.common.logic.BasicFacadeDBLogic;
 import product.demo_wave.entity.Demo;
+import product.demo_wave.demo.DemoWithParticipantDTO;
 //import product.demo_wave.demo.CommentForm;
 //import product.demo_wave.demo.DemoForm;
 import product.demo_wave.entity.GiftTransfer;
@@ -122,6 +123,27 @@ class MypageFacadeDBLogic extends BasicFacadeDBLogic {
     List<Demo> fetchPostedDemos() {
         java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
         return demoRepository.findOwnDemosByUserIdOrderByUpcomingFirst(userId);
+    }
+
+    // ログイン中のユーザーが投稿したデモ活動をDTO形式で取得（参加者数・応援ポイント含む）
+    @CustomRetry
+    List<DemoWithParticipantDTO> fetchPostedDemosWithParticipant() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        return demoRepository.findPostedDemosByUserIdWithParticipantCount(userId);
+    }
+
+    // ログイン中のユーザーが参加したデモ活動をDTO形式で取得（参加者数・応援ポイント含む）
+    @CustomRetry
+    List<DemoWithParticipantDTO> fetchParticipatedDemosWithParticipant() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        return demoRepository.findParticipatedDemosByUserIdWithParticipantCount(userId);
+    }
+
+    // ログイン中のユーザーがお気に入りに登録したデモ活動をDTO形式で取得（参加者数・応援ポイント含む）
+    @CustomRetry
+    List<DemoWithParticipantDTO> fetchFavoriteDemosWithParticipant() {
+        java.util.UUID userId = this.getUserLogic.getUserFromCache().getId();
+        return demoRepository.findFavoriteDemosByUserIdWithParticipantCount(userId);
     }
 
     // ログイン中のユーザーが報酬を受け取ったデモ活動を取得

@@ -148,6 +148,39 @@ public interface DemoRepository extends JpaRepository<Demo, Integer> {
          "ORDER BY CASE WHEN d.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, d.demoStartDate DESC")
   List<Demo> findOwnDemosByUserIdOrderByUpcomingFirst(@Param("userId") UUID userId);
 
+  // マイページ用：投稿したデモをDTOで取得
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), (SELECT COALESCE(SUM(pt2.points), 0) FROM PointTransaction pt2 WHERE pt2.demo.id = d.id AND pt2.deletedAt IS NULL), " +
+          "d.category.id, d.category.jaName, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "WHERE d.deletedAt IS NULL AND d.user.id = :userId " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.jaName, d.prefecture.name, d.user.name " +
+          "ORDER BY CASE WHEN d.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> findPostedDemosByUserIdWithParticipantCount(@Param("userId") UUID userId);
+
+  // マイページ用：参加したデモをDTOで取得
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), (SELECT COALESCE(SUM(pt2.points), 0) FROM PointTransaction pt2 WHERE pt2.demo.id = d.id AND pt2.deletedAt IS NULL), " +
+          "d.category.id, d.category.jaName, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "WHERE d.deletedAt IS NULL AND d.id IN (SELECT p2.demo.id FROM Participant p2 WHERE p2.user.id = :userId AND p2.deletedAt IS NULL) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.jaName, d.prefecture.name, d.user.name " +
+          "ORDER BY CASE WHEN d.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> findParticipatedDemosByUserIdWithParticipantCount(@Param("userId") UUID userId);
+
+  // マイページ用：お気に入りデモをDTOで取得
+  @Query(value = "SELECT new product.demo_wave.demo.DemoWithParticipantDTO(" +
+          "d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, COUNT(DISTINCT p.id), (SELECT COALESCE(SUM(pt2.points), 0) FROM PointTransaction pt2 WHERE pt2.demo.id = d.id AND pt2.deletedAt IS NULL), " +
+          "d.category.id, d.category.jaName, d.prefecture.name, d.user.name) " +
+          "FROM Demo d " +
+          "LEFT JOIN Participant p ON d.id = p.demo.id AND p.deletedAt IS NULL " +
+          "WHERE d.deletedAt IS NULL AND d.id IN (SELECT f.demo.id FROM FavoriteDemo f WHERE f.user.id = :userId AND f.deletedAt IS NULL) " +
+          "GROUP BY d.id, d.title, d.content, d.demoPlace, d.demoStartDate, d.demoEndDate, d.category.id, d.category.jaName, d.prefecture.name, d.user.name " +
+          "ORDER BY CASE WHEN d.demoEndDate >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END, d.demoStartDate DESC")
+  List<DemoWithParticipantDTO> findFavoriteDemosByUserIdWithParticipantCount(@Param("userId") UUID userId);
+
   /**
    * ユーザーが参加したデモのうち、支援金を受け取ったデモを取得
    * （GiftTransferが存在する月に開催されたデモ）

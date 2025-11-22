@@ -15,6 +15,9 @@
   <!-- Footer Styles -->
   <th:block th:replace="~{common/footer :: footerStyles}"></th:block>
 
+  <!-- Demo Card Styles -->
+  <th:block th:replace="~{common/demoCard :: demoCardStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
@@ -44,166 +47,6 @@
 
     .nav-link:hover {
       color: #2563eb;
-    }
-
-    /* Demo card */
-    .demo-card {
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s;
-      border: 2px solid #e8e8e8;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .demo-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .demo-card:hover::before {
-      opacity: 1;
-    }
-
-    .demo-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(16, 185, 129, 0.2);
-      border-color: #10b981;
-    }
-
-    .demo-description {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.6;
-      margin: 12px 0;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      min-height: 63px;
-    }
-
-    .demo-card-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: 50px;
-    }
-
-    .demo-status-badge {
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      color: white;
-    }
-
-    .status-ongoing {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-
-    .status-upcoming {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    }
-
-    .status-completed {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      color: #666;
-    }
-
-    .organizer-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .demo-card-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 16px;
-      padding: 16px;
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-      border-radius: 12px;
-      font-size: 13px;
-    }
-
-    .demo-card-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .demo-card-meta-item i {
-      font-size: 16px;
-      width: 24px;
-      text-align: center;
-    }
-
-    .demo-card-meta-item.location i {
-      color: #ef4444;
-    }
-
-    .demo-card-meta-item.schedule i {
-      color: #10b981;
-    }
-
-    .demo-card-meta-label {
-      font-size: 11px;
-      color: #94a3b8;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      min-width: 60px;
-    }
-
-    .demo-card-meta-value {
-      font-weight: 600;
-      color: #334155;
-      flex: 1;
-    }
-
-    .demo-card-meta-value.schedule-value {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      line-height: 1.4;
-    }
-
-    .schedule-date {
-      font-weight: 600;
-    }
-
-    .schedule-time {
-      font-size: 12px;
-      color: #64748b;
     }
 
     .empty-state {
@@ -371,61 +214,10 @@
   </div>
 
   <!-- Demo Cards Grid -->
-  <div th:if="${!#lists.isEmpty(postedDemos)}" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    <div th:each="demo : ${postedDemos}" class="demo-card"
-         th:data-demo-url="@{/demo/show(demoId=${demo.id})}"
-         onclick="window.location.href=this.getAttribute('data-demo-url')">
-
-      <!-- Content -->
-      <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-        <!-- Header with Status -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
-          <!-- Status Badge -->
-          <span th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}"
-                class="demo-status-badge status-ongoing" style="position: static;">
-            開催中
-          </span>
-          <span th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}"
-                class="demo-status-badge status-upcoming" style="position: static;">
-            開催予定
-          </span>
-          <span th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}"
-                class="demo-status-badge status-completed" style="position: static;">
-            開催済
-          </span>
-
-          <!-- Organizer Badge -->
-          <span class="organizer-badge">
-            <i class="fas fa-crown"></i>
-            主催者
-          </span>
-        </div>
-
-        <h4 class="demo-card-title" style="margin-bottom: 12px;" th:text="${demo.title}">デモタイトル</h4>
-
-        <!-- Description -->
-        <p class="demo-description" th:text="${demo.content}">
-          デモの説明文がここに表示されます。最大3行まで表示されます。
-        </p>
-
-        <!-- Meta Information -->
-        <div class="demo-card-meta" style="margin-top: auto;">
-          <div class="demo-card-meta-item schedule">
-            <i class="fas fa-calendar-alt"></i>
-            <span class="demo-card-meta-label">開催日</span>
-            <span class="demo-card-meta-value schedule-value">
-              <span class="schedule-date" th:text="${#temporals.format(demo.demoStartDate, 'yyyy/MM/dd')}">2025/01/15</span>
-              <span class="schedule-time" th:text="${#temporals.format(demo.demoStartDate, 'HH:mm')} + ' ~ ' + ${#temporals.format(demo.demoEndDate, 'HH:mm')}">14:00 ~ 16:00</span>
-            </span>
-          </div>
-          <div class="demo-card-meta-item location">
-            <i class="fas fa-map-marker-alt"></i>
-            <span class="demo-card-meta-label">場所</span>
-            <span class="demo-card-meta-value" th:text="${demo.demoPlace}">渋谷駅前</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div th:if="${!#lists.isEmpty(postedDemos)}" class="demo-cards-grid grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <th:block th:each="demo : ${postedDemos}">
+      <th:block th:replace="~{common/demoCard :: demoCard(${demo})}"></th:block>
+    </th:block>
   </div>
 
   <!-- No Results -->

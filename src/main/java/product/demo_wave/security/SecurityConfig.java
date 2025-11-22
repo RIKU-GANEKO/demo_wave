@@ -76,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/demo/favorite-status**").permitAll()
                         .requestMatchers("/api/ranking/**").permitAll()
                         .requestMatchers("/api/config/**").permitAll()
+                        .requestMatchers("/api/today-demos/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/signup").permitAll()
                         .requestMatchers("/user/create/confirm").permitAll()

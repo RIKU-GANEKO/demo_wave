@@ -816,7 +816,7 @@
     }
 
     // Load favorite status (will work if user is logged in via session)
-    fetch(`/api/demo/favorite-status?demoId=${demoId}`)
+    fetch(`${contextPath}/api/demo/favorite-status?demoId=${demoId}`)
     .then(response => {
       console.log('Favorite status response:', response.status);
       if (response.ok) {

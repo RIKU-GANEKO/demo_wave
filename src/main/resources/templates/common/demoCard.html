@@ -372,5 +372,68 @@
   </style>
 </th:block>
 
+<!-- Demo Card Fragment for Entity (Demo entity直接使用時) -->
+<div th:fragment="demoCardEntity(demo)" class="demo-card"
+     th:data-demo-url="@{/demo/show(demoId=${demo.id})}"
+     th:data-title="${demo.title}"
+     th:data-category="${demo.category?.id}"
+     th:data-prefecture="${demo.prefecture?.name}"
+     onclick="window.location.href=this.getAttribute('data-demo-url')">
+
+  <!-- Content -->
+  <div class="demo-card-content" style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
+    <!-- Header with Status -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+      <!-- Status Badge -->
+      <span th:if="${demo.demoStartDate.isBefore(T(java.time.LocalDateTime).now()) and demo.demoEndDate.isAfter(T(java.time.LocalDateTime).now())}"
+            class="demo-status-badge status-ongoing" style="position: static;">
+        開催中
+      </span>
+      <span th:if="${demo.demoStartDate.isAfter(T(java.time.LocalDateTime).now())}"
+            class="demo-status-badge status-upcoming" style="position: static;">
+        開催予定
+      </span>
+      <span th:if="${demo.demoEndDate.isBefore(T(java.time.LocalDateTime).now())}"
+            class="demo-status-badge status-completed" style="position: static;">
+        開催済
+      </span>
+    </div>
+
+    <h4 class="demo-card-title" style="margin-bottom: 12px;" th:text="${demo.title}">デモタイトル</h4>
+
+    <!-- Description -->
+    <p class="demo-description" th:text="${demo.content}">
+      デモの説明文がここに表示されます。最大3行まで表示されます。
+    </p>
+
+    <!-- Organizer & Category & Prefecture -->
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; align-items: center; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+        <i class="fas fa-user" style="color: #2563eb;"></i>
+        <span th:text="${demo.user?.name}">主催者</span>
+      </div>
+      <span style="background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;" th:text="${demo.category?.jaName}">環境</span>
+      <span style="background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;" th:text="${demo.prefecture?.name}">東京都</span>
+    </div>
+
+    <!-- Meta Information -->
+    <div class="demo-card-meta" style="margin-top: auto;">
+      <div class="demo-card-meta-item schedule">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="demo-card-meta-label">開催日</span>
+        <span class="demo-card-meta-value schedule-value">
+          <span class="schedule-date" th:text="${#temporals.format(demo.demoStartDate, 'yyyy/MM/dd')}">2025/01/15</span>
+          <span class="schedule-time" th:text="${#temporals.format(demo.demoStartDate, 'HH:mm')} + ' ~ ' + ${#temporals.format(demo.demoEndDate, 'HH:mm')}">14:00 ~ 16:00</span>
+        </span>
+      </div>
+      <div class="demo-card-meta-item location">
+        <i class="fas fa-map-marker-alt"></i>
+        <span class="demo-card-meta-label">場所</span>
+        <span class="demo-card-meta-value" th:text="${demo.demoPlace}">渋谷駅前</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

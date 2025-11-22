@@ -407,7 +407,7 @@
       if (keyword) params.set('keyword', keyword);
       if (sort && sort !== 'newest') params.set('sort', sort);
 
-      const url = params.toString() ? `/search?${params.toString()}` : '/search';
+      const url = params.toString() ? `${contextPath}/search?${params.toString()}` : `${contextPath}/search`;
       console.log('Navigating to:', url);
       window.location.href = url;
     }
