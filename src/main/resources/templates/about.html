@@ -11,6 +11,9 @@
     <!-- Header Styles -->
     <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
 
+    <!-- Footer Styles -->
+    <th:block th:replace="~{common/footer :: footerStyles}"></th:block>
+
     <style>
         .hero-gradient {
             background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
@@ -504,11 +507,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2025 Demo Wave. All rights reserved.</p>
-        </div>
-    </footer>
+    <th:block th:replace="~{common/footer :: footer}"></th:block>
 
     <!-- Header Script -->
     <th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>

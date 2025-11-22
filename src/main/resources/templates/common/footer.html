@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="site-footer">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div class="md:col-span-2">
+        <div class="flex items-center space-x-3 mb-4">
+          <img th:src="@{/images/demowave_icon.png}" alt="Demo Wave" class="w-10 h-10">
+          <h3 class="text-xl font-bold">Demo Wave</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          市民の声を社会に届けるための、新しいプラットフォーム。
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">サービス</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a th:href="@{/search}" class="hover:text-white">デモを探す</a></li>
+          <li><a th:href="@{/about}" class="hover:text-white">Demo Waveとは</a></li>
+          <li><a th:href="@{/login}" class="hover:text-white">ログイン</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">サポート</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a th:href="@{/about#faq}" class="hover:text-white">よくある質問</a></li>
+          <li><a th:href="@{/privacy}" class="hover:text-white">プライバシーポリシー</a></li>
+          <li><a th:href="@{/terms}" class="hover:text-white">利用規約</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 Demo Wave. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Footer Styles Fragment -->
+<th:block th:fragment="footerStyles">
+  <style>
+    .site-footer {
+      background-color: #111827;
+      color: white;
+      padding: 48px 0;
+      margin-top: 64px;
+    }
+
+    .site-footer a {
+      transition: color 0.2s;
+    }
+
+    .site-footer a:hover {
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .site-footer {
+        padding: 32px 0;
+        margin-top: 32px;
+      }
+
+      .site-footer .grid {
+        gap: 24px;
+      }
+
+      .site-footer h3 {
+        font-size: 1.125rem;
+      }
+
+      .site-footer h4 {
+        font-size: 0.875rem;
+        margin-bottom: 12px;
+      }
+
+      .site-footer p,
+      .site-footer li {
+        font-size: 0.875rem;
+      }
+
+      .site-footer ul {
+        gap: 8px;
+      }
+    }
+  </style>
+</th:block>
+
+</body>
+</html>

@@ -12,6 +12,9 @@
   <!-- Header Styles -->
   <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
 
+  <!-- Footer Styles -->
+  <th:block th:replace="~{common/footer :: footerStyles}"></th:block>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
@@ -313,11 +316,7 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-gray-900 text-white py-8">
-  <div class="container mx-auto px-4 text-center">
-    <p>&copy; 2025 Demo Wave. All rights reserved.</p>
-  </div>
-</footer>
+<th:block th:replace="~{common/footer :: footer}"></th:block>
 
 <!-- Header Script -->
 <th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>

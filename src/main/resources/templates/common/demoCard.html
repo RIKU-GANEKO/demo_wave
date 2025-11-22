@@ -8,6 +8,9 @@
 <!-- Demo Card Fragment -->
 <div th:fragment="demoCard(demo)" class="demo-card"
      th:data-demo-url="@{/demo/show(demoId=${demo.id})}"
+     th:data-title="${demo.title}"
+     th:data-category="${demo.categoryId}"
+     th:data-prefecture="${demo.prefectureName}"
      onclick="window.location.href=this.getAttribute('data-demo-url')">
 
   <!-- Content -->
@@ -36,13 +39,14 @@
       デモの説明文がここに表示されます。最大3行まで表示されます。
     </p>
 
-    <!-- Organizer & Category -->
+    <!-- Organizer & Category & Prefecture -->
     <div style="display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; align-items: center; flex-wrap: wrap;">
       <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
         <i class="fas fa-user" style="color: #2563eb;"></i>
         <span th:text="${demo.organizerName}">主催者</span>
       </div>
       <span style="background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;" th:text="${demo.categoryName}">環境</span>
+      <span style="background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;" th:text="${demo.prefectureName}">東京都</span>
     </div>
 
     <!-- Meta Information -->
@@ -72,7 +76,7 @@
 <!-- Demo Card Styles Fragment -->
 <th:block th:fragment="demoCardStyles">
   <style>
-    /* Demo card */
+    /* Demo card - Original design */
     .demo-card {
       background: white;
       border-radius: 16px;
@@ -222,6 +226,148 @@
     .schedule-time {
       font-size: 12px;
       color: #64748b;
+    }
+
+    /* ==========================================
+       Responsive - Mobile (640px以下)
+       1カラム、説明文表示、メタ情報シンプル化
+       ========================================== */
+    @media (max-width: 640px) {
+      /* グリッドを1カラムに */
+      .demo-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* カードの角丸とシャドウを控えめに */
+      .demo-card {
+        border-radius: 12px;
+        border-width: 1px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .demo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      }
+
+      /* コンテンツの余白を調整 */
+      .demo-card-content {
+        padding: 16px !important;
+      }
+
+      /* タイトル */
+      .demo-card-title {
+        font-size: 16px;
+        min-height: auto;
+        margin-bottom: 8px !important;
+      }
+
+      /* 説明文を表示（2行に制限） */
+      .demo-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        min-height: auto;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+
+      /* ステータスバッジ */
+      .demo-status-badge {
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+
+      /* 主催者・カテゴリ・都道府県エリア */
+      .demo-card-content > div:nth-child(4) {
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+        padding-bottom: 12px !important;
+      }
+
+      .demo-card-content > div:nth-child(4) span {
+        padding: 4px 10px !important;
+        font-size: 11px !important;
+      }
+
+      /* メタ情報 - 枠を外してフラットに */
+      .demo-card-meta {
+        padding: 0;
+        gap: 0;
+        background: none;
+        border-radius: 0;
+        margin-top: 8px;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 12px;
+      }
+
+      .demo-card-meta-item {
+        display: inline-flex;
+        padding: 0;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        margin-right: 16px;
+        margin-bottom: 4px;
+      }
+
+      .demo-card-meta-item i {
+        font-size: 13px;
+        width: 18px;
+      }
+
+      .demo-card-meta-label {
+        font-size: 10px;
+        min-width: auto;
+        margin-right: 4px;
+      }
+
+      .demo-card-meta-value {
+        font-size: 13px;
+      }
+
+      .demo-card-meta-value.schedule-value {
+        flex-direction: row;
+        gap: 6px;
+      }
+
+      .schedule-time {
+        font-size: 13px;
+        color: #64748b;
+      }
+
+      .schedule-time::before {
+        content: '';
+      }
+    }
+
+    /* ==========================================
+       Very small screens (374px以下)
+       ========================================== */
+    @media (max-width: 374px) {
+      .demo-cards-grid {
+        gap: 10px !important;
+      }
+
+      .demo-card-content {
+        padding: 12px !important;
+      }
+
+      .demo-card-title {
+        font-size: 15px;
+      }
+
+      .demo-description {
+        font-size: 12px;
+      }
+
+      .demo-card-meta-item {
+        margin-right: 12px;
+      }
+
+      .demo-card-meta-value {
+        font-size: 12px;
+      }
     }
   </style>
 </th:block>

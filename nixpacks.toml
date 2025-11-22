@@ -5,4 +5,9 @@ nixPkgs = ["maven", "jdk21"]
 cmds = ["mvn clean package -DskipTests"]
 
 [start]
-cmd = "java -Xmx512m -Xms256m -XX:MaxMetaspaceSize=128m -Dspring.profiles.active=prod -Dserver.port=$PORT -jar target/demo_wave-0.0.1-SNAPSHOT.jar"
+# メモリ最適化設定
+# - SerialGC: メモリ効率重視のGC
+# - Xss256k: スレッドスタックサイズ縮小（デフォルト1MB→256KB）
+# - MaxDirectMemorySize: ダイレクトメモリ制限
+# - ReservedCodeCacheSize: JITコンパイルキャッシュ制限
+cmd = "java -Xmx384m -Xms256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -Xss256k -XX:MaxDirectMemorySize=48m -XX:ReservedCodeCacheSize=48m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dspring.profiles.active=prod -Dserver.port=$PORT -jar target/demo_wave-0.0.1-SNAPSHOT.jar"

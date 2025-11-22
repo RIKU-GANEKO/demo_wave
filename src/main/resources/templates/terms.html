@@ -8,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+  <th:block th:replace="~{common/footer :: footerStyles}"></th:block>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
     * { font-family: 'Noto Sans JP', sans-serif; }
@@ -166,11 +167,8 @@
   </div>
 </main>
 
-<footer class="bg-gray-900 text-white py-8 mt-16">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <p class="text-gray-400">&copy; 2025 Demo Wave. All rights reserved.</p>
-  </div>
-</footer>
+<!-- Footer -->
+<th:block th:replace="~{common/footer :: footer}"></th:block>
 
 <th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
 </body>
