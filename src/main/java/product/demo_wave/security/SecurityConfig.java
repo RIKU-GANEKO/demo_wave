@@ -91,6 +91,8 @@ public class SecurityConfig {
                         .requestMatchers("/organizer-guide").permitAll() // 主催者向けガイドページを認証不要に設定
                         .requestMatchers("/privacy").permitAll() // プライバシーポリシーを認証不要に設定
                         .requestMatchers("/terms").permitAll() // 利用規約を認証不要に設定
+                        .requestMatchers("/legal").permitAll() // 特定商取引法に基づく表記を認証不要に設定
+                        .requestMatchers("/contact").permitAll() // お問い合わせページを認証不要に設定
                         .requestMatchers("/search").permitAll() // 検索ページを認証不要に設定
                         .requestMatchers("/search**").permitAll() // 検索ページ（クエリパラメータ付き）を認証不要に設定
                         .requestMatchers("/demo/show").permitAll() // デモ詳細ページを認証不要に設定
@@ -115,14 +117,15 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                         .permitAll();
             });
-            // CSRF設定：外部Webhook（Stripe）のみ無効化
+            // CSRF設定：外部Webhook・公開フォームは無効化
             // SPAフロントエンドからのAPI呼び出しはSupabase JWTで認証されるためCSRF保護不要
             http.csrf(csrf -> {
                 csrf.ignoringRequestMatchers(
                     "/payment/webhook",           // Stripe Webhook専用
                     "/api/**",                    // SPA用APIエンドポイント（JWT認証済み）
                     "/demoList/**",               // 公開API（読み取りのみ）
-                    "/{demoId}/commentList/**"    // 公開API（読み取りのみ）
+                    "/{demoId}/commentList/**",   // 公開API（読み取りのみ）
+                    "/contact"                    // お問い合わせフォーム（認証不要）
                 );
             });
 

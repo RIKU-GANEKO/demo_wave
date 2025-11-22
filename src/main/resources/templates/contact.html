@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お問い合わせ - Demo Wave</title>
+  <link rel="icon" th:href="@{/images/demowave_icon.png}" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <th:block th:replace="~{common/mainHeader :: headerStyles}"></th:block>
+  <th:block th:replace="~{common/footer :: footerStyles}"></th:block>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    * { font-family: 'Noto Sans JP', sans-serif; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    .form-label .required {
+      color: #ef4444;
+      margin-left: 0.25rem;
+    }
+    .submit-btn {
+      background-color: #2563eb;
+      color: white;
+      padding: 0.875rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .submit-btn:hover {
+      background-color: #1d4ed8;
+    }
+    .submit-btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .alert-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .alert-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<th:block th:replace="~{common/mainHeader :: header}"></th:block>
+
+<main class="max-w-2xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">お問い合わせ</h1>
+  <p class="text-gray-600 text-center mb-12">ご質問やご要望がございましたら、お気軽にお問い合わせください。</p>
+
+  <!-- Success/Error Messages -->
+  <div th:if="${success}" class="alert alert-success">
+    <i class="fas fa-check-circle mr-2"></i>
+    お問い合わせを受け付けました。ご連絡いただきありがとうございます。
+  </div>
+  <div th:if="${error}" class="alert alert-error">
+    <i class="fas fa-exclamation-circle mr-2"></i>
+    <span th:text="${error}">エラーが発生しました。</span>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-lg p-8">
+    <form th:action="@{/contact}" method="post" id="contactForm">
+      <div class="mb-6">
+        <label for="name" class="form-label">
+          お名前<span class="required">*</span>
+        </label>
+        <input type="text" id="name" name="name" class="form-input"
+               placeholder="山田 太郎" required maxlength="100">
+      </div>
+
+      <div class="mb-6">
+        <label for="email" class="form-label">
+          メールアドレス<span class="required">*</span>
+        </label>
+        <input type="email" id="email" name="email" class="form-input"
+               placeholder="example@email.com" required maxlength="255">
+      </div>
+
+      <div class="mb-6">
+        <label for="subject" class="form-label">
+          件名<span class="required">*</span>
+        </label>
+        <input type="text" id="subject" name="subject" class="form-input"
+               placeholder="お問い合わせの件名" required maxlength="200">
+      </div>
+
+      <div class="mb-8">
+        <label for="message" class="form-label">
+          本文<span class="required">*</span>
+        </label>
+        <textarea id="message" name="message" class="form-input" rows="6"
+                  placeholder="お問い合わせ内容をご入力ください" required maxlength="5000"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <i class="fas fa-paper-plane mr-2"></i>送信する
+      </button>
+    </form>
+  </div>
+
+  <div class="mt-8 text-center text-gray-500 text-sm">
+    <p>通常、1〜3営業日以内にご返信いたします。</p>
+  </div>
+</main>
+
+<!-- Footer -->
+<th:block th:replace="~{common/footer :: footer}"></th:block>
+
+<th:block th:replace="~{common/mainHeader :: headerScript}"></th:block>
+
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>送信中...';
+  });
+</script>
+</body>
+</html>
