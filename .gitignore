@@ -54,3 +54,7 @@ src/main/resources/application-batch.properties
 .env.production
 .env.*.local
 .env.local
+
+### MCP Configuration ###
+# MCP configuration with API keys
+.mcp.json
