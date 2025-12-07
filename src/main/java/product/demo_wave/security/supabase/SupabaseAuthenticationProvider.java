@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import product.demo_wave.entity.User;
 import product.demo_wave.repository.UserRepository;
+import product.demo_wave.security.LoginAttemptService;
 import product.demo_wave.security.SupabaseUserDetails;
 
 import java.util.List;
@@ -37,12 +39,21 @@ public class SupabaseAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         logger.debug("Attempting Supabase authentication for: {}", email);
+
+        // アカウントがロックされているかチェック
+        if (loginAttemptService.isBlocked(email)) {
+            logger.warn("Login attempt for locked account: {}", email);
+            throw new LockedException("アカウントがロックされています。10回ログインに失敗したため、30分間ログインできません。");
+        }
 
         try {
             // Supabase Auth APIでログイン

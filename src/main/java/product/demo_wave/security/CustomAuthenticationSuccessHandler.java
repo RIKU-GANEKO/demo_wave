@@ -22,6 +22,7 @@ import product.demo_wave.common.annotation.CustomRetry;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
 	private final UserRepository userRepository;
+	private final LoginAttemptService loginAttemptService;
 
 	@Override
 	@CustomRetry
@@ -30,12 +31,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 
+		System.out.println("################### CustomAuthenticationSuccessHandler called!");
+		System.out.println("################### Request URI: " + request.getRequestURI());
+		System.out.println("################### Authentication: " + authentication);
+		System.out.println("################### Authorities: " + authentication.getAuthorities());
+
 		Object principal = authentication.getPrincipal();
 
 		// Supabase認証の場合
 		if (principal instanceof SupabaseUserDetails) {
 			SupabaseUserDetails supabaseUserDetails = (SupabaseUserDetails) principal;
 			System.out.println("Supabase authentication successful for: " + supabaseUserDetails.getEmail());
+
+			// ログイン成功時、試行回数をリセット
+			loginAttemptService.loginSucceeded(supabaseUserDetails.getEmail());
 
 			// トークンをセッションに保存
 			if (supabaseUserDetails.getAccessToken() != null) {
@@ -61,7 +70,26 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 				.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
 		if (isAdmin) {
-			// 管理者の場合は管理画面にリダイレクト
+			// 管理者の場合、2FAが有効かチェック
+			if (principal instanceof SupabaseUserDetails) {
+				try {
+					SupabaseUserDetails adminUserDetails = (SupabaseUserDetails) principal;
+					java.util.UUID userId = java.util.UUID.fromString(adminUserDetails.getUserId());
+					User user = userRepository.findById(userId).orElseThrow();
+
+					if (user.getTwoFactorEnabled() != null && user.getTwoFactorEnabled()) {
+						// 2FAが有効な場合、2FA検証画面にリダイレクト
+						System.out.println("################### Admin user with 2FA, redirecting to 2FA verification");
+						request.getSession().setAttribute("pending2FAUserId", userId.toString());
+						response.sendRedirect(request.getContextPath() + "/admin/2fa/verify");
+						return;
+					}
+				} catch (Exception e) {
+					System.err.println("2FAチェックエラー: " + e.getMessage());
+				}
+			}
+
+			// 2FAが無効、または2FA済みの場合は管理画面にリダイレクト
 			System.out.println("################### Admin user, redirecting to admin dashboard");
 			response.sendRedirect(request.getContextPath() + "/admin");
 		} else {

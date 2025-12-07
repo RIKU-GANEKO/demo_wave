@@ -71,6 +71,14 @@ public class User {
   @Column(name = "deleted_at")
   private Date deletedAt;
 
+  // 二要素認証（2FA）用のシークレットキー
+  @Column(name = "two_factor_secret")
+  private String twoFactorSecret;
+
+  // 二要素認証が有効かどうか
+  @Column(name = "two_factor_enabled")
+  private Boolean twoFactorEnabled = false;
+
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval=true, cascade = CascadeType.ALL)
   private List<UserRole> userRole = new ArrayList<>();
 
