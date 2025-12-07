@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,7 +25,6 @@ import product.demo_wave.security.supabase.SupabaseAuthenticationProvider;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
@@ -44,7 +44,40 @@ public class SecurityConfig {
     @Autowired
     private SupabaseAuthenticationProvider supabaseAuthenticationProvider;
 
+    @Autowired
+    private AdminBasicAuthFilter adminBasicAuthFilter;
+
+    /**
+     * 管理者画面用のSecurityFilterChain（ベーシック認証あり）
+     */
     @Bean
+    @Order(1)  // 管理者画面を優先的に評価
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/admin/**")
+            .authorizeHttpRequests(authorize -> {
+                authorize
+                        .requestMatchers("/admin/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN");
+            })
+            // カスタムベーシック認証フィルターを追加（SecurityFilterChainの前に実行）
+            .addFilterBefore(adminBasicAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .formLogin(form -> {
+                form.usernameParameter("email")
+                        .passwordParameter("password")
+                        .loginPage("/admin/login")
+                        .successHandler(customAuthenticationSuccessHandler)
+                        .failureHandler(customAuthenticationFailureHandler)
+                        .permitAll();
+            });
+
+        return http.build();
+    }
+
+    /**
+     * 一般ユーザー用のSecurityFilterChain（ベーシック認証なし）
+     */
+    @Bean
+    @Order(2)  // 一般ユーザー画面は後で評価
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         try {
             // セッション管理を有効化
@@ -54,9 +87,6 @@ public class SecurityConfig {
 
             http.authorizeHttpRequests(authorize -> {
                 authorize
-                        // 管理者ルート
-                        .requestMatchers("/admin/login").permitAll() // 管理者ログインページは認証不要
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // 管理者画面はADMINロール必須
                         // 一般ユーザー向けルート
 //                        .requestMatchers("/demo").permitAll()
                         .requestMatchers("/demoList/**").permitAll()

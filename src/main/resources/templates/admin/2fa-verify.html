@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二要素認証 - DemoWave管理画面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #2563eb;
+            font-size: 28px;
+            margin: 0 0 10px 0;
+        }
+        .logo p {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+        .icon {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 22px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 24px;
+            letter-spacing: 8px;
+            text-align: center;
+            box-sizing: border-box;
+            font-family: monospace;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+        }
+        .btn-primary:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error-message {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #fca5a5;
+            font-size: 14px;
+            text-align: center;
+        }
+        .help-text {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+        .help-text a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>DemoWave</h1>
+            <p>管理画面</p>
+        </div>
+
+        <div class="icon">🔐</div>
+
+        <h2>二要素認証</h2>
+        <p class="subtitle">認証アプリに表示されている6桁のコードを入力してください</p>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <form id="verify2FAForm" onsubmit="verify2FA(event)">
+            <div class="input-group">
+                <label for="verificationCode">認証コード</label>
+                <input
+                    type="text"
+                    id="verificationCode"
+                    placeholder="000000"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    autocomplete="off"
+                    autofocus
+                    required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary">認証</button>
+
+            <div class="loading" id="loadingMessage">
+                検証中...
+            </div>
+        </form>
+
+        <div class="help-text">
+            認証コードが見つかりませんか？<br>
+            Google Authenticatorアプリを確認してください
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const contextPath = /*[[${#httpServletRequest.getContextPath()}]]*/ '';
+
+        // 入力時に自動的に数字のみにフィルタ
+        document.getElementById('verificationCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        async function verify2FA(event) {
+            event.preventDefault();
+
+            const code = document.getElementById('verificationCode').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loadingMessage');
+
+            if (code.length !== 6) {
+                showError('6桁のコードを入力してください');
+                return;
+            }
+
+            // ボタンを無効化
+            submitBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(contextPath + '/admin/2fa/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'verificationCode=' + code
+                });
+
+                if (response.ok) {
+                    // 検証成功 - 管理画面にリダイレクト
+                    window.location.href = contextPath + '/admin';
+                } else {
+                    const data = await response.json();
+                    showError(data.error || '認証に失敗しました');
+                    submitBtn.disabled = false;
+                    loadingDiv.style.display = 'none';
+                    // コードをクリア
+                    document.getElementById('verificationCode').value = '';
+                    document.getElementById('verificationCode').focus();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('エラーが発生しました');
+                submitBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
